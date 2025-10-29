@@ -97,21 +97,28 @@ IMAGES=(
     # Images from ACTUAL deployments (airflow-test + milvus-mmjc-dev)
     # Source: icr.io/mjc-cr (GLOBAL region)
 
-    # From airflow-test deployment
+    # From airflow-test namespace (1 image)
     "icr.io/mjc-cr/mmjc-airflow-service:latest|mmjc-airflow-service|latest"
 
-    # From milvus-mmjc-dev deployment - MCP Services
+    # From mmjc-dev namespace - MCP Services (4 images)
     "icr.io/mjc-cr/mcp-arc-s3-tool:2.1.17-amd64|mcp-arc-s3-tool|2.1.17-amd64"
     "icr.io/mjc-cr/mcp-milvus-db:0.0.1|mcp-milvus-db|0.0.1"
+    "icr.io/mjc-cr/mcp-context-forge:0.6.0|mcp-context-forge|0.6.0"
+    "icr.io/mjc-cr/go-mcp-git-s3:1.0.31|go-mcp-git-s3|1.0.31"
 
-    # From milvus-mmjc-dev deployment - Validators
+    # From mmjc-dev namespace - Validators (1 image)
     "icr.io/mjc-cr/mjc-mermaid-validator:1.0.17-llm-ready-amd64|mjc-mermaid-validator|1.0.17-llm-ready-amd64"
 
-    # From milvus-mmjc-dev deployment - MMJC Services
+    # From mmjc-dev namespace - MMJC Services (4 images)
     "icr.io/mjc-cr/mmjc-po:0.0.1|mmjc-po|0.0.1"
+    "icr.io/mjc-cr/mmjc-agents:0.0.1|mmjc-agents|0.0.1"
+    "icr.io/mjc-cr/mmjc-frontend:0.0.1|mmjc-frontend|0.0.1"
 
-    # From milvus-mmjc-dev deployment - Understanding Agent (multiple versions)
-    "icr.io/mjc-cr/understanding-agent-arc:1.5.5|understanding-agent-arc|1.5.5"
+    # From mmjc-dev namespace - File Services (2 images)
+    "icr.io/mjc-cr/api-file-zip-s3:1.0.2|api-file-zip-s3|1.0.2"
+    "icr.io/mjc-cr/cos-file-organizer:0.1.0|cos-file-organizer|0.1.0"
+
+    # From mmjc-dev namespace - Understanding Agent (1 image)
     "icr.io/mjc-cr/understanding-agent-arc:v1.6.57|understanding-agent-arc|v1.6.57"
 )
 

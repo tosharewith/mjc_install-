@@ -8,24 +8,31 @@
 
 ## 📦 All Migrated Images
 
-### Quick Copy-Paste (All Images):
+### Quick Copy-Paste (All 14 Images):
 
 ```bash
-# Airflow Service
+# Airflow Service (1)
 docker pull br.icr.io/br-ibm-images/mmjc-airflow-service:latest
 
-# MCP Services
+# MCP Services (4)
 docker pull br.icr.io/br-ibm-images/mcp-arc-s3-tool:2.1.17-amd64
 docker pull br.icr.io/br-ibm-images/mcp-milvus-db:0.0.1
+docker pull br.icr.io/br-ibm-images/mcp-context-forge:0.6.0
+docker pull br.icr.io/br-ibm-images/go-mcp-git-s3:1.0.31
 
-# Validators
+# Validators (1)
 docker pull br.icr.io/br-ibm-images/mjc-mermaid-validator:1.0.17-llm-ready-amd64
 
-# MMJC Services
+# MMJC Services (3)
 docker pull br.icr.io/br-ibm-images/mmjc-po:0.0.1
+docker pull br.icr.io/br-ibm-images/mmjc-agents:0.0.1
+docker pull br.icr.io/br-ibm-images/mmjc-frontend:0.0.1
 
-# Understanding Agent (Multiple Versions)
-docker pull br.icr.io/br-ibm-images/understanding-agent-arc:1.5.5
+# File Services (2)
+docker pull br.icr.io/br-ibm-images/api-file-zip-s3:1.0.2
+docker pull br.icr.io/br-ibm-images/cos-file-organizer:0.1.0
+
+# Understanding Agent (1)
 docker pull br.icr.io/br-ibm-images/understanding-agent-arc:v1.6.57
 ```
 
