@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: airflow-logs
+spec:
+  storageClassName: gp3  # EKS usa gp3 ao invés de ibmc-block-gold do IKS
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-airflow-test-worker-0
+spec:
+  storageClassName: gp3
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-airflow-test-triggerer-0
+spec:
+  storageClassName: gp3

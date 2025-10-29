@@ -1,0 +1,1330 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: milvus-mmjc-dev
+      meta.helm.sh/release-namespace: mmjc-dev
+    creationTimestamp: "2025-07-31T07:18:53Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/instance: milvus-mmjc-dev
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: milvus
+      app.kubernetes.io/version: 2.5.15
+      component: datanode
+      helm.sh/chart: milvus-4.2.57
+    name: milvus-mmjc-dev-datanode
+    namespace: mmjc-dev
+    resourceVersion: "22637854"
+    uid: 462b9fc8-970f-4a71-82e9-c8db22ac7683
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: milvus-mmjc-dev
+        app.kubernetes.io/name: milvus
+        component: datanode
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          checksum/config: 7fd9be72867e2683fa94f9eb59994829f1bc1ba881a870cda0993c4c4a6ecd11
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/instance: milvus-mmjc-dev
+          app.kubernetes.io/name: milvus
+          component: datanode
+      spec:
+        containers:
+        - args:
+          - milvus
+          - run
+          - datanode
+          image: milvusdb/milvus:v2.5.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            successThreshold: 1
+            tcpSocket:
+              port: metrics
+            timeoutSeconds: 5
+          name: datanode
+          ports:
+          - containerPort: 21124
+            name: datanode
+            protocol: TCP
+          - containerPort: 9091
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: "2"
+              memory: 8Gi
+            requests:
+              cpu: 500m
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /milvus/configs/default.yaml
+            name: milvus-config
+            readOnly: true
+            subPath: default.yaml
+          - mountPath: /milvus/configs/user.yaml
+            name: milvus-config
+            readOnly: true
+            subPath: user.yaml
+          - mountPath: /milvus/tools
+            name: tools
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          ibm-cloud.kubernetes.io/worker-pool-name: milvus-pool
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: reserved
+          operator: Equal
+          value: milvus
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: milvus-mmjc-dev
+          name: milvus-config
+        - emptyDir: {}
+          name: tools
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2025-07-31T07:21:44Z"
+      lastUpdateTime: "2025-07-31T07:21:44Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-07-31T07:18:53Z"
+      lastUpdateTime: "2025-07-31T07:21:44Z"
+      message: ReplicaSet "milvus-mmjc-dev-datanode-7865b55c9c" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: milvus-mmjc-dev
+      meta.helm.sh/release-namespace: mmjc-dev
+    creationTimestamp: "2025-07-31T07:18:53Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/instance: milvus-mmjc-dev
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: milvus
+      app.kubernetes.io/version: 2.5.15
+      component: indexnode
+      helm.sh/chart: milvus-4.2.57
+    name: milvus-mmjc-dev-indexnode
+    namespace: mmjc-dev
+    resourceVersion: "22638162"
+    uid: b1d9061d-a909-4359-a6e9-23e9f5886716
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: milvus-mmjc-dev
+        app.kubernetes.io/name: milvus
+        component: indexnode
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          checksum/config: 7fd9be72867e2683fa94f9eb59994829f1bc1ba881a870cda0993c4c4a6ecd11
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/instance: milvus-mmjc-dev
+          app.kubernetes.io/name: milvus
+          component: indexnode
+      spec:
+        containers:
+        - args:
+          - milvus
+          - run
+          - indexnode
+          image: milvusdb/milvus:v2.5.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            successThreshold: 1
+            tcpSocket:
+              port: metrics
+            timeoutSeconds: 5
+          name: indexnode
+          ports:
+          - containerPort: 21121
+            name: indexnode
+            protocol: TCP
+          - containerPort: 9091
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: "2"
+              memory: 8Gi
+            requests:
+              cpu: 500m
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /milvus/configs/default.yaml
+            name: milvus-config
+            readOnly: true
+            subPath: default.yaml
+          - mountPath: /milvus/configs/user.yaml
+            name: milvus-config
+            readOnly: true
+            subPath: user.yaml
+          - mountPath: /milvus/tools
+            name: tools
+          - mountPath: /var/lib/milvus/data
+            name: disk
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          ibm-cloud.kubernetes.io/worker-pool-name: milvus-pool
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: reserved
+          operator: Equal
+          value: milvus
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: milvus-mmjc-dev
+          name: milvus-config
+        - emptyDir: {}
+          name: tools
+        - emptyDir: {}
+          name: disk
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2025-07-31T07:22:34Z"
+      lastUpdateTime: "2025-07-31T07:22:34Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-07-31T07:18:53Z"
+      lastUpdateTime: "2025-07-31T07:22:34Z"
+      message: ReplicaSet "milvus-mmjc-dev-indexnode-5869bf776d" has successfully
+        progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: milvus-mmjc-dev
+      meta.helm.sh/release-namespace: mmjc-dev
+    creationTimestamp: "2025-07-31T07:18:53Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/instance: milvus-mmjc-dev
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: milvus
+      app.kubernetes.io/version: 2.5.15
+      component: mixcoord
+      helm.sh/chart: milvus-4.2.57
+    name: milvus-mmjc-dev-mixcoord
+    namespace: mmjc-dev
+    resourceVersion: "22637859"
+    uid: 9a1e1874-b958-49b6-a71c-f88cb958fc42
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: milvus-mmjc-dev
+        app.kubernetes.io/name: milvus
+        component: mixcoord
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        annotations:
+          checksum/config: 7fd9be72867e2683fa94f9eb59994829f1bc1ba881a870cda0993c4c4a6ecd11
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/instance: milvus-mmjc-dev
+          app.kubernetes.io/name: milvus
+          component: mixcoord
+      spec:
+        containers:
+        - args:
+          - milvus
+          - run
+          - mixture
+          - -rootcoord
+          - -querycoord
+          - -datacoord
+          - -indexcoord
+          image: milvusdb/milvus:v2.5.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            successThreshold: 1
+            tcpSocket:
+              port: metrics
+            timeoutSeconds: 5
+          name: mixcoord
+          ports:
+          - containerPort: 9091
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: "2"
+              memory: 8Gi
+            requests:
+              cpu: 500m
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /milvus/configs/default.yaml
+            name: milvus-config
+            readOnly: true
+            subPath: default.yaml
+          - mountPath: /milvus/configs/user.yaml
+            name: milvus-config
+            readOnly: true
+            subPath: user.yaml
+          - mountPath: /milvus/tools
+            name: tools
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          ibm-cloud.kubernetes.io/worker-pool-name: milvus-pool
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: reserved
+          operator: Equal
+          value: milvus
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: milvus-mmjc-dev
+          name: milvus-config
+        - emptyDir: {}
+          name: tools
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-07-31T07:21:44Z"
+      lastUpdateTime: "2025-07-31T07:21:44Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-07-31T07:18:53Z"
+      lastUpdateTime: "2025-07-31T07:21:44Z"
+      message: ReplicaSet "milvus-mmjc-dev-mixcoord-74dcbb44c9" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: milvus-mmjc-dev
+      meta.helm.sh/release-namespace: mmjc-dev
+    creationTimestamp: "2025-07-31T07:18:53Z"
+    generation: 2
+    labels:
+      app.kubernetes.io/instance: milvus-mmjc-dev
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: milvus
+      app.kubernetes.io/version: 2.5.15
+      component: proxy
+      helm.sh/chart: milvus-4.2.57
+    name: milvus-mmjc-dev-proxy
+    namespace: mmjc-dev
+    resourceVersion: "22638478"
+    uid: 3fdd6643-df5e-4042-aef1-e413e6b4e079
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: milvus-mmjc-dev
+        app.kubernetes.io/name: milvus
+        component: proxy
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          checksum/config: 7fd9be72867e2683fa94f9eb59994829f1bc1ba881a870cda0993c4c4a6ecd11
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/instance: milvus-mmjc-dev
+          app.kubernetes.io/name: milvus
+          component: proxy
+      spec:
+        containers:
+        - args:
+          - milvus
+          - run
+          - proxy
+          image: milvusdb/milvus:v2.5.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            successThreshold: 1
+            tcpSocket:
+              port: metrics
+            timeoutSeconds: 5
+          name: proxy
+          ports:
+          - containerPort: 19530
+            name: milvus
+            protocol: TCP
+          - containerPort: 9091
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /milvus/configs/default.yaml
+            name: milvus-config
+            readOnly: true
+            subPath: default.yaml
+          - mountPath: /milvus/configs/user.yaml
+            name: milvus-config
+            readOnly: true
+            subPath: user.yaml
+          - mountPath: /milvus/tools
+            name: tools
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          ibm-cloud.kubernetes.io/worker-pool-name: milvus-pool
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: reserved
+          operator: Equal
+          value: milvus
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: milvus-mmjc-dev
+          name: milvus-config
+        - emptyDir: {}
+          name: tools
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-07-31T07:23:44Z"
+      lastUpdateTime: "2025-07-31T07:23:44Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-07-31T07:18:53Z"
+      lastUpdateTime: "2025-07-31T07:23:44Z"
+      message: ReplicaSet "milvus-mmjc-dev-proxy-656f94777" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 2
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: milvus-mmjc-dev
+      meta.helm.sh/release-namespace: mmjc-dev
+    creationTimestamp: "2025-07-31T07:18:53Z"
+    generation: 2
+    labels:
+      app.kubernetes.io/instance: milvus-mmjc-dev
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: milvus
+      app.kubernetes.io/version: 2.5.15
+      component: querynode
+      helm.sh/chart: milvus-4.2.57
+    name: milvus-mmjc-dev-querynode
+    namespace: mmjc-dev
+    resourceVersion: "22639506"
+    uid: 2fa36d36-b42a-4449-a7fa-d552e89cfd38
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 3
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: milvus-mmjc-dev
+        app.kubernetes.io/name: milvus
+        component: querynode
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          checksum/config: 7fd9be72867e2683fa94f9eb59994829f1bc1ba881a870cda0993c4c4a6ecd11
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/instance: milvus-mmjc-dev
+          app.kubernetes.io/name: milvus
+          component: querynode
+      spec:
+        containers:
+        - args:
+          - milvus
+          - run
+          - querynode
+          image: milvusdb/milvus:v2.5.15
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            successThreshold: 1
+            tcpSocket:
+              port: metrics
+            timeoutSeconds: 5
+          name: querynode
+          ports:
+          - containerPort: 21123
+            name: querynode
+            protocol: TCP
+          - containerPort: 9091
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: "2"
+              memory: 8Gi
+            requests:
+              cpu: 500m
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /milvus/configs/default.yaml
+            name: milvus-config
+            readOnly: true
+            subPath: default.yaml
+          - mountPath: /milvus/configs/user.yaml
+            name: milvus-config
+            readOnly: true
+            subPath: user.yaml
+          - mountPath: /milvus/tools
+            name: tools
+          - mountPath: /var/lib/milvus/data
+            name: disk
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          ibm-cloud.kubernetes.io/worker-pool-name: milvus-pool
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: reserved
+          operator: Equal
+          value: milvus
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: milvus-mmjc-dev
+          name: milvus-config
+        - emptyDir: {}
+          name: tools
+        - emptyDir: {}
+          name: disk
+  status:
+    availableReplicas: 3
+    conditions:
+    - lastTransitionTime: "2025-07-31T07:27:29Z"
+      lastUpdateTime: "2025-07-31T07:27:29Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-07-31T07:18:53Z"
+      lastUpdateTime: "2025-07-31T07:27:29Z"
+      message: ReplicaSet "milvus-mmjc-dev-querynode-6949dd4666" has successfully
+        progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 2
+    readyReplicas: 3
+    replicas: 3
+    updatedReplicas: 3
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: milvus-mmjc-dev
+      meta.helm.sh/release-namespace: mmjc-dev
+    creationTimestamp: "2025-07-31T07:18:54Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/instance: milvus-mmjc-dev
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: etcd
+      helm.sh/chart: etcd-6.3.3
+    name: milvus-mmjc-dev-etcd
+    namespace: mmjc-dev
+    resourceVersion: "22637733"
+    uid: 84d7941f-b07f-40ee-9283-9ef357dddc02
+  spec:
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+      whenScaled: Retain
+    podManagementPolicy: Parallel
+    replicas: 3
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: milvus-mmjc-dev
+        app.kubernetes.io/name: etcd
+    serviceName: milvus-mmjc-dev-etcd-headless
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/instance: milvus-mmjc-dev
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: etcd
+          helm.sh/chart: etcd-6.3.3
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: milvus-mmjc-dev
+                    app.kubernetes.io/name: etcd
+                namespaces:
+                - mmjc-dev
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - env:
+          - name: BITNAMI_DEBUG
+            value: "false"
+          - name: MY_POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: ETCDCTL_API
+            value: "3"
+          - name: ETCD_ON_K8S
+            value: "yes"
+          - name: ETCD_START_FROM_SNAPSHOT
+            value: "no"
+          - name: ETCD_DISASTER_RECOVERY
+            value: "no"
+          - name: ETCD_NAME
+            value: $(MY_POD_NAME)
+          - name: ETCD_DATA_DIR
+            value: /bitnami/etcd/data
+          - name: ETCD_LOG_LEVEL
+            value: info
+          - name: ALLOW_NONE_AUTHENTICATION
+            value: "yes"
+          - name: ETCD_ADVERTISE_CLIENT_URLS
+            value: http://$(MY_POD_NAME).milvus-mmjc-dev-etcd-headless.mmjc-dev.svc.cluster.local:2379
+          - name: ETCD_LISTEN_CLIENT_URLS
+            value: http://0.0.0.0:2379
+          - name: ETCD_INITIAL_ADVERTISE_PEER_URLS
+            value: http://$(MY_POD_NAME).milvus-mmjc-dev-etcd-headless.mmjc-dev.svc.cluster.local:2380
+          - name: ETCD_LISTEN_PEER_URLS
+            value: http://0.0.0.0:2380
+          - name: ETCD_AUTO_COMPACTION_MODE
+            value: revision
+          - name: ETCD_AUTO_COMPACTION_RETENTION
+            value: "1000"
+          - name: ETCD_INITIAL_CLUSTER_TOKEN
+            value: etcd-cluster-k8s
+          - name: ETCD_INITIAL_CLUSTER_STATE
+            value: new
+          - name: ETCD_INITIAL_CLUSTER
+            value: milvus-mmjc-dev-etcd-0=http://milvus-mmjc-dev-etcd-0.milvus-mmjc-dev-etcd-headless.mmjc-dev.svc.cluster.local:2380,milvus-mmjc-dev-etcd-1=http://milvus-mmjc-dev-etcd-1.milvus-mmjc-dev-etcd-headless.mmjc-dev.svc.cluster.local:2380,milvus-mmjc-dev-etcd-2=http://milvus-mmjc-dev-etcd-2.milvus-mmjc-dev-etcd-headless.mmjc-dev.svc.cluster.local:2380
+          - name: ETCD_CLUSTER_DOMAIN
+            value: milvus-mmjc-dev-etcd-headless.mmjc-dev.svc.cluster.local
+          - name: ETCD_QUOTA_BACKEND_BYTES
+            value: "4294967296"
+          - name: ETCD_HEARTBEAT_INTERVAL
+            value: "500"
+          - name: ETCD_ELECTION_TIMEOUT
+            value: "2500"
+          image: docker.io/milvusdb/etcd:3.5.18-r1
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                - /opt/bitnami/scripts/etcd/prestop.sh
+          livenessProbe:
+            exec:
+              command:
+              - /opt/bitnami/scripts/etcd/healthcheck.sh
+            failureThreshold: 5
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+          name: etcd
+          ports:
+          - containerPort: 2379
+            name: client
+            protocol: TCP
+          - containerPort: 2380
+            name: peer
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /opt/bitnami/scripts/etcd/healthcheck.sh
+            failureThreshold: 5
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 10
+          resources: {}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /bitnami/etcd
+            name: data
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          ibm-cloud.kubernetes.io/worker-pool-name: milvus-pool
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: reserved
+          operator: Equal
+          value: milvus
+    updateStrategy:
+      type: RollingUpdate
+    volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        creationTimestamp: null
+        name: data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        volumeMode: Filesystem
+      status:
+        phase: Pending
+  status:
+    availableReplicas: 3
+    collisionCount: 0
+    currentReplicas: 3
+    currentRevision: milvus-mmjc-dev-etcd-6f58fb8487
+    observedGeneration: 1
+    readyReplicas: 3
+    replicas: 3
+    updateRevision: milvus-mmjc-dev-etcd-6f58fb8487
+    updatedReplicas: 3
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: milvus-mmjc-dev
+      meta.helm.sh/release-namespace: mmjc-dev
+    creationTimestamp: "2025-07-31T07:18:54Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/component: kafka
+      app.kubernetes.io/instance: milvus-mmjc-dev
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kafka
+      helm.sh/chart: kafka-15.5.1
+    name: milvus-mmjc-dev-kafka
+    namespace: mmjc-dev
+    resourceVersion: "22637520"
+    uid: 152a16e6-405b-4c01-884f-6437fac78573
+  spec:
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+      whenScaled: Retain
+    podManagementPolicy: Parallel
+    replicas: 3
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: kafka
+        app.kubernetes.io/instance: milvus-mmjc-dev
+        app.kubernetes.io/name: kafka
+    serviceName: milvus-mmjc-dev-kafka-headless
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/component: kafka
+          app.kubernetes.io/instance: milvus-mmjc-dev
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: kafka
+          helm.sh/chart: kafka-15.5.1
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: kafka
+                    app.kubernetes.io/instance: milvus-mmjc-dev
+                    app.kubernetes.io/name: kafka
+                namespaces:
+                - mmjc-dev
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - command:
+          - /scripts/setup.sh
+          env:
+          - name: BITNAMI_DEBUG
+            value: "false"
+          - name: MY_POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+            value: milvus-mmjc-dev-zookeeper
+          - name: KAFKA_INTER_BROKER_LISTENER_NAME
+            value: INTERNAL
+          - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+            value: INTERNAL:PLAINTEXT,CLIENT:PLAINTEXT
+          - name: KAFKA_CFG_LISTENERS
+            value: INTERNAL://:9093,CLIENT://:9092
+          - name: KAFKA_CFG_ADVERTISED_LISTENERS
+            value: INTERNAL://$(MY_POD_NAME).milvus-mmjc-dev-kafka-headless.mmjc-dev.svc.cluster.local:9093,CLIENT://$(MY_POD_NAME).milvus-mmjc-dev-kafka-headless.mmjc-dev.svc.cluster.local:9092
+          - name: ALLOW_PLAINTEXT_LISTENER
+            value: "yes"
+          - name: KAFKA_VOLUME_DIR
+            value: /bitnami/kafka
+          - name: KAFKA_LOG_DIR
+            value: /opt/bitnami/kafka/logs
+          - name: KAFKA_CFG_DELETE_TOPIC_ENABLE
+            value: "false"
+          - name: KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE
+            value: "true"
+          - name: KAFKA_HEAP_OPTS
+            value: -Xmx4096m -Xms4096m
+          - name: KAFKA_CFG_LOG_FLUSH_INTERVAL_MESSAGES
+            value: "10000"
+          - name: KAFKA_CFG_LOG_FLUSH_INTERVAL_MS
+            value: "1000"
+          - name: KAFKA_CFG_LOG_RETENTION_BYTES
+            value: "-1"
+          - name: KAFKA_CFG_LOG_RETENTION_CHECK_INTERVALS_MS
+            value: "300000"
+          - name: KAFKA_CFG_LOG_RETENTION_HOURS
+            value: "168"
+          - name: KAFKA_CFG_MESSAGE_MAX_BYTES
+            value: "10485760"
+          - name: KAFKA_CFG_LOG_SEGMENT_BYTES
+            value: "1073741824"
+          - name: KAFKA_CFG_LOG_DIRS
+            value: /bitnami/kafka/data
+          - name: KAFKA_CFG_DEFAULT_REPLICATION_FACTOR
+            value: "3"
+          - name: KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR
+            value: "3"
+          - name: KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
+            value: "1"
+          - name: KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR
+            value: "1"
+          - name: KAFKA_CFG_NUM_IO_THREADS
+            value: "8"
+          - name: KAFKA_CFG_NUM_NETWORK_THREADS
+            value: "3"
+          - name: KAFKA_CFG_NUM_PARTITIONS
+            value: "1"
+          - name: KAFKA_CFG_NUM_RECOVERY_THREADS_PER_DATA_DIR
+            value: "1"
+          - name: KAFKA_CFG_SOCKET_RECEIVE_BUFFER_BYTES
+            value: "102400"
+          - name: KAFKA_CFG_SOCKET_REQUEST_MAX_BYTES
+            value: "104857600"
+          - name: KAFKA_CFG_SOCKET_SEND_BUFFER_BYTES
+            value: "102400"
+          - name: KAFKA_CFG_ZOOKEEPER_CONNECTION_TIMEOUT_MS
+            value: "6000"
+          - name: KAFKA_CFG_AUTHORIZER_CLASS_NAME
+          - name: KAFKA_CFG_ALLOW_EVERYONE_IF_NO_ACL_FOUND
+            value: "true"
+          - name: KAFKA_CFG_SUPER_USERS
+            value: User:admin
+          - name: KAFKA_CFG_MAX_PARTITION_FETCH_BYTES
+            value: "5242880"
+          - name: KAFKA_CFG_MAX_REQUEST_SIZE
+            value: "5242880"
+          - name: KAFKA_CFG_REPLICA_FETCH_MAX_BYTES
+            value: "10485760"
+          - name: KAFKA_CFG_FETCH_MESSAGE_MAX_BYTES
+            value: "5242880"
+          - name: KAFKA_CFG_LOG_ROLL_HOURS
+            value: "24"
+          image: docker.io/bitnami/kafka:3.1.0-debian-10-r52
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: kafka-client
+            timeoutSeconds: 5
+          name: kafka
+          ports:
+          - containerPort: 9092
+            name: kafka-client
+            protocol: TCP
+          - containerPort: 9093
+            name: kafka-internal
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: kafka-client
+            timeoutSeconds: 5
+          resources: {}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          startupProbe:
+            failureThreshold: 15
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: kafka-client
+            timeoutSeconds: 1
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /bitnami/kafka
+            name: data
+          - mountPath: /opt/bitnami/kafka/logs
+            name: logs
+          - mountPath: /scripts/setup.sh
+            name: scripts
+            subPath: setup.sh
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          ibm-cloud.kubernetes.io/worker-pool-name: milvus-pool
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: milvus-mmjc-dev-kafka
+        serviceAccountName: milvus-mmjc-dev-kafka
+        terminationGracePeriodSeconds: 90
+        tolerations:
+        - effect: NoSchedule
+          key: reserved
+          operator: Equal
+          value: milvus
+        volumes:
+        - configMap:
+            defaultMode: 493
+            name: milvus-mmjc-dev-kafka-scripts
+          name: scripts
+        - emptyDir: {}
+          name: logs
+    updateStrategy:
+      rollingUpdate:
+        partition: 0
+      type: RollingUpdate
+    volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        creationTimestamp: null
+        name: data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+        volumeMode: Filesystem
+      status:
+        phase: Pending
+  status:
+    availableReplicas: 3
+    collisionCount: 0
+    currentReplicas: 3
+    currentRevision: milvus-mmjc-dev-kafka-688b8b7dcd
+    observedGeneration: 1
+    readyReplicas: 3
+    replicas: 3
+    updateRevision: milvus-mmjc-dev-kafka-688b8b7dcd
+    updatedReplicas: 3
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: milvus-mmjc-dev
+      meta.helm.sh/release-namespace: mmjc-dev
+    creationTimestamp: "2025-07-31T07:18:54Z"
+    generation: 2
+    labels:
+      app.kubernetes.io/component: zookeeper
+      app.kubernetes.io/instance: milvus-mmjc-dev
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: zookeeper
+      helm.sh/chart: zookeeper-8.1.2
+      role: zookeeper
+    name: milvus-mmjc-dev-zookeeper
+    namespace: mmjc-dev
+    resourceVersion: "22638950"
+    uid: 717399dc-729e-4be4-9d55-690f069db0f7
+  spec:
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+      whenScaled: Retain
+    podManagementPolicy: Parallel
+    replicas: 3
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: zookeeper
+        app.kubernetes.io/instance: milvus-mmjc-dev
+        app.kubernetes.io/name: zookeeper
+    serviceName: milvus-mmjc-dev-zookeeper-headless
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/component: zookeeper
+          app.kubernetes.io/instance: milvus-mmjc-dev
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: zookeeper
+          helm.sh/chart: zookeeper-8.1.2
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: zookeeper
+                    app.kubernetes.io/instance: milvus-mmjc-dev
+                    app.kubernetes.io/name: zookeeper
+                namespaces:
+                - mmjc-dev
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - command:
+          - /scripts/setup.sh
+          env:
+          - name: BITNAMI_DEBUG
+            value: "false"
+          - name: ZOO_DATA_LOG_DIR
+          - name: ZOO_PORT_NUMBER
+            value: "2181"
+          - name: ZOO_TICK_TIME
+            value: "2000"
+          - name: ZOO_INIT_LIMIT
+            value: "10"
+          - name: ZOO_SYNC_LIMIT
+            value: "5"
+          - name: ZOO_PRE_ALLOC_SIZE
+            value: "65536"
+          - name: ZOO_SNAPCOUNT
+            value: "100000"
+          - name: ZOO_MAX_CLIENT_CNXNS
+            value: "60"
+          - name: ZOO_4LW_COMMANDS_WHITELIST
+            value: srvr, mntr, ruok
+          - name: ZOO_LISTEN_ALLIPS_ENABLED
+            value: "no"
+          - name: ZOO_AUTOPURGE_INTERVAL
+            value: "0"
+          - name: ZOO_AUTOPURGE_RETAIN_COUNT
+            value: "3"
+          - name: ZOO_MAX_SESSION_TIMEOUT
+            value: "40000"
+          - name: ZOO_SERVERS
+            value: milvus-mmjc-dev-zookeeper-0.milvus-mmjc-dev-zookeeper-headless.mmjc-dev.svc.cluster.local:2888:3888::1
+              milvus-mmjc-dev-zookeeper-1.milvus-mmjc-dev-zookeeper-headless.mmjc-dev.svc.cluster.local:2888:3888::2
+              milvus-mmjc-dev-zookeeper-2.milvus-mmjc-dev-zookeeper-headless.mmjc-dev.svc.cluster.local:2888:3888::3
+          - name: ZOO_ENABLE_AUTH
+            value: "no"
+          - name: ZOO_HEAP_SIZE
+            value: "1024"
+          - name: ZOO_LOG_LEVEL
+            value: ERROR
+          - name: ALLOW_ANONYMOUS_LOGIN
+            value: "yes"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          image: docker.io/bitnami/zookeeper:3.7.0-debian-10-r320
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - echo "ruok" | timeout 2 nc -w 2 localhost 2181 | grep imok
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: zookeeper
+          ports:
+          - containerPort: 2181
+            name: client
+            protocol: TCP
+          - containerPort: 2888
+            name: follower
+            protocol: TCP
+          - containerPort: 3888
+            name: election
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - echo "ruok" | timeout 2 nc -w 2 localhost 2181 | grep imok
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /scripts/setup.sh
+            name: scripts
+            subPath: setup.sh
+          - mountPath: /bitnami/zookeeper
+            name: data
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          ibm-cloud.kubernetes.io/worker-pool-name: milvus-pool
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: reserved
+          operator: Equal
+          value: milvus
+        volumes:
+        - configMap:
+            defaultMode: 493
+            name: milvus-mmjc-dev-zookeeper-scripts
+          name: scripts
+    updateStrategy:
+      rollingUpdate:
+        partition: 0
+      type: RollingUpdate
+    volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        creationTimestamp: null
+        name: data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 8Gi
+        volumeMode: Filesystem
+      status:
+        phase: Pending
+  status:
+    availableReplicas: 3
+    collisionCount: 0
+    currentReplicas: 3
+    currentRevision: milvus-mmjc-dev-zookeeper-5d5fcd76cf
+    observedGeneration: 2
+    readyReplicas: 3
+    replicas: 3
+    updateRevision: milvus-mmjc-dev-zookeeper-5d5fcd76cf
+    updatedReplicas: 3
+kind: List
+metadata:
+  resourceVersion: ""

@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: airflow-test
+  annotations:
+    # Substituir IKS ALB por AWS ALB Ingress Controller
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:REGION:ACCOUNT_ID:certificate/CERT_ID
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    # OAuth2 Proxy para substituir IBMid/w3id
+    alb.ingress.kubernetes.io/auth-type: oidc
+    alb.ingress.kubernetes.io/auth-idp-oidc-client-id: CLIENT_ID
+    alb.ingress.kubernetes.io/auth-idp-oidc-client-secret: CLIENT_SECRET
+    alb.ingress.kubernetes.io/auth-idp-oidc-issuer: https://OAUTH_PROVIDER/oauth2
+spec:
+  rules:
+    - host: airflow-test.SEU_DOMINIO.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: airflow-test-api-server
+                port:
+                  number: 8080

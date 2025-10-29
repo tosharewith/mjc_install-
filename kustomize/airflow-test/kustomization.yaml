@@ -1,0 +1,64 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: airflow-test
+
+# Recursos base do Airflow
+resources:
+  - deployments.yaml
+  - statefulsets.yaml
+  - services.yaml
+  - configmaps.yaml
+
+# Secrets (aplicar após preencher os placeholders)
+# Descomente após configurar os valores reais
+# - secrets/airflow-test-secrets-template.yaml
+
+# ConfigMaps Generators para secrets a partir de arquivos
+secretGenerator:
+  - name: airflow-postgres-connection-test
+    literals:
+      - connection=postgresql://USUARIO:SENHA@HOST:5432/DBNAME
+  - name: airflow-redis-connection-test
+    literals:
+      - connection=redis://HOST:6379/0
+  - name: airflow-test-fernet-key
+    literals:
+      - fernet-key=GERAR_FERNET_KEY_AQUI
+  - name: airflow-test-jwt-secret
+    literals:
+      - jwt-secret=GERAR_JWT_SECRET_AQUI
+  - name: airflow-test-webserver-secret-key
+    literals:
+      - webserver-secret-key=GERAR_WEBSERVER_SECRET_KEY_AQUI
+
+# Patches para ajustar configurações específicas do EKS
+patchesStrategicMerge:
+  - patches/storage-class.yaml
+  - patches/ingress-eks.yaml
+
+# Transformações comuns
+commonLabels:
+  app.kubernetes.io/managed-by: kustomize
+  migration.source: ibm-iks
+  migration.target: aws-eks
+
+# Imagens (ajustar registry conforme necessário)
+images:
+  - name: apache/airflow
+    newTag: 2.10.3  # Ajustar conforme versão atual
+
+# Configurações
+configMapGenerator:
+  - name: migration-config
+    literals:
+      - ENVIRONMENT=test
+      - CLOUD_PROVIDER=aws
+      - REGION=us-east-1
+
+# Recursos para ajustar limites e requests
+replicas:
+  - name: airflow-test-api-server
+    count: 2
+  - name: airflow-test-scheduler
+    count: 1

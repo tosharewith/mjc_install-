@@ -1,0 +1,88 @@
+# ============================================
+# Secrets e Dados Sensíveis - NUNCA COMMITAR!
+# ============================================
+config/secrets/
+config/migration.env
+config/terraform-outputs.json
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+*-key.yaml
+*-secrets.yaml
+
+# ============================================
+# Terraform
+# ============================================
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+*.tfplan
+*.tfvars
+!*.tfvars.example
+terraform.tfstate.*.backup
+crash.log
+crash.*.log
+
+# ============================================
+# Kubernetes
+# ============================================
+*.kubeconfig
+kubeconfig
+.kube/
+
+# ============================================
+# Backups e Temporários
+# ============================================
+*.backup
+*.bak
+*.tmp
+/tmp/
+backups/
+*.log
+
+# ============================================
+# IDE e Editores
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ============================================
+# Python
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+.venv
+
+# ============================================
+# Node
+# ============================================
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# ============================================
+# Dados Exportados (podem conter info sensível)
+# ============================================
+airflow-test/airflow-test-complete.yaml
+milvus-mmjc-dev/milvus-complete.yaml
+exports/
+*.yaml.backup
+
+# ============================================
+# Mantém os templates e examples
+# ============================================
+!kustomize/**/secrets/*-template.yaml
+!config/*.example
+!config/*.sample
