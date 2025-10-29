@@ -9,12 +9,38 @@ Este repositório contém todos os recursos e instruções para migrar as seguin
 ## 📋 Índice
 
 1. [Visão Geral](#visão-geral)
-2. [Arquitetura](#arquitetura)
-3. [Pré-requisitos](#pré-requisitos)
-4. [Estrutura do Repositório](#estrutura-do-repositório)
-5. [Guias de Instalação](#guias-de-instalação)
-6. [Principais Diferenças IKS vs EKS](#principais-diferenças-iks-vs-eks)
-7. [Troubleshooting](#troubleshooting)
+2. [Imagens Docker Migradas](#-imagens-docker-migradas)
+3. [Arquitetura](#arquitetura)
+4. [Pré-requisitos](#pré-requisitos)
+5. [Estrutura do Repositório](#estrutura-do-repositório)
+6. [Guias de Instalação](#guias-de-instalação)
+7. [Principais Diferenças IKS vs EKS](#principais-diferenças-iks-vs-eks)
+8. [Troubleshooting](#troubleshooting)
+
+## 🐳 Imagens Docker Migradas
+
+**Registry**: `br.icr.io/br-ibm-images/`
+**Region**: Brazil (São Paulo)
+
+### Pull de Todas as Imagens
+
+```bash
+# Login primeiro
+ibmcloud cr login
+
+# Pull todas as imagens customizadas
+docker pull br.icr.io/br-ibm-images/mmjc-airflow-service:latest
+docker pull br.icr.io/br-ibm-images/mcp-arc-s3-tool:2.1.17-amd64
+docker pull br.icr.io/br-ibm-images/mcp-milvus-db:0.0.1
+docker pull br.icr.io/br-ibm-images/mjc-mermaid-validator:1.0.17-llm-ready-amd64
+docker pull br.icr.io/br-ibm-images/mmjc-po:0.0.1
+docker pull br.icr.io/br-ibm-images/understanding-agent-arc:1.5.5
+docker pull br.icr.io/br-ibm-images/understanding-agent-arc:v1.6.57
+```
+
+📚 **Documentação completa**: [DOCKER_PULL_COMMANDS.md](DOCKER_PULL_COMMANDS.md)
+
+---
 
 ## 🎯 Visão Geral
 
