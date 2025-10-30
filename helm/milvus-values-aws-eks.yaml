@@ -1,0 +1,361 @@
+# Milvus Helm Chart Values para AWS EKS
+# Baseado na configuração atual do milvus-mmjc-dev no IBM IKS
+# Chart: milvus-4.2.57 (https://milvus.io/docs/install_cluster-helm.md)
+
+# ============================================================================
+# IMAGEM DO MILVUS
+# ============================================================================
+image:
+  all:
+    repository: milvusdb/milvus
+    tag: v2.5.15
+    pullPolicy: IfNotPresent
+
+# Opção: Se migrar para registry privado
+# image:
+#   all:
+#     repository: br.icr.io/br-ibm-images/milvus
+#     tag: v2.5.15
+
+# ============================================================================
+# MODO CLUSTER
+# ============================================================================
+cluster:
+  enabled: true
+
+# ============================================================================
+# COORDENADORES (usando MixCoordinator)
+# ============================================================================
+# Mix Coordinator combina: root, query, data e index coordinators
+mixCoordinator:
+  enabled: true
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2Gi"
+    limits:
+      cpu: "2000m"
+      memory: "8Gi"
+
+  # No EKS - remover nodeSelector específico do IBM
+  # Se quiser usar node groups específicos no EKS:
+  # nodeSelector:
+  #   node.kubernetes.io/instance-type: t3.xlarge
+  #   workload: milvus
+
+  # Remover tolerations específicas do IBM
+  # tolerations: []
+
+# Coordenadores individuais desabilitados (usando mix)
+rootCoordinator:
+  enabled: false
+
+queryCoordinator:
+  enabled: false
+
+dataCoordinator:
+  enabled: false
+
+indexCoordinator:
+  enabled: false
+
+# ============================================================================
+# DATA NODE
+# ============================================================================
+dataNode:
+  enabled: true
+  replicas: 2
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2Gi"
+    limits:
+      cpu: "2000m"
+      memory: "8Gi"
+
+  # No EKS - remover nodeSelector do IBM
+  # nodeSelector: {}
+
+# ============================================================================
+# INDEX NODE
+# ============================================================================
+indexNode:
+  enabled: true
+  replicas: 2
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2Gi"
+    limits:
+      cpu: "2000m"
+      memory: "8Gi"
+
+  # No EKS - remover nodeSelector do IBM
+  # nodeSelector: {}
+
+# ============================================================================
+# QUERY NODE
+# ============================================================================
+queryNode:
+  enabled: true
+  replicas: 3
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2Gi"
+    limits:
+      cpu: "2000m"
+      memory: "8Gi"
+
+  # No EKS - remover nodeSelector do IBM
+  # nodeSelector: {}
+
+# ============================================================================
+# PROXY
+# ============================================================================
+proxy:
+  enabled: true
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+  # No EKS - remover nodeSelector do IBM
+  # nodeSelector: {}
+
+  # Service
+  service:
+    type: ClusterIP
+    port: 19530
+
+# ============================================================================
+# ETCD (Metadata Store)
+# ============================================================================
+etcd:
+  enabled: true
+  replicaCount: 3
+
+  persistence:
+    enabled: true
+    storageClass: gp3  # Mudança principal: IBM → AWS
+    size: 10Gi
+    accessMode: ReadWriteOnce
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+
+  # No EKS - remover nodeSelector do IBM
+  # nodeSelector: {}
+
+# ============================================================================
+# KAFKA (Message Queue)
+# ============================================================================
+kafka:
+  enabled: true
+  replicaCount: 3
+
+  persistence:
+    enabled: true
+    storageClass: gp3  # Mudança principal: IBM → AWS
+    size: 20Gi
+    accessMode: ReadWriteOnce
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+  # No EKS - remover nodeSelector do IBM
+  # nodeSelector: {}
+
+# ============================================================================
+# MINIO (Object Storage)
+# ============================================================================
+minio:
+  enabled: true
+  mode: standalone
+  replicas: 4
+
+  persistence:
+    enabled: true
+    storageClass: gp3  # Mudança principal: IBM → AWS
+    size: 20Gi
+    accessMode: ReadWriteOnce
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+  # No EKS - remover nodeSelector do IBM
+  # nodeSelector: {}
+
+# Opção: Usar S3 nativo em vez de MinIO
+# Para usar S3, desabilitar MinIO e configurar external S3:
+# minio:
+#   enabled: false
+#
+# externalS3:
+#   enabled: true
+#   host: s3.us-east-1.amazonaws.com
+#   port: 443
+#   useSSL: true
+#   bucketName: milvus-data-bucket
+#   useIAM: true  # Usar IRSA para autenticação
+#   # Ou com credentials:
+#   # accessKey: "ACCESS_KEY"
+#   # secretKey: "SECRET_KEY"
+
+# ============================================================================
+# PULSAR (Alternativa ao Kafka - desabilitado)
+# ============================================================================
+pulsar:
+  enabled: false
+
+pulsarv3:
+  enabled: false
+
+# ============================================================================
+# CONFIGURAÇÕES EXTRAS
+# ============================================================================
+extraConfigFiles:
+  user.yaml: |-
+    common:
+      security:
+        authorizationEnabled: true
+
+# ============================================================================
+# SERVICE ACCOUNT (para IRSA se usar S3)
+# ============================================================================
+serviceAccount:
+  create: true
+  name: milvus-mmjc-dev
+
+  # Se usar S3 com IRSA:
+  # annotations:
+  #   eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/milvus-s3-role
+
+# ============================================================================
+# INGRESS (se precisar expor externamente)
+# ============================================================================
+# ingress:
+#   enabled: true
+#   ingressClassName: alb
+#   annotations:
+#     alb.ingress.kubernetes.io/scheme: internal
+#     alb.ingress.kubernetes.io/target-type: ip
+#   hosts:
+#     - host: milvus.internal.seu-dominio.com
+#       paths:
+#         - path: /
+#           pathType: Prefix
+
+# ============================================================================
+# MONITORING (Prometheus/Grafana)
+# ============================================================================
+# metrics:
+#   enabled: true
+#   serviceMonitor:
+#     enabled: true
+
+# ============================================================================
+# LOG CONFIG
+# ============================================================================
+log:
+  level: info
+  format: json
+
+# ============================================================================
+# ATTU UI (Web Interface para Milvus)
+# ============================================================================
+# Attu não vem no chart do Milvus, instalar separadamente:
+# kubectl apply -f - <<EOF
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: attu
+#   namespace: mmjc-dev
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: attu
+#   template:
+#     metadata:
+#       labels:
+#         app: attu
+#     spec:
+#       containers:
+#       - name: attu
+#         image: zilliz/attu:v2.5
+#         ports:
+#         - containerPort: 3000
+#         env:
+#         - name: MILVUS_URL
+#           value: "milvus-mmjc-dev-proxy:19530"
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: attu
+#   namespace: mmjc-dev
+# spec:
+#   selector:
+#     app: attu
+#   ports:
+#   - port: 80
+#     targetPort: 3000
+# EOF
+
+# ============================================================================
+# RECURSOS GLOBAIS
+# ============================================================================
+# Se quiser aplicar recursos globais a todos os componentes:
+# global:
+#   storageClass: gp3
+
+# ============================================================================
+# NOTAS SOBRE MIGRAÇÃO IKS → EKS
+# ============================================================================
+# Mudanças principais:
+#
+# 1. Storage Class:
+#    - IKS: null (usa padrão ibmc-block-gold)
+#    - EKS: gp3 (EBS)
+#
+# 2. Node Selector:
+#    - IKS: ibm-cloud.kubernetes.io/worker-pool-name: milvus-pool
+#    - EKS: Remover ou usar nodeSelector do EKS
+#
+# 3. Tolerations:
+#    - IKS: reserved=milvus:NoSchedule
+#    - EKS: Remover ou adaptar para node groups do EKS
+#
+# 4. Imagens:
+#    - IKS: milvusdb/milvus (Docker Hub)
+#    - EKS: Mesmo, ou migrar para ECR/IBM ICR Brasil
+#
+# 5. MinIO vs S3:
+#    - IKS: MinIO interno (4 réplicas)
+#    - EKS: Opção de usar S3 nativo (recomendado para prod)

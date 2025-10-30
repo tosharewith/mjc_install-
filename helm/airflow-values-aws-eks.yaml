@@ -1,0 +1,397 @@
+# Airflow Helm Chart Values para AWS EKS
+# Baseado na configuração atual do airflow-dev no IBM IKS
+# Chart: apache-airflow/airflow (https://airflow.apache.org/docs/helm-chart/)
+
+# ============================================================================
+# VERSÃO DO AIRFLOW
+# ============================================================================
+airflowVersion: "3.0.2"
+
+# ============================================================================
+# EXECUTOR
+# ============================================================================
+executor: "CeleryExecutor"
+
+# ============================================================================
+# IMAGEM CUSTOMIZADA
+# ============================================================================
+# Opção 1: Usar imagem migrada para registry da AWS/Brasil
+defaultAirflowRepository: br.icr.io/br-ibm-images/mmjc-airflow-service
+defaultAirflowTag: latest
+defaultAirflowDigest: null
+
+# Opção 2: Se migrar para ECR
+# defaultAirflowRepository: ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/mmjc-airflow-service
+# defaultAirflowTag: latest
+
+images:
+  airflow:
+    pullPolicy: Always
+
+# ============================================================================
+# REGISTRY SECRET (se usar registry privado)
+# ============================================================================
+# Para IBM ICR Brasil
+registry:
+  secretName: all-icr-io-mmjc  # Criar este secret no namespace
+
+# Para AWS ECR, criar secret:
+# kubectl create secret docker-registry ecr-secret \
+#   --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com \
+#   --docker-username=AWS \
+#   --docker-password=$(aws ecr get-login-password --region us-east-1) \
+#   -n airflow-dev
+
+# ============================================================================
+# BANCO DE DADOS EXTERNO (RDS PostgreSQL)
+# ============================================================================
+postgresql:
+  enabled: false  # Não usar PostgreSQL interno
+
+# Configuração de conexão com RDS
+data:
+  # Secret com connection string do PostgreSQL
+  # Formato: postgresql://user:password@host:5432/database
+  metadataSecretName: airflow-postgres-connection-dev
+
+  # Secret com connection string do Redis
+  # Formato: redis://host:6379/0
+  brokerUrlSecretName: airflow-redis-connection-dev
+
+# Criar secrets:
+# kubectl create secret generic airflow-postgres-connection-dev \
+#   --from-literal=connection="postgresql://airflow:PASSWORD@RDS_ENDPOINT:5432/airflow" \
+#   -n airflow-dev
+#
+# kubectl create secret generic airflow-redis-connection-dev \
+#   --from-literal=connection="redis://REDIS_ENDPOINT:6379/0" \
+#   -n airflow-dev
+
+# ============================================================================
+# REDIS EXTERNO (ElastiCache)
+# ============================================================================
+redis:
+  enabled: false  # Não usar Redis interno
+
+# ============================================================================
+# DAGs PERSISTENCE
+# ============================================================================
+dags:
+  persistence:
+    enabled: true
+    # Opção 1: Criar novo PVC no EKS
+    # size: 10Gi
+    # storageClassName: gp3
+    # accessMode: ReadWriteMany  # Requer EFS CSI driver
+
+    # Opção 2: Usar PVC existente (se migrar dados)
+    existingClaim: mmjc-airflow-dags-dev
+
+  # Opção 3: Usar Git-Sync para DAGs (recomendado para produção)
+  # gitSync:
+  #   enabled: true
+  #   repo: https://github.com/seu-org/airflow-dags.git
+  #   branch: main
+  #   subPath: dags
+  #   credentialsSecret: git-credentials
+
+# ============================================================================
+# LOGS NO S3
+# ============================================================================
+# Adicionar via config abaixo ou como variáveis de ambiente
+
+# ============================================================================
+# CONFIGURAÇÕES DO AIRFLOW
+# ============================================================================
+config:
+  # Celery
+  celery:
+    worker_concurrency: 4
+
+  # Logging remoto no S3
+  logging:
+    remote_logging: "True"
+    remote_base_log_folder: "s3://SEU-BUCKET-LOGS/airflow/logs"
+    remote_log_conn_id: "aws_default"
+
+  # Core
+  core:
+    dags_folder: "/opt/airflow/dags"
+    load_examples: "False"
+
+  # Webserver
+  webserver:
+    base_url: "https://airflow.seu-dominio.com"
+    expose_config: "True"
+
+# ============================================================================
+# VARIÁVEIS DE AMBIENTE GLOBAIS
+# ============================================================================
+env:
+  - name: AIRFLOW__CORE__FERNET_KEY
+    valueFrom:
+      secretKeyRef:
+        name: airflow-fernet-key
+        key: fernet-key
+  - name: AWS_DEFAULT_REGION
+    value: "us-east-1"
+
+# ============================================================================
+# COMPONENTES - SCHEDULER
+# ============================================================================
+scheduler:
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2Gi"
+    limits:
+      cpu: "2000m"
+      memory: "4Gi"
+
+  # No AWS EKS, não precisamos do nodeSelector do IBM Cloud
+  # nodeSelector: {}
+
+  # Se quiser usar node groups específicos no EKS:
+  # nodeSelector:
+  #   node.kubernetes.io/instance-type: t3.xlarge
+
+  # Certificado PostgreSQL (se necessário SSL)
+  extraVolumes:
+    - name: postgres-ca
+      secret:
+        secretName: airflow-postgres-cert-dev
+        optional: true
+
+  extraVolumeMounts:
+    - name: postgres-ca
+      mountPath: /home/airflow/.postgresql
+      readOnly: true
+
+# ============================================================================
+# COMPONENTES - API SERVER (Webserver)
+# ============================================================================
+apiServer:
+  replicas: 2  # Aumentar para HA
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2Gi"
+    limits:
+      cpu: "2000m"
+      memory: "4Gi"
+
+  # Certificado PostgreSQL
+  extraVolumes:
+    - name: postgres-ca
+      secret:
+        secretName: airflow-postgres-cert-dev
+        optional: true
+
+  extraVolumeMounts:
+    - name: postgres-ca
+      mountPath: /home/airflow/.postgresql
+      readOnly: true
+
+# ============================================================================
+# COMPONENTES - WORKERS
+# ============================================================================
+workers:
+  replicas: 2  # Ajustar conforme carga
+
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "4Gi"
+    limits:
+      cpu: "4000m"
+      memory: "8Gi"
+
+  persistence:
+    enabled: true
+    size: 20Gi
+    storageClassName: gp3
+
+  # Certificado PostgreSQL
+  extraVolumes:
+    - name: postgres-ca
+      secret:
+        secretName: airflow-postgres-cert-dev
+        optional: true
+
+  extraVolumeMounts:
+    - name: postgres-ca
+      mountPath: /home/airflow/.postgresql
+      readOnly: true
+
+# ============================================================================
+# COMPONENTES - TRIGGERER
+# ============================================================================
+triggerer:
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+  # Certificado PostgreSQL
+  extraVolumes:
+    - name: postgres-ca
+      secret:
+        secretName: airflow-postgres-cert-dev
+        optional: true
+
+  extraVolumeMounts:
+    - name: postgres-ca
+      mountPath: /home/airflow/.postgresql
+      readOnly: true
+
+# ============================================================================
+# COMPONENTES - DAG PROCESSOR
+# ============================================================================
+dagProcessor:
+  enabled: true
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+  # Certificado PostgreSQL
+  extraVolumes:
+    - name: postgres-ca
+      secret:
+        secretName: airflow-postgres-cert-dev
+        optional: true
+
+  extraVolumeMounts:
+    - name: postgres-ca
+      mountPath: /home/airflow/.postgresql
+      readOnly: true
+
+# ============================================================================
+# COMPONENTES - STATSD
+# ============================================================================
+statsd:
+  enabled: true
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+# ============================================================================
+# JOBS - DATABASE MIGRATION
+# ============================================================================
+migrateDatabaseJob:
+  enabled: true
+
+  # Certificado PostgreSQL
+  extraVolumes:
+    - name: postgres-ca
+      secret:
+        secretName: airflow-postgres-cert-dev
+        optional: true
+
+  extraVolumeMounts:
+    - name: postgres-ca
+      mountPath: /home/airflow/.postgresql
+      readOnly: true
+
+# ============================================================================
+# JOBS - CREATE USER
+# ============================================================================
+createUserJob:
+  enabled: true
+
+  # Certificado PostgreSQL
+  extraVolumes:
+    - name: postgres-ca
+      secret:
+        secretName: airflow-postgres-cert-dev
+        optional: true
+
+  extraVolumeMounts:
+    - name: postgres-ca
+      mountPath: /home/airflow/.postgresql
+      readOnly: true
+
+# ============================================================================
+# INGRESS (ALB no EKS)
+# ============================================================================
+ingress:
+  enabled: true
+
+  # Para AWS ALB Ingress Controller
+  apiVersion: networking.k8s.io/v1
+  ingressClassName: alb
+
+  annotations:
+    # ALB Configuration
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+
+    # SSL Certificate (criar no ACM)
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:ACCOUNT_ID:certificate/CERT_ID
+
+    # Health Check
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '15'
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
+    alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
+
+  hosts:
+    - name: airflow.seu-dominio.com
+      tls:
+        enabled: true
+        secretName: ""  # Não precisa, ALB usa ACM
+
+  path: /
+  pathType: Prefix
+
+# ============================================================================
+# SERVICE ACCOUNT (para IRSA - IAM Roles for Service Accounts)
+# ============================================================================
+serviceAccount:
+  create: true
+  name: airflow-dev
+
+  # Annotations para IRSA (permite acesso a S3, Secrets Manager, etc)
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/airflow-dev-role
+
+# Criar IAM role com policy para:
+# - S3 (logs, dags)
+# - Secrets Manager (secrets)
+# - RDS (se usar IAM auth)
+
+# ============================================================================
+# EXTRAS
+# ============================================================================
+# Tolerations (se usar spot instances)
+# tolerations:
+#   - key: "spot"
+#     operator: "Equal"
+#     value: "true"
+#     effect: "NoSchedule"
+
+# Pod Disruption Budget
+# podDisruptionBudget:
+#   enabled: true
+#   maxUnavailable: 1
