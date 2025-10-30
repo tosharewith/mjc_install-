@@ -1,0 +1,148 @@
+# Registry Mapping Configuration for Air-gapped Environments
+# This file defines how to map external registries to internal Artifactory
+# Supports multiple Artifactory instances/namespaces
+
+# Target Artifactory Registries (per namespace/instance)
+artifactory_instances:
+  # Airflow namespace
+  airflow-dev:
+    registry: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf"
+    description: "Artifactory instance for Airflow Dev"
+
+  airflow-test:
+    registry: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf"
+    description: "Artifactory instance for Airflow Test"
+
+  airflow-stage:
+    registry: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf"
+    description: "Artifactory instance for Airflow Stage"
+
+  # Milvus/MMJC namespace
+  mmjc-dev:
+    registry: "docker-arc4-remote.artifactory.prod.aws.cloud.ihf"
+    description: "Artifactory instance for MMJC Dev"
+
+  mmjc-test:
+    registry: "docker-arc4-remote.artifactory.prod.aws.cloud.ihf"
+    description: "Artifactory instance for MMJC Test"
+
+  mmjc-stage:
+    registry: "docker-arc4-remote.artifactory.prod.aws.cloud.ihf"
+    description: "Artifactory instance for MMJC Stage"
+
+# Default registry (fallback)
+default_registry: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf"
+
+# Registry mappings
+# Format: source_registry → artifactory_path
+registry_mappings:
+  # IBM Container Registry
+  - source: "icr.io/mjc-cr"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf"
+    strip_prefix: "icr.io/mjc-cr/"
+    description: "IBM ICR custom images"
+
+  - source: "br.icr.io/br-ibm-images"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf"
+    strip_prefix: "br.icr.io/br-ibm-images/"
+    description: "IBM Brazil ICR images"
+
+  # Docker Hub
+  - source: "docker.io"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf"
+    strip_prefix: "docker.io/"
+    description: "Docker Hub public images"
+
+  - source: ""  # Images without registry prefix (defaults to docker.io)
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf"
+    strip_prefix: ""
+    description: "Default Docker Hub images"
+
+  # Google Container Registry
+  - source: "gcr.io"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf"
+    strip_prefix: "gcr.io/"
+    description: "Google Container Registry"
+
+  # Quay.io
+  - source: "quay.io"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf"
+    strip_prefix: "quay.io/"
+    description: "Quay.io registry"
+
+# Image list for Airflow
+airflow_images:
+  - source: "icr.io/mjc-cr/mmjc-airflow-service:latest"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/mmjc-airflow-service:latest"
+
+  - source: "quay.io/prometheus/statsd-exporter:v0.28.0"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/prometheus/statsd-exporter:v0.28.0"
+
+# Image list for Milvus
+milvus_images:
+  - source: "milvusdb/milvus:v2.5.15"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/milvusdb/milvus:v2.5.15"
+
+  - source: "docker.io/milvusdb/etcd:3.5.18-r1"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/milvusdb/etcd:3.5.18-r1"
+
+  - source: "docker.io/bitnami/kafka:3.1.0-debian-10-r52"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/bitnami/kafka:3.1.0-debian-10-r52"
+
+  - source: "docker.io/bitnami/zookeeper:3.7.0-debian-10-r320"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/bitnami/zookeeper:3.7.0-debian-10-r320"
+
+  - source: "minio/minio:RELEASE.2024-05-28T17-19-04Z"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/minio/minio:RELEASE.2024-05-28T17-19-04Z"
+
+# Custom MMJC images
+mmjc_custom_images:
+  - source: "icr.io/mjc-cr/understanding-agent-arc:1.6.61"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/understanding-agent-arc:1.6.61"
+
+  - source: "br.icr.io/br-ibm-images/understanding-agent-arc:1.5.5"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/understanding-agent-arc:1.5.5"
+
+  - source: "icr.io/mjc-cr/mcp-arc-s3-tool:2.1.17-amd64"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/mcp-arc-s3-tool:2.1.17-amd64"
+
+  - source: "icr.io/mjc-cr/mcp-milvus-db:0.0.1"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/mcp-milvus-db:0.0.1"
+
+  - source: "icr.io/mjc-cr/mcp-context-forge:0.6.0"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/mcp-context-forge:0.6.0"
+
+  - source: "icr.io/mjc-cr/go-mcp-git-s3:1.0.31"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/go-mcp-git-s3:1.0.31"
+
+  - source: "icr.io/mjc-cr/mjc-mermaid-validator:1.0.17-llm-ready-amd64"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/mjc-mermaid-validator:1.0.17-llm-ready-amd64"
+
+  - source: "icr.io/mjc-cr/mmjc-po:0.0.1"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/mmjc-po:0.0.1"
+
+  - source: "icr.io/mjc-cr/mmjc-agents:0.0.1"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/mmjc-agents:0.0.1"
+
+  - source: "icr.io/mjc-cr/mmjc-frontend:0.0.1"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/mmjc-frontend:0.0.1"
+
+  - source: "icr.io/mjc-cr/api-file-zip-s3:1.0.2"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/api-file-zip-s3:1.0.2"
+
+  - source: "icr.io/mjc-cr/cos-file-organizer:0.1.0"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/cos-file-organizer:0.1.0"
+
+  - source: "icr.io/mjc-cr/code-analysis-api:dev-latest"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/code-analysis-api:dev-latest"
+
+# Additional images
+other_images:
+  - source: "langfuse/langfuse:2"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/langfuse/langfuse:2"
+
+  - source: "gcr.io/kaniko-project/executor:v1.23.0"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/kaniko-project/executor:v1.23.0"
+
+  - source: "icr.io/ext/istio/proxyv2:1.23.6"
+    target: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf/istio/proxyv2:1.23.6"

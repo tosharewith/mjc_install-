@@ -1,0 +1,299 @@
+# Milvus Helm Chart Values para Ambiente Air-gapped com Artifactory
+# Based on milvus-values-aws-eks.yaml but with Artifactory registry
+
+# ============================================================================
+# IMAGEM DO MILVUS (via Artifactory)
+# ============================================================================
+image:
+  all:
+    repository: docker-arc3-remote.artifactory.prod.aws.cloud.ihf/milvusdb/milvus
+    tag: v2.5.15
+    pullPolicy: IfNotPresent  # Importante para air-gapped
+
+# ============================================================================
+# MODO CLUSTER
+# ============================================================================
+cluster:
+  enabled: true
+
+# ============================================================================
+# COORDENADORES (usando MixCoordinator)
+# ============================================================================
+mixCoordinator:
+  enabled: true
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2Gi"
+    limits:
+      cpu: "2000m"
+      memory: "8Gi"
+
+rootCoordinator:
+  enabled: false
+
+queryCoordinator:
+  enabled: false
+
+dataCoordinator:
+  enabled: false
+
+indexCoordinator:
+  enabled: false
+
+# ============================================================================
+# DATA NODE
+# ============================================================================
+dataNode:
+  enabled: true
+  replicas: 2
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2Gi"
+    limits:
+      cpu: "2000m"
+      memory: "8Gi"
+
+# ============================================================================
+# INDEX NODE
+# ============================================================================
+indexNode:
+  enabled: true
+  replicas: 2
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2Gi"
+    limits:
+      cpu: "2000m"
+      memory: "8Gi"
+
+# ============================================================================
+# QUERY NODE
+# ============================================================================
+queryNode:
+  enabled: true
+  replicas: 3
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2Gi"
+    limits:
+      cpu: "2000m"
+      memory: "8Gi"
+
+# ============================================================================
+# PROXY
+# ============================================================================
+proxy:
+  enabled: true
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+  service:
+    type: ClusterIP
+    port: 19530
+
+# ============================================================================
+# ETCD (Metadata Store) - Via Artifactory
+# ============================================================================
+etcd:
+  enabled: true
+  replicaCount: 3
+
+  image:
+    repository: docker-arc3-remote.artifactory.prod.aws.cloud.ihf/milvusdb/etcd
+    tag: 3.5.18-r1
+    pullPolicy: IfNotPresent
+
+  persistence:
+    enabled: true
+    storageClass: gp3
+    size: 10Gi
+    accessMode: ReadWriteOnce
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+
+  # Importante para air-gapped
+  imagePullSecrets:
+    - name: artifactory-registry-secret
+
+# ============================================================================
+# KAFKA (Message Queue) - Via Artifactory
+# ============================================================================
+kafka:
+  enabled: true
+  replicaCount: 3
+
+  image:
+    repository: docker-arc3-remote.artifactory.prod.aws.cloud.ihf/bitnami/kafka
+    tag: 3.1.0-debian-10-r52
+    pullPolicy: IfNotPresent
+
+  persistence:
+    enabled: true
+    storageClass: gp3
+    size: 20Gi
+    accessMode: ReadWriteOnce
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+  imagePullSecrets:
+    - name: artifactory-registry-secret
+
+  # Zookeeper (subchart do Kafka)
+  zookeeper:
+    enabled: true
+    replicaCount: 3
+
+    image:
+      repository: docker-arc3-remote.artifactory.prod.aws.cloud.ihf/bitnami/zookeeper
+      tag: 3.7.0-debian-10-r320
+      pullPolicy: IfNotPresent
+
+    persistence:
+      enabled: true
+      storageClass: gp3
+      size: 10Gi
+
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "1Gi"
+
+# ============================================================================
+# MINIO (Object Storage) - Via Artifactory
+# ============================================================================
+minio:
+  enabled: true
+  mode: standalone
+  replicas: 4
+
+  image:
+    repository: docker-arc3-remote.artifactory.prod.aws.cloud.ihf/minio/minio
+    tag: RELEASE.2024-05-28T17-19-04Z
+    pullPolicy: IfNotPresent
+
+  persistence:
+    enabled: true
+    storageClass: gp3
+    size: 20Gi
+    accessMode: ReadWriteOnce
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+# Nota: Se usar S3 em vez de MinIO (não recomendado para air-gapped):
+# minio:
+#   enabled: false
+# externalS3:
+#   enabled: true
+#   host: s3-endpoint-interno.seu-dominio
+#   port: 443
+#   useSSL: true
+#   bucketName: milvus-data
+#   useIAM: true
+
+# ============================================================================
+# PULSAR (Alternativa ao Kafka - desabilitado)
+# ============================================================================
+pulsar:
+  enabled: false
+
+pulsarv3:
+  enabled: false
+
+# ============================================================================
+# CONFIGURAÇÕES EXTRAS
+# ============================================================================
+extraConfigFiles:
+  user.yaml: |-
+    common:
+      security:
+        authorizationEnabled: true
+
+# ============================================================================
+# SERVICE ACCOUNT
+# ============================================================================
+serviceAccount:
+  create: true
+  name: milvus-mmjc-dev
+
+# Para IRSA (se usar S3):
+# serviceAccount:
+#   annotations:
+#     eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/milvus-s3-role
+
+# ============================================================================
+# IMAGE PULL SECRETS (Global para todos os componentes)
+# ============================================================================
+global:
+  imagePullSecrets:
+    - artifactory-registry-secret
+
+# Criar secret com:
+# kubectl create secret docker-registry artifactory-registry-secret \
+#   --docker-server=docker-arc3-remote.artifactory.prod.aws.cloud.ihf \
+#   --docker-username=YOUR_USER \
+#   --docker-password=YOUR_PASSWORD \
+#   -n mmjc-dev
+
+# ============================================================================
+# LOG CONFIG
+# ============================================================================
+log:
+  level: info
+  format: json
+
+# ============================================================================
+# NOTAS SOBRE AMBIENTE AIR-GAPPED
+# ============================================================================
+# 1. TODAS as imagens devem estar no Artifactory:
+#    - milvusdb/milvus:v2.5.15
+#    - milvusdb/etcd:3.5.18-r1
+#    - bitnami/kafka:3.1.0-debian-10-r52
+#    - bitnami/zookeeper:3.7.0-debian-10-r320
+#    - minio/minio:RELEASE.2024-05-28T17-19-04Z
+#
+# 2. Use pullPolicy: IfNotPresent para evitar pulls desnecessários
+#
+# 3. Registry secret é obrigatório em todos os namespaces
+#
+# 4. Helm chart deve ser instalado de arquivo local (.tgz)
+#
+# 5. Não use imagens latest em produção
+#
+# 6. Teste primeiro em ambiente de desenvolvimento
