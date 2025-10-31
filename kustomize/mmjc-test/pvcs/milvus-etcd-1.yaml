@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+    volume.beta.kubernetes.io/storage-provisioner: vpc.block.csi.ibm.io
+    volume.kubernetes.io/storage-provisioner: vpc.block.csi.ibm.io
+  creationTimestamp: "2025-07-31T08:33:14Z"
+  finalizers:
+  - kubernetes.io/pvc-protection
+  labels:
+    app.kubernetes.io/instance: milvus-mmjc-test
+    app.kubernetes.io/name: etcd
+  name: data-milvus-mmjc-test-etcd-1
+  namespace: mmjc-test
+  resourceVersion: "22654816"
+  uid: 938b7fee-9945-42ba-8305-82c3ce090754
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: ibmc-vpc-block-10iops-tier
+  volumeMode: Filesystem
+  volumeName: pvc-938b7fee-9945-42ba-8305-82c3ce090754
+status:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  phase: Bound

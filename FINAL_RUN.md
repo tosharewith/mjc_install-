@@ -16,12 +16,12 @@
 | # | Image | Source | Used In |
 |---|-------|--------|---------|
 | 1 | mmjc-airflow-service:latest | icr.io/mjc-cr | airflow-test |
-| 2 | mcp-arc-s3-tool:2.1.17-amd64 | icr.io/mjc-cr | milvus-mmjc-dev |
-| 3 | mcp-milvus-db:0.0.1 | icr.io/mjc-cr | milvus-mmjc-dev |
-| 4 | mjc-mermaid-validator:1.0.17-llm-ready-amd64 | icr.io/mjc-cr | milvus-mmjc-dev |
-| 5 | mmjc-po:0.0.1 | icr.io/mjc-cr | milvus-mmjc-dev |
-| 6 | understanding-agent-arc:1.5.5 | icr.io/mjc-cr | milvus-mmjc-dev |
-| 7 | understanding-agent-arc:v1.6.57 | icr.io/mjc-cr | milvus-mmjc-dev |
+| 2 | mcp-arc-s3-tool:2.1.17-amd64 | icr.io/mjc-cr | milvus-mmjc-test |
+| 3 | mcp-milvus-db:0.0.1 | icr.io/mjc-cr | milvus-mmjc-test |
+| 4 | mjc-mermaid-validator:1.0.17-llm-ready-amd64 | icr.io/mjc-cr | milvus-mmjc-test |
+| 5 | mmjc-po:0.0.1 | icr.io/mjc-cr | milvus-mmjc-test |
+| 6 | understanding-agent-arc:1.5.5 | icr.io/mjc-cr | milvus-mmjc-test |
+| 7 | understanding-agent-arc:v1.6.57 | icr.io/mjc-cr | milvus-mmjc-test |
 
 **Total**: ~1GB (download + upload)
 **Time**: ~15-20 minutes
@@ -53,7 +53,7 @@ source ./scripts/setup-docker-colima.sh
 
 ### Corrected Migration:
 - Source: `icr.io/mjc-cr` (GLOBAL region namespace)
-- Images: All 7 from actual airflow-test and milvus-mmjc-dev deployments
+- Images: All 7 from actual airflow-test and milvus-mmjc-test deployments
 - **Verified**: All images exist and are actually used
 
 ---

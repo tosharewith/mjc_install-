@@ -1,0 +1,141 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: mmjc-test
+
+resources:
+  # Deployments
+  - deployments/agents.yaml
+  - deployments/frontend.yaml
+  - deployments/mcp-gateway.yaml
+  - deployments/mcp-git-s3-server.yaml
+  - deployments/mcp-milvus-db.yaml
+  - deployments/mermaid-validator-api.yaml
+  - deployments/po.yaml
+  - deployments/attu.yaml
+  - deployments/milvus-datanode.yaml
+  - deployments/milvus-indexnode.yaml
+  - deployments/milvus-mixcoord.yaml
+  - deployments/milvus-proxy.yaml
+  - deployments/milvus-querynode.yaml
+
+  # StatefulSets
+  - statefulsets/mcp-arc-s3-server.yaml
+  - statefulsets/redis-cluster.yaml
+  - statefulsets/milvus-etcd.yaml
+  - statefulsets/milvus-kafka.yaml
+  - statefulsets/milvus-minio.yaml
+  - statefulsets/milvus-zookeeper.yaml
+
+  # Services
+  - services/agents.yaml
+  - services/frontend.yaml
+  - services/mcp-arc-s3.yaml
+  - services/mcp-gateway.yaml
+  - services/mcp-git-s3-server.yaml
+  - services/mcp-git-s3-server-headless.yaml
+  - services/mcp-git-s3-server-lb.yaml
+  - services/mcp-milvus-db.yaml
+  - services/mermaid-validator-api.yaml
+  - services/po.yaml
+  - services/redis.yaml
+  - services/attu.yaml
+  - services/milvus-proxy.yaml
+  - services/milvus-datanode.yaml
+  - services/milvus-indexnode.yaml
+  - services/milvus-querynode.yaml
+  - services/milvus-mixcoord.yaml
+  - services/milvus-etcd.yaml
+  - services/milvus-etcd-headless.yaml
+  - services/milvus-kafka.yaml
+  - services/milvus-kafka-headless.yaml
+  - services/milvus-minio.yaml
+  - services/milvus-minio-svc.yaml
+  - services/milvus-zookeeper.yaml
+  - services/milvus-zookeeper-headless.yaml
+
+  # ConfigMaps
+  - configmaps/lang-detect-config.yaml
+  - configmaps/mcp-arc-s3-config.yaml
+  - configmaps/mcp-arc-s3-custom-result-config.yaml
+  - configmaps/mcp-arc-s3-ssh-config.yaml
+  - configmaps/mcp-git-s3-config.yaml
+  - configmaps/mcp-git-s3-jvm-config.yaml
+  - configmaps/mcp-git-s3-monitoring.yaml
+  - configmaps/mcp-git-s3-tls-config.yaml
+  - configmaps/mermaid-syntax-rules.yaml
+  - configmaps/mermaid-validator-api-config.yaml
+  - configmaps/milvus-config.yaml
+  - configmaps/milvus-kafka-scripts.yaml
+  - configmaps/milvus-minio.yaml
+  - configmaps/milvus-zookeeper-scripts.yaml
+  - configmaps/redis-cluster-config.yaml
+
+  # PVCs
+  - pvcs/milvus-etcd-0.yaml
+  - pvcs/milvus-etcd-1.yaml
+  - pvcs/milvus-etcd-2.yaml
+  - pvcs/milvus-kafka-0.yaml
+  - pvcs/milvus-kafka-1.yaml
+  - pvcs/milvus-kafka-2.yaml
+  - pvcs/milvus-zookeeper-0.yaml
+  - pvcs/milvus-zookeeper-1.yaml
+  - pvcs/milvus-zookeeper-2.yaml
+  - pvcs/milvus-minio-0.yaml
+  - pvcs/milvus-minio-1.yaml
+  - pvcs/milvus-minio-2.yaml
+  - pvcs/milvus-minio-3.yaml
+  - pvcs/mcp-arc-s3-server-0.yaml
+  - pvcs/mcp-arc-s3-server-1.yaml
+  - pvcs/mcp-arc-s3-server-2.yaml
+  - pvcs/redis-cluster-0.yaml
+
+  # Ingresses
+  - ingresses/lang-detect.yaml
+  - ingresses/mermaid-validator-api.yaml
+
+# Image transformations - Modify these to change registry/prefix
+images:
+  # ICR custom images
+  - name: icr.io/mjc-cr/mmjc-agents
+    newName: icr.io/mjc-cr/mmjc-agents
+    newTag: 0.0.2
+
+  - name: icr.io/mjc-cr/mmjc-frontend
+    newName: icr.io/mjc-cr/mmjc-frontend
+    newTag: 0.0.2
+
+  - name: icr.io/mjc-cr/mmjc-po
+    newName: icr.io/mjc-cr/mmjc-po
+    newTag: 0.0.2
+
+  - name: icr.io/mjc-cr/go-mcp-git-s3
+    newName: icr.io/mjc-cr/go-mcp-git-s3
+    newTag: 1.0.31
+
+  - name: icr.io/mjc-cr/mcp-milvus-db
+    newName: icr.io/mjc-cr/mcp-milvus-db
+    newTag: 0.0.2
+
+  - name: icr.io/mjc-cr/mjc-mermaid-validator
+    newName: icr.io/mjc-cr/mjc-mermaid-validator
+    newTag: 1.0.17-llm-ready-amd64
+
+  # GHCR images
+  - name: ghcr.io/ibm/mcp-context-forge
+    newName: ghcr.io/ibm/mcp-context-forge
+    newTag: 0.6.0
+
+  # Milvus images
+  - name: milvusdb/milvus
+    newName: milvusdb/milvus
+    newTag: v2.5.15
+
+  - name: zilliz/attu
+    newName: zilliz/attu
+    newTag: v2.5.6
+
+# Common labels to add to all resources
+commonLabels:
+  environment: test
+  managed-by: kustomize

@@ -1,5 +1,5 @@
 # Airflow Helm Chart Values para AWS EKS
-# Baseado na configuração atual do airflow-dev no IBM IKS
+# Baseado na configuração atual do airflow-test no IBM IKS
 # Chart: apache-airflow/airflow (https://airflow.apache.org/docs/helm-chart/)
 
 # ============================================================================
@@ -40,7 +40,7 @@ registry:
 #   --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com \
 #   --docker-username=AWS \
 #   --docker-password=$(aws ecr get-login-password --region us-east-1) \
-#   -n airflow-dev
+#   -n airflow-test
 
 # ============================================================================
 # BANCO DE DADOS EXTERNO (RDS PostgreSQL)
@@ -61,14 +61,14 @@ data:
 # Criar secrets:
 # kubectl create secret generic airflow-postgres-connection-dev \
 #   --from-literal=connection="postgresql://airflow:PASSWORD@RDS_ENDPOINT:5432/airflow" \
-#   -n airflow-dev
+#   -n airflow-test
 #
 # kubectl create secret generic airflow-redis-connection-dev \
 #   --from-literal=connection="redis://REDIS_ENDPOINT:6379/0" \
-#   -n airflow-dev
+#   -n airflow-test
 
 # ============================================================================
-# REDIS EXTERNO (ElastiCache)
+# REDIS AS CACHE (EXTERNO)
 # ============================================================================
 redis:
   enabled: false  # Não usar Redis interno
@@ -370,11 +370,11 @@ ingress:
 # ============================================================================
 serviceAccount:
   create: true
-  name: airflow-dev
+  name: airflow-test
 
   # Annotations para IRSA (permite acesso a S3, Secrets Manager, etc)
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/airflow-dev-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/airflow-test-role
 
 # Criar IAM role com policy para:
 # - S3 (logs, dags)

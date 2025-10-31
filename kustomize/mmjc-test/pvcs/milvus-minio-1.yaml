@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+    volume.beta.kubernetes.io/storage-provisioner: vpc.block.csi.ibm.io
+    volume.kubernetes.io/storage-provisioner: vpc.block.csi.ibm.io
+  creationTimestamp: "2025-07-31T08:33:14Z"
+  finalizers:
+  - kubernetes.io/pvc-protection
+  labels:
+    app: minio
+    release: milvus-mmjc-test
+  name: export-milvus-mmjc-test-minio-1
+  namespace: mmjc-test
+  resourceVersion: "22654795"
+  uid: cabb23ac-99b9-46bd-a3d6-76420332b5bd
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: ibmc-vpc-block-10iops-tier
+  volumeMode: Filesystem
+  volumeName: pvc-cabb23ac-99b9-46bd-a3d6-76420332b5bd
+status:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 20Gi
+  phase: Bound

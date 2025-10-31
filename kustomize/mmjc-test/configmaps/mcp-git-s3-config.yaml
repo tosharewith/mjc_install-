@@ -1,0 +1,67 @@
+apiVersion: v1
+data:
+  CACHE_CLEANUP_INTERVAL: "300"
+  CACHE_SIZE: "50000"
+  CACHE_TTL: "1800"
+  GIT_BUFFER_SIZE: "1048576"
+  GIT_CACHE_LIMIT: "50000"
+  GIT_PARALLEL_THREADS: "8"
+  GIT_UPLOAD_BATCH_SIZE: "100"
+  GIT_USERNAME: ""
+  GITHUB_API_URL: https://github.ibm.com/api/v3
+  GITHUB_APP_ENABLED: "true"
+  GITHUB_ENTERPRISE_URL: https://github.ibm.com
+  GOMAXPROCS: "2"
+  GOMEMLIMIT: 450MiB
+  LOG_LEVEL: INFO
+  PORT: "8080"
+  S3_BACKEND_HEALTHCHECK_ENABLED: "false"
+  S3_BUCKET: ""
+  S3_ENDPOINT_URL: https://s3.direct.us-south.cloud-object-storage.appdomain.cloud
+  S3_MAX_CONNECTIONS: "50"
+  S3_MAX_RETRIES: "3"
+  S3_MULTIPART_SIZE: "33554432"
+  S3_REGION: us-south
+  S3_TIMEOUT: "300"
+  S3_UPLOAD_WORKERS: "20"
+  SERVER_PORT: "8080"
+  STRIP_LEADING_SLASH: "false"
+  TRANSPORT: both
+  USE_SESSION_ID_PREFIX: "false"
+  cache.cleanup.interval: "300"
+  cache.size: "50000"
+  cache.ttl: "1800"
+  git.parallel.threads: "8"
+  git.upload.batch.size: "100"
+  jclouds.connection.timeout: "60000"
+  jclouds.max.connections: "50"
+  jclouds.mpu.parts.size: "33554432"
+  jclouds.request.timeout: "300000"
+  jgit.buffer.size: "1048576"
+  jgit.cache.limit: "50000"
+  jgit.parallel.threads: "8"
+  log.level: DEBUG
+  server.port: "8080"
+  spring.profiles.active: production
+  tls.enabled: "false"
+kind: ConfigMap
+metadata:
+  annotations:
+    app.kubernetes.io/description: High-performance MCP Git-S3 Tools Server
+    app.kubernetes.io/documentation: https://github.com/your-org/java-mcp-tool-s3git
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"S3_BACKEND_HEALTHCHECK_ENABLED":"false","S3_BUCKET":"mmjc-test","S3_ENDPOINT_URL":"https://s3.direct.us-south.cloud-object-storage.appdomain.cloud","S3_REGION":"us-east","cache.cleanup.interval":"300","cache.size":"50000","cache.ttl":"1800","git.parallel.threads":"8","git.upload.batch.size":"100","jclouds.connection.timeout":"60000","jclouds.max.connections":"50","jclouds.mpu.parts.size":"33554432","jclouds.request.timeout":"300000","jgit.buffer.size":"1048576","jgit.cache.limit":"50000","jgit.parallel.threads":"8","log.level":"INFO","server.port":"8080","spring.profiles.active":"production","tls.enabled":"false"},"kind":"ConfigMap","metadata":{"annotations":{"app.kubernetes.io/description":"High-performance MCP Git-S3 Tools Server","app.kubernetes.io/documentation":"https://github.com/your-org/java-mcp-tool-s3git","deployment.kubernetes.io/revision":"1"},"creationTimestamp":"2025-06-16T11:56:36Z","labels":{"app":"mcp-git-s3-server","app.kubernetes.io/component":"api-server","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"mcp-git-s3-server","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":"0.0.1-SNAPSHOT","component":"config"},"name":"mcp-git-s3-config","namespace":"mmjc-test","resourceVersion":"20903229","uid":"3c21f095-c955-4ef2-ac9f-b1e89522d29d"}}
+  creationTimestamp: "2025-06-16T11:56:36Z"
+  labels:
+    app: mcp-git-s3-server
+    app.kubernetes.io/component: api-server
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: mcp-git-s3-server
+    app.kubernetes.io/part-of: mcp-platform
+    app.kubernetes.io/version: 0.0.1-SNAPSHOT
+    component: config
+  name: mcp-git-s3-config
+  namespace: mmjc-test
+  resourceVersion: "53682370"
+  uid: 3c21f095-c955-4ef2-ac9f-b1e89522d29d

@@ -1,5 +1,5 @@
 # Milvus Helm Chart Values para AWS EKS
-# Baseado na configuração atual do milvus-mmjc-dev no IBM IKS
+# Baseado na configuração atual do milvus-mmjc-test no IBM IKS
 # Chart: milvus-4.2.57 (https://milvus.io/docs/install_cluster-helm.md)
 
 # ============================================================================
@@ -250,7 +250,7 @@ extraConfigFiles:
 # ============================================================================
 serviceAccount:
   create: true
-  name: milvus-mmjc-dev
+  name: milvus-mmjc-test
 
   # Se usar S3 com IRSA:
   # annotations:
@@ -295,7 +295,7 @@ log:
 # kind: Deployment
 # metadata:
 #   name: attu
-#   namespace: mmjc-dev
+#   namespace: mmjc-test
 # spec:
 #   replicas: 1
 #   selector:
@@ -313,13 +313,13 @@ log:
 #         - containerPort: 3000
 #         env:
 #         - name: MILVUS_URL
-#           value: "milvus-mmjc-dev-proxy:19530"
+#           value: "milvus-mmjc-test-proxy:19530"
 # ---
 # apiVersion: v1
 # kind: Service
 # metadata:
 #   name: attu
-#   namespace: mmjc-dev
+#   namespace: mmjc-test
 # spec:
 #   selector:
 #     app: attu

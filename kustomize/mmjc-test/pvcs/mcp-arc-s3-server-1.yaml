@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    ibm.io/volume-tier: 10iops-tier
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+    volume.beta.kubernetes.io/storage-class: ibmc-vpc-block-10iops-tier
+    volume.beta.kubernetes.io/storage-provisioner: vpc.block.csi.ibm.io
+    volume.kubernetes.io/storage-provisioner: vpc.block.csi.ibm.io
+  creationTimestamp: "2025-10-27T13:44:16Z"
+  finalizers:
+  - kubernetes.io/pvc-protection
+  labels:
+    app: mcp-arc-s3-server
+  name: run-folder-mcp-arc-s3-server-1
+  namespace: mmjc-test
+  resourceVersion: "53873482"
+  uid: 73f7ef49-bd96-4085-90e4-0dc42d3007f5
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: ibmc-vpc-block-10iops-tier
+  volumeMode: Filesystem
+  volumeName: pvc-73f7ef49-bd96-4085-90e4-0dc42d3007f5
+status:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 100Gi
+  phase: Bound

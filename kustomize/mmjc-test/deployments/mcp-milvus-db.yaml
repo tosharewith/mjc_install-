@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "5"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"mcp-milvus-db-test","namespace":"mmjc-test"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"mcp-milvus-db"}},"strategy":{"rollingUpdate":{"maxSurge":0,"maxUnavailable":1},"type":"RollingUpdate"},"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true"},"labels":{"app":"mcp-milvus-db"}},"spec":{"containers":[{"env":[{"name":"MILVUS_URL","value":"http://milvus-mmjc-test.mmjc-test.svc.cluster.local:19530"},{"name":"MILVUS_USER","value":"root"},{"name":"MILVUS_PASSWORD","valueFrom":{"secretKeyRef":{"key":"MILVUS_PASSWORD","name":"mcp-milvus-db-password"}}},{"name":"MODEL_GATEWAY_URL","value":"https://model-gateway.llm-adapter-dev-c97c2ce0266e6f32de317d52e2a84f46-0001.us-east.containers.appdomain.cloud/v1"},{"name":"MODEL_GATEWAY_API_KEY","valueFrom":{"secretKeyRef":{"key":"MODEL_GATEWAY_API_KEY","name":"mcp-milvus-db-model-api-key"}}},{"name":"VECTOR_LENGTH","value":"384"}],"image":"icr.io/mjc-cr/mcp-milvus-db:0.0.2","imagePullPolicy":"Always","name":"mcp-milvus","ports":[{"containerPort":8903,"name":"mcp-milvus"}],"resources":{"limits":{"cpu":0.25,"memory":"1Gi"},"requests":{"cpu":0.125,"memory":"1Gi"}}}],"imagePullSecrets":[{"name":"all-icr-io-mmjc"}]}}}}
+  creationTimestamp: "2025-08-28T07:24:28Z"
+  generation: 5
+  name: mcp-milvus-db-test
+  namespace: mmjc-test
+  resourceVersion: "46975071"
+  uid: c2123eea-082d-4081-86f1-d3b777854b13
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: mcp-milvus-db
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-10-08T12:17:28Z"
+        sidecar.istio.io/inject: "true"
+      creationTimestamp: null
+      labels:
+        app: mcp-milvus-db
+    spec:
+      containers:
+      - env:
+        - name: MILVUS_URL
+          value: http://milvus-mmjc-test.mmjc-test.svc.cluster.local:19530
+        - name: MILVUS_USER
+          value: root
+        - name: MILVUS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MILVUS_PASSWORD
+              name: mcp-milvus-db-password
+        - name: MODEL_GATEWAY_URL
+          value: https://model-gateway.llm-adapter-dev-c97c2ce0266e6f32de317d52e2a84f46-0001.us-east.containers.appdomain.cloud/v1
+        - name: MODEL_GATEWAY_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: MODEL_GATEWAY_API_KEY
+              name: mcp-milvus-db-model-api-key
+        - name: VECTOR_LENGTH
+          value: "384"
+        image: icr.io/mjc-cr/mcp-milvus-db:0.0.2
+        imagePullPolicy: Always
+        name: mcp-milvus
+        ports:
+        - containerPort: 8903
+          name: mcp-milvus
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 250m
+            memory: 1Gi
+          requests:
+            cpu: 125m
+            memory: 1Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: all-icr-io-mmjc
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-08-28T07:24:28Z"
+    lastUpdateTime: "2025-08-28T07:24:28Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2025-08-28T07:24:28Z"
+    lastUpdateTime: "2025-10-08T12:18:14Z"
+    message: ReplicaSet "mcp-milvus-db-test-84b4f5c647" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 5
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

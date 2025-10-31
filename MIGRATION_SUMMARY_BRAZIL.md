@@ -203,7 +203,7 @@ kubectl kustomize kustomize/airflow-test/ | grep "image:" | sort -u
 │  └──────────────────────────────────────────────────────┘ │
 │                                                            │
 │  ┌──────────────────────────────────────────────────────┐ │
-│  │ MILVUS (namespace: mmjc-dev)                         │ │
+│  │ MILVUS (namespace: mmjc-test)                         │ │
 │  │                                                      │ │
 │  │ Uses images from PUBLIC registries:                 │ │
 │  │ • docker.io/milvusdb/milvus:v2.5.15                 │ │

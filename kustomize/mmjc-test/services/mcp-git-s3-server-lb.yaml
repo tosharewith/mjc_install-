@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    app.kubernetes.io/description: High-performance MCP Git-S3 Tools Server
+    app.kubernetes.io/documentation: https://github.com/your-org/java-mcp-tool-s3git
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{"app.kubernetes.io/description":"High-performance MCP Git-S3 Tools Server","app.kubernetes.io/documentation":"https://github.com/your-org/java-mcp-tool-s3git","deployment.kubernetes.io/revision":"1","service.beta.kubernetes.io/aws-load-balancer-backend-protocol":"tcp","service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled":"true","service.beta.kubernetes.io/aws-load-balancer-type":"nlb"},"labels":{"app":"mcp-git-s3-server","app.kubernetes.io/component":"api-server","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"mcp-git-s3-server","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":"0.0.1-SNAPSHOT","component":"load-balancer"},"name":"mcp-git-s3-server-lb","namespace":"mmjc-test"},"spec":{"loadBalancerSourceRanges":["0.0.0.0/0"],"ports":[{"name":"http","port":80,"protocol":"TCP","targetPort":"http"},{"name":"https","port":443,"protocol":"TCP","targetPort":"https"}],"selector":{"app":"mcp-git-s3-server","app.kubernetes.io/component":"api-server","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"mcp-git-s3-server","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":"0.0.1-SNAPSHOT"},"type":"LoadBalancer"}}
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+  creationTimestamp: "2025-06-16T11:56:40Z"
+  finalizers:
+  - service.kubernetes.io/load-balancer-cleanup
+  labels:
+    app: mcp-git-s3-server
+    app.kubernetes.io/component: api-server
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: mcp-git-s3-server
+    app.kubernetes.io/part-of: mcp-platform
+    app.kubernetes.io/version: 0.0.1-SNAPSHOT
+    component: load-balancer
+  name: mcp-git-s3-server-lb
+  namespace: mmjc-test
+  resourceVersion: "10731070"
+  uid: bfb50aa1-7be9-4d83-b604-f4fd541e9110
+spec:
+  allocateLoadBalancerNodePorts: true
+  clusterIP: 172.21.147.213
+  clusterIPs:
+  - 172.21.147.213
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  loadBalancerSourceRanges:
+  - 0.0.0.0/0
+  ports:
+  - name: http
+    nodePort: 32005
+    port: 80
+    protocol: TCP
+    targetPort: http
+  - name: https
+    nodePort: 32156
+    port: 443
+    protocol: TCP
+    targetPort: https
+  selector:
+    app: mcp-git-s3-server
+    app.kubernetes.io/component: api-server
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: mcp-git-s3-server
+    app.kubernetes.io/part-of: mcp-platform
+    app.kubernetes.io/version: 0.0.1-SNAPSHOT
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - hostname: c670bf1f-us-south.lb.appdomain.cloud

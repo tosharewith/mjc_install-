@@ -1,0 +1,60 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Example overlay for air-gapped/disconnected environment
+# All images must be mirrored to internal registry
+# Apply with: kubectl apply -k kustomize/overlays/air-gapped/
+
+bases:
+  - ../../mmjc-test
+
+namespace: mmjc-test
+
+# Override ALL images to use internal air-gapped registry
+images:
+  # Custom application images
+  - name: icr.io/mjc-cr/mmjc-agents
+    newName: internal-registry.company.local/mirror/mmjc-agents
+    newTag: 0.0.2
+
+  - name: icr.io/mjc-cr/mmjc-frontend
+    newName: internal-registry.company.local/mirror/mmjc-frontend
+    newTag: 0.0.2
+
+  - name: icr.io/mjc-cr/mmjc-po
+    newName: internal-registry.company.local/mirror/mmjc-po
+    newTag: 0.0.2
+
+  - name: icr.io/mjc-cr/go-mcp-git-s3
+    newName: internal-registry.company.local/mirror/go-mcp-git-s3
+    newTag: 1.0.31
+
+  - name: icr.io/mjc-cr/mcp-milvus-db
+    newName: internal-registry.company.local/mirror/mcp-milvus-db
+    newTag: 0.0.2
+
+  - name: icr.io/mjc-cr/mjc-mermaid-validator
+    newName: internal-registry.company.local/mirror/mjc-mermaid-validator
+    newTag: 1.0.17-llm-ready-amd64
+
+  # Third-party images (must be mirrored)
+  - name: ghcr.io/ibm/mcp-context-forge
+    newName: internal-registry.company.local/mirror/mcp-context-forge
+    newTag: 0.6.0
+
+  - name: milvusdb/milvus
+    newName: internal-registry.company.local/mirror/milvus
+    newTag: v2.5.15
+
+  - name: zilliz/attu
+    newName: internal-registry.company.local/mirror/attu
+    newTag: v2.5.6
+
+# Patch to use internal registry credentials
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/imagePullSecrets/0/name
+        value: internal-registry-secret
+    target:
+      kind: Deployment

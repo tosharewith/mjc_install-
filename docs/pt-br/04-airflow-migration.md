@@ -7,7 +7,7 @@ Este documento detalha o processo de migração do Airflow Test do IBM IKS para 
 O namespace `airflow-test` contém:
 - **Deployments**: API Server, Scheduler, DAG Processor, StatsD
 - **StatefulSets**: Workers (Celery), Triggerer
-- **Dependências Externas**: PostgreSQL (RDS), Redis (ElastiCache), S3
+- **Dependências Externas**: PostgreSQL (RDS), Redis as Cache, S3
 
 ## Pré-requisitos
 
@@ -15,7 +15,7 @@ Antes de iniciar esta migração:
 
 - [ ] Infraestrutura AWS criada via Terraform (03-terraform-setup.md)
 - [ ] RDS PostgreSQL acessível e validado
-- [ ] ElastiCache Redis acessível e validado
+- [ ] Redis as Cache acessível e validado
 - [ ] S3 buckets criados
 - [ ] Imagens Docker migradas para registry alvo
 - [ ] Namespace `airflow-test` criado no EKS

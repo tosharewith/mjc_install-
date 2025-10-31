@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+    volume.beta.kubernetes.io/storage-provisioner: vpc.block.csi.ibm.io
+    volume.kubernetes.io/storage-provisioner: vpc.block.csi.ibm.io
+  creationTimestamp: "2025-07-31T08:33:14Z"
+  finalizers:
+  - kubernetes.io/pvc-protection
+  labels:
+    app.kubernetes.io/component: zookeeper
+    app.kubernetes.io/instance: milvus-mmjc-test
+    app.kubernetes.io/name: zookeeper
+  name: data-milvus-mmjc-test-zookeeper-2
+  namespace: mmjc-test
+  resourceVersion: "22654821"
+  uid: e9905b34-ef30-4e6a-aadd-8d944d3cd94d
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: ibmc-vpc-block-10iops-tier
+  volumeMode: Filesystem
+  volumeName: pvc-e9905b34-ef30-4e6a-aadd-8d944d3cd94d
+status:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  phase: Bound

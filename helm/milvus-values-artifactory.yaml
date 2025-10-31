@@ -250,7 +250,7 @@ extraConfigFiles:
 # ============================================================================
 serviceAccount:
   create: true
-  name: milvus-mmjc-dev
+  name: milvus-mmjc-test
 
 # Para IRSA (se usar S3):
 # serviceAccount:
@@ -269,7 +269,7 @@ global:
 #   --docker-server=docker-arc3-remote.artifactory.prod.aws.cloud.ihf \
 #   --docker-username=YOUR_USER \
 #   --docker-password=YOUR_PASSWORD \
-#   -n mmjc-dev
+#   -n mmjc-test
 
 # ============================================================================
 # LOG CONFIG

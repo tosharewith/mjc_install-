@@ -76,7 +76,7 @@ yarn-error.log
 # Dados Exportados (podem conter info sensível)
 # ============================================
 airflow-test/airflow-test-complete.yaml
-milvus-mmjc-dev/milvus-complete.yaml
+milvus-mmjc-test/milvus-complete.yaml
 exports/
 *.yaml.backup
 

@@ -39,7 +39,7 @@ registry:
 #   --docker-server=docker-arc3-remote.artifactory.prod.aws.cloud.ihf \
 #   --docker-username=YOUR_USER \
 #   --docker-password=YOUR_PASSWORD \
-#   -n airflow-dev
+#   -n airflow-test
 
 # ============================================================================
 # BANCO DE DADOS EXTERNO (RDS PostgreSQL)
@@ -52,7 +52,7 @@ data:
   brokerUrlSecretName: airflow-redis-connection-dev
 
 # ============================================================================
-# REDIS EXTERNO (ElastiCache)
+# REDIS AS CACHE (EXTERNO)
 # ============================================================================
 redis:
   enabled: false
@@ -315,9 +315,9 @@ ingress:
 # ============================================================================
 serviceAccount:
   create: true
-  name: airflow-dev
+  name: airflow-test
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/airflow-dev-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/airflow-test-role
 
 # ============================================================================
 # NOTAS SOBRE AMBIENTE AIR-GAPPED

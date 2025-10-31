@@ -22,7 +22,7 @@ aws rds describe-db-instances \
   --query 'DBInstances[0].DBInstanceStatus'
 # Esperado: "available"
 
-# ElastiCache Redis
+# Redis as Cache
 aws elasticache describe-cache-clusters \
   --cache-cluster-id itau-airflow-milvus-airflow-redis \
   --query 'CacheClusters[0].CacheClusterStatus'
@@ -178,17 +178,17 @@ kubectl get pvc -n milvus-dev --field-selector=status.phase!=Bound
 
 ```bash
 # Etcd cluster health
-kubectl exec -it -n milvus-dev milvus-mmjc-dev-etcd-0 -- \
+kubectl exec -it -n milvus-dev milvus-mmjc-test-etcd-0 -- \
   etcdctl endpoint health --cluster
 # Esperado: 3 endpoints healthy
 
 # Kafka cluster
-kubectl exec -it -n milvus-dev milvus-mmjc-dev-kafka-0 -- \
+kubectl exec -it -n milvus-dev milvus-mmjc-test-kafka-0 -- \
   kafka-topics.sh --bootstrap-server localhost:9092 --list
 # Deve listar topics do Milvus
 
 # MinIO (ou verificar S3)
-kubectl exec -it -n milvus-dev milvus-mmjc-dev-minio-0 -- \
+kubectl exec -it -n milvus-dev milvus-mmjc-test-minio-0 -- \
   mc ls local/
 # Deve listar buckets
 ```
@@ -197,7 +197,7 @@ kubectl exec -it -n milvus-dev milvus-mmjc-dev-minio-0 -- \
 
 ```bash
 # Port-forward
-kubectl port-forward -n milvus-dev svc/milvus-mmjc-dev-proxy 19530:19530 &
+kubectl port-forward -n milvus-dev svc/milvus-mmjc-test-proxy 19530:19530 &
 
 # Testar com Python
 python3 << 'EOF'
@@ -345,7 +345,7 @@ Use o script fornecido:
 
 # Output esperado:
 # ✓ RDS PostgreSQL disponível
-# ✓ ElastiCache Redis disponível
+# ✓ Redis as Cache disponível
 # ✓ S3 buckets acessíveis
 # ✓ Namespace airflow-test OK
 # ✓ Namespace milvus-dev OK

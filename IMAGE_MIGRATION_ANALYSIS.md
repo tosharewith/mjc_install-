@@ -14,7 +14,7 @@
 
 ### Actually Needed Images:
 - **Source**: `icr.io/mjc-cr/` (GLOBAL region namespace)
-- **Used in**: airflow-test, milvus-mmjc-dev deployments
+- **Used in**: airflow-test, milvus-mmjc-test deployments
 - **Status**: NOT being migrated
 
 ---
@@ -45,7 +45,7 @@
 |-------|--------|--------|------------|
 | mmjc-airflow-service:latest | icr.io/mjc-cr | ❌ NOT migrating | Airflow scheduler, webserver, worker, triggerer |
 
-#### From milvus-mmjc-dev/milvus-complete.yaml:
+#### From milvus-mmjc-test/milvus-complete.yaml:
 
 | Image | Source | Status | Used Where |
 |-------|--------|--------|------------|
@@ -183,7 +183,7 @@ IMAGES=(
 
 ---
 
-### milvus-mmjc-dev namespace:
+### milvus-mmjc-test namespace:
 
 | Service | Image |
 |---------|-------|

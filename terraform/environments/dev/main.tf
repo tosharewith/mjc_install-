@@ -94,7 +94,7 @@ module "rds_postgres" {
   allowed_security_groups = [data.aws_eks_cluster.existing.vpc_config[0].cluster_security_group_id]
 }
 
-module "elasticache_redis" {
+module "redis_cache" {
   source = "../../modules/elasticache"
 
   cluster_id              = "${var.project_name}-airflow-redis"
@@ -161,8 +161,8 @@ output "rds_endpoint" {
 }
 
 output "redis_endpoint" {
-  value       = module.elasticache_redis.endpoint
-  description = "Endpoint do Redis para Airflow"
+  value       = module.redis_cache.endpoint
+  description = "Endpoint do Redis as Cache para Airflow"
 }
 
 output "s3_buckets" {

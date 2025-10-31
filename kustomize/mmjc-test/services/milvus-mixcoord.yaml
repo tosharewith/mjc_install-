@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: milvus-mmjc-test
+    meta.helm.sh/release-namespace: mmjc-test
+  creationTimestamp: "2025-07-31T08:33:13Z"
+  labels:
+    app.kubernetes.io/instance: milvus-mmjc-test
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: milvus
+    app.kubernetes.io/version: 2.5.15
+    component: mixcoord
+    helm.sh/chart: milvus-4.2.57
+  name: milvus-mmjc-test-mixcoord
+  namespace: mmjc-test
+  resourceVersion: "22654266"
+  uid: 5b800e18-0619-4029-9cc4-50ecb86519d9
+spec:
+  clusterIP: 172.21.140.116
+  clusterIPs:
+  - 172.21.140.116
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: metrics
+    port: 9091
+    protocol: TCP
+    targetPort: metrics
+  selector:
+    app.kubernetes.io/instance: milvus-mmjc-test
+    app.kubernetes.io/name: milvus
+    component: mixcoord
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

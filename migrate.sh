@@ -222,7 +222,7 @@ migrate_milvus() {
     # Aguardar StatefulSets ficarem prontos
     if [ "$DRY_RUN" != "true" ]; then
         log_info "Aguardando StatefulSets do Milvus ficarem prontos..."
-        kubectl wait --for=condition=ready pod -l app.kubernetes.io/instance=milvus-mmjc-dev -n milvus-dev --timeout=900s || true
+        kubectl wait --for=condition=ready pod -l app.kubernetes.io/instance=milvus-mmjc-test -n milvus-dev --timeout=900s || true
     fi
 
     log_info "✓ Milvus migrado com sucesso"

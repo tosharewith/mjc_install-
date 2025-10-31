@@ -165,13 +165,13 @@ kubectl create secret docker-registry artifactory-registry-secret \
   --docker-server=docker-arc3-remote.artifactory.prod.aws.cloud.ihf \
   --docker-username=$ARTIFACTORY_USER \
   --docker-password=$ARTIFACTORY_PASSWORD \
-  --namespace=airflow-dev
+  --namespace=airflow-test
 
 kubectl create secret docker-registry artifactory-registry-secret \
   --docker-server=docker-arc3-remote.artifactory.prod.aws.cloud.ihf \
   --docker-username=$ARTIFACTORY_USER \
   --docker-password=$ARTIFACTORY_PASSWORD \
-  --namespace=mmjc-dev
+  --namespace=mmjc-test
 ```
 
 ### Etapa 4: Instalar Airflow
@@ -181,11 +181,11 @@ kubectl create secret docker-registry artifactory-registry-secret \
 tar xzf helm-charts-and-values.tar.gz
 
 # Criar namespace
-kubectl create namespace airflow-dev
+kubectl create namespace airflow-test
 
 # Instalar a partir do chart local
-helm install airflow-dev helm-charts/airflow-1.17.0.tgz \
-  --namespace airflow-dev \
+helm install airflow-test helm-charts/airflow-1.17.0.tgz \
+  --namespace airflow-test \
   --values helm/airflow-values-artifactory.yaml \
   --timeout 10m \
   --wait
@@ -195,11 +195,11 @@ helm install airflow-dev helm-charts/airflow-1.17.0.tgz \
 
 ```bash
 # Criar namespace
-kubectl create namespace mmjc-dev
+kubectl create namespace mmjc-test
 
 # Instalar a partir do chart local
-helm install milvus-mmjc-dev helm-charts/milvus-4.2.57.tgz \
-  --namespace mmjc-dev \
+helm install milvus-mmjc-test helm-charts/milvus-4.2.57.tgz \
+  --namespace mmjc-test \
   --values helm/milvus-values-artifactory.yaml \
   --timeout 15m \
   --wait
@@ -209,12 +209,12 @@ helm install milvus-mmjc-dev helm-charts/milvus-4.2.57.tgz \
 
 ```bash
 # Verificar pods
-kubectl get pods -n airflow-dev
-kubectl get pods -n mmjc-dev
+kubectl get pods -n airflow-test
+kubectl get pods -n mmjc-test
 
 # Verificar se imagens foram puxadas do Artifactory
-kubectl describe pod -n airflow-dev <pod-name> | grep "Image:"
-kubectl describe pod -n mmjc-dev <pod-name> | grep "Image:"
+kubectl describe pod -n airflow-test <pod-name> | grep "Image:"
+kubectl describe pod -n mmjc-test <pod-name> | grep "Image:"
 
 # Deve mostrar: docker-arc3-remote.artifactory.prod.aws.cloud.ihf/...
 ```
@@ -241,8 +241,8 @@ docker push docker-arc3-remote.artifactory.prod.aws.cloud.ihf/mmjc-airflow-servi
 
 ```bash
 # Atualizar Helm release
-helm upgrade airflow-dev helm-charts/airflow-1.17.0.tgz \
-  --namespace airflow-dev \
+helm upgrade airflow-test helm-charts/airflow-1.17.0.tgz \
+  --namespace airflow-test \
   --set defaultAirflowTag=v2.0.0 \
   --reuse-values \
   --wait
@@ -316,11 +316,11 @@ docker push artifactory.../image:correct-tag
 cat > scripts/list-cluster-images.sh <<'EOF'
 #!/bin/bash
 echo "=== Airflow Images ==="
-kubectl get pods -n airflow-dev -o jsonpath='{range .items[*]}{.spec.containers[*].image}{"\n"}{end}' | sort -u
+kubectl get pods -n airflow-test -o jsonpath='{range .items[*]}{.spec.containers[*].image}{"\n"}{end}' | sort -u
 
 echo ""
 echo "=== Milvus Images ==="
-kubectl get pods -n mmjc-dev -o jsonpath='{range .items[*]}{.spec.containers[*].image}{"\n"}{end}' | sort -u
+kubectl get pods -n mmjc-test -o jsonpath='{range .items[*]}{.spec.containers[*].image}{"\n"}{end}' | sort -u
 EOF
 
 chmod +x scripts/list-cluster-images.sh

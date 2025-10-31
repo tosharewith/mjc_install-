@@ -93,15 +93,15 @@ Estes rodam completamente dentro do Kubernetes:
 
 | Serviço | Namespace | Pods | Storage | AWS Dependency |
 |---------|-----------|------|---------|----------------|
-| **Milvus DataNode** | mmjc-dev | 2 | PVC (EBS) | ❌ Nenhuma |
-| **Milvus IndexNode** | mmjc-dev | 1 | PVC (EBS) | ❌ Nenhuma |
-| **Milvus QueryNode** | mmjc-dev | 1 | PVC (EBS) | ❌ Nenhuma |
-| **Milvus MixCoord** | mmjc-dev | 1 | PVC (EBS) | ❌ Nenhuma |
-| **Milvus Proxy** | mmjc-dev | 1 | - | ❌ Nenhuma |
-| **Etcd** | mmjc-dev | 3 | PVC (EBS) | ❌ Nenhuma |
-| **Kafka** | mmjc-dev | 3 | PVC (EBS) | ❌ Nenhuma |
-| **Zookeeper** | mmjc-dev | 3 | PVC (EBS) | ❌ Nenhuma |
-| **MinIO** | mmjc-dev | 4 | PVC (EBS) | 🟡 Opcional S3 |
+| **Milvus DataNode** | mmjc-test | 2 | PVC (EBS) | ❌ Nenhuma |
+| **Milvus IndexNode** | mmjc-test | 1 | PVC (EBS) | ❌ Nenhuma |
+| **Milvus QueryNode** | mmjc-test | 1 | PVC (EBS) | ❌ Nenhuma |
+| **Milvus MixCoord** | mmjc-test | 1 | PVC (EBS) | ❌ Nenhuma |
+| **Milvus Proxy** | mmjc-test | 1 | - | ❌ Nenhuma |
+| **Etcd** | mmjc-test | 3 | PVC (EBS) | ❌ Nenhuma |
+| **Kafka** | mmjc-test | 3 | PVC (EBS) | ❌ Nenhuma |
+| **Zookeeper** | mmjc-test | 3 | PVC (EBS) | ❌ Nenhuma |
+| **MinIO** | mmjc-test | 4 | PVC (EBS) | 🟡 Opcional S3 |
 
 **Características**:
 - ✅ Rodam como StatefulSets ou Deployments
@@ -116,7 +116,7 @@ Estes rodam completamente dentro do Kubernetes:
 | Serviço AWS | Para que serve | Usado por | Alternativa Interna |
 |-------------|----------------|-----------|---------------------|
 | **RDS PostgreSQL 15** | Metadata DB | Airflow | ❌ Não (complexo) |
-| **ElastiCache Redis 7** | Message Broker | Airflow (Celery) | ❌ Não (recomendado externo) |
+| **Redis as Cache (Redis 7)** | Message Broker | Airflow (Celery) | ❌ Não (recomendado externo) |
 | **S3 Buckets** | Logs/DAGs | Airflow | 🟡 Pode usar PVC (não recomendado) |
 | **EBS Volumes** | Persistent Storage | Todos StatefulSets | ❌ Não (managed pelo EKS) |
 | **ALB (Load Balancer)** | Ingress | Airflow/Milvus | 🟡 Pode usar NodePort (não recomendado) |
@@ -153,7 +153,7 @@ Estes rodam completamente dentro do Kubernetes:
 │  │         AIRFLOW (Precisa AWS externo)                  │ │
 │  │                                                         │ │
 │  │  • API Server    ──→  RDS PostgreSQL (AWS)            │ │
-│  │  • Scheduler     ──→  ElastiCache Redis (AWS)         │ │
+│  │  • Scheduler     ──→  Redis as Cache (AWS)           │ │
 │  │  • Workers       ──→  S3 Buckets (AWS)                │ │
 │  │  • Triggerer                                           │ │
 │  └─────────────────────────────────────────────────────────┘ │
@@ -164,7 +164,7 @@ Estes rodam completamente dentro do Kubernetes:
         │      SERVIÇOS AWS EXTERNOS          │
         │                                     │
         │  • RDS PostgreSQL (OBRIGATÓRIO)    │
-        │  • ElastiCache Redis (OBRIGATÓRIO) │
+        │  • Redis as Cache (OBRIGATÓRIO)    │
         │  • S3 (OBRIGATÓRIO para Airflow)   │
         │  • EBS (AUTOMÁTICO pelo EKS)       │
         │  • ALB (OBRIGATÓRIO para ingress)  │
@@ -415,7 +415,7 @@ terraform apply
 kubectl apply -k kustomize/milvus/
 
 # 2. Verificar
-kubectl get pods -n mmjc-dev
+kubectl get pods -n mmjc-test
 
 # 3. Deploy Airflow (precisa RDS + Redis + S3)
 kubectl apply -k kustomize/airflow-test/
@@ -448,13 +448,13 @@ docker pull ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/milvus:v2.5.15
 aws rds describe-db-instances --db-instance-identifier itau-airflow-postgres
 
 # ✅ Redis acessível
-aws elasticache describe-cache-clusters --cache-cluster-id itau-airflow-redis
+aws elasticache describe-cache-clusters --cache-cluster-id itau-airflow-redis  # Redis as Cache
 
 # ✅ S3 buckets criados
 aws s3 ls | grep airflow
 
 # ✅ Pods running
-kubectl get pods -n mmjc-dev
+kubectl get pods -n mmjc-test
 kubectl get pods -n airflow-test
 
 # ✅ Services expostos
@@ -481,7 +481,7 @@ kubectl get pvc -A
 ### O que PRECISA AWS externo:
 
 - 🔴 RDS PostgreSQL (Airflow metadata)
-- 🔴 ElastiCache Redis (Airflow Celery)
+- 🔴 Redis as Cache (Airflow Celery)
 - 🔴 S3 (Airflow logs/DAGs)
 - 🔴 ALB (Ingress controller)
 - 🔴 EBS (Persistent volumes)

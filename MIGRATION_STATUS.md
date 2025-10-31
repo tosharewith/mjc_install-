@@ -17,7 +17,7 @@
 - Only 1 of 7 wrong images had completed
 
 ### 3. Analysis Completed ✅
-- Analyzed actual deployment files: `airflow-test` and `milvus-mmjc-dev`
+- Analyzed actual deployment files: `airflow-test` and `milvus-mmjc-test`
 - Identified ALL 7 images actually used
 - Verified all exist in source registry `icr.io/mjc-cr`
 
@@ -47,12 +47,12 @@
 | # | Image | Status | Used In |
 |---|-------|--------|---------|
 | 1 | mmjc-airflow-service:latest | 🔄 Pulling... | airflow-test |
-| 2 | mcp-arc-s3-tool:2.1.17-amd64 | ⏳ Queued | milvus-mmjc-dev |
-| 3 | mcp-milvus-db:0.0.1 | ⏳ Queued | milvus-mmjc-dev |
-| 4 | mjc-mermaid-validator:1.0.17-llm-ready-amd64 | ⏳ Queued | milvus-mmjc-dev |
-| 5 | mmjc-po:0.0.1 | ⏳ Queued | milvus-mmjc-dev |
-| 6 | understanding-agent-arc:1.5.5 | ⏳ Queued | milvus-mmjc-dev |
-| 7 | understanding-agent-arc:v1.6.57 | ⏳ Queued | milvus-mmjc-dev |
+| 2 | mcp-arc-s3-tool:2.1.17-amd64 | ⏳ Queued | milvus-mmjc-test |
+| 3 | mcp-milvus-db:0.0.1 | ⏳ Queued | milvus-mmjc-test |
+| 4 | mjc-mermaid-validator:1.0.17-llm-ready-amd64 | ⏳ Queued | milvus-mmjc-test |
+| 5 | mmjc-po:0.0.1 | ⏳ Queued | milvus-mmjc-test |
+| 6 | understanding-agent-arc:1.5.5 | ⏳ Queued | milvus-mmjc-test |
+| 7 | understanding-agent-arc:v1.6.57 | ⏳ Queued | milvus-mmjc-test |
 
 ---
 
@@ -115,7 +115,7 @@ git diff
 
 # Apply to test namespace
 kubectl apply -k kustomize/airflow-test
-kubectl apply -k kustomize/milvus-mmjc-dev
+kubectl apply -k kustomize/milvus-mmjc-test
 ```
 
 ---
@@ -129,7 +129,7 @@ kubectl apply -k kustomize/milvus-mmjc-dev
 
 ### After (CORRECT):
 - Source: `icr.io/mjc-cr` (GLOBAL region)
-- Images: 7 images from actual airflow-test and milvus-mmjc-dev
+- Images: 7 images from actual airflow-test and milvus-mmjc-test
 - Migration: Running now with correct images
 
 ---

@@ -4,7 +4,7 @@ Este documento detalha o processo de migração do Milvus Dev do IBM IKS para AW
 
 ## Visão Geral
 
-O namespace `milvus-dev` (ou componentes do `mmjc-dev`) contém:
+O namespace `milvus-dev` (ou componentes do `mmjc-test`) contém:
 - **StatefulSets**: Etcd (3), Kafka (3), Zookeeper (3), MinIO (4)
 - **Deployments**: Milvus DataNode (2), IndexNode (1), QueryNode (1), MixCoord (1), Proxy (1), Attu UI, MCP Milvus DB
 - **Storage**: PersistentVolumeClaims para cada StatefulSet
@@ -186,24 +186,24 @@ kubectl wait --for=condition=ready pod -l component=querynode -n milvus-dev --ti
 kubectl get pods -n milvus-dev
 
 # Esperado:
-# milvus-mmjc-dev-etcd-0            1/1     Running
-# milvus-mmjc-dev-etcd-1            1/1     Running
-# milvus-mmjc-dev-etcd-2            1/1     Running
-# milvus-mmjc-dev-kafka-0           1/1     Running
-# milvus-mmjc-dev-kafka-1           1/1     Running
-# milvus-mmjc-dev-kafka-2           1/1     Running
-# milvus-mmjc-dev-zookeeper-0       1/1     Running
-# milvus-mmjc-dev-zookeeper-1       1/1     Running
-# milvus-mmjc-dev-zookeeper-2       1/1     Running
-# milvus-mmjc-dev-minio-0           1/1     Running
-# milvus-mmjc-dev-minio-1           1/1     Running
-# milvus-mmjc-dev-minio-2           1/1     Running
-# milvus-mmjc-dev-minio-3           1/1     Running
-# milvus-mmjc-dev-datanode-xxx      1/1     Running
-# milvus-mmjc-dev-indexnode-xxx     1/1     Running
-# milvus-mmjc-dev-querynode-xxx     1/1     Running
-# milvus-mmjc-dev-mixcoord-xxx      1/1     Running
-# milvus-mmjc-dev-proxy-xxx         1/1     Running
+# milvus-mmjc-test-etcd-0            1/1     Running
+# milvus-mmjc-test-etcd-1            1/1     Running
+# milvus-mmjc-test-etcd-2            1/1     Running
+# milvus-mmjc-test-kafka-0           1/1     Running
+# milvus-mmjc-test-kafka-1           1/1     Running
+# milvus-mmjc-test-kafka-2           1/1     Running
+# milvus-mmjc-test-zookeeper-0       1/1     Running
+# milvus-mmjc-test-zookeeper-1       1/1     Running
+# milvus-mmjc-test-zookeeper-2       1/1     Running
+# milvus-mmjc-test-minio-0           1/1     Running
+# milvus-mmjc-test-minio-1           1/1     Running
+# milvus-mmjc-test-minio-2           1/1     Running
+# milvus-mmjc-test-minio-3           1/1     Running
+# milvus-mmjc-test-datanode-xxx      1/1     Running
+# milvus-mmjc-test-indexnode-xxx     1/1     Running
+# milvus-mmjc-test-querynode-xxx     1/1     Running
+# milvus-mmjc-test-mixcoord-xxx      1/1     Running
+# milvus-mmjc-test-proxy-xxx         1/1     Running
 # my-attu-xxx                       1/1     Running
 ```
 
@@ -222,7 +222,7 @@ kubectl get pvc -n milvus-dev
 kubectl get svc -n milvus-dev
 
 # Serviços importantes:
-# milvus-mmjc-dev-proxy (porta 19530) - API do Milvus
+# milvus-mmjc-test-proxy (porta 19530) - API do Milvus
 # my-attu (porta 80) - UI
 ```
 
@@ -241,7 +241,7 @@ open http://localhost:8000
 
 ```bash
 # Port-forward para API
-kubectl port-forward -n milvus-dev svc/milvus-mmjc-dev-proxy 19530:19530 &
+kubectl port-forward -n milvus-dev svc/milvus-mmjc-test-proxy 19530:19530 &
 
 # Testar com Python (exemplo)
 python3 << EOF
@@ -264,7 +264,7 @@ Se precisar migrar collections existentes:
 ibmcloud ks cluster config --cluster mjc-cluster
 
 # Port-forward para Milvus no IKS
-kubectl port-forward -n mmjc-dev svc/milvus-proxy 19530:19530 &
+kubectl port-forward -n mmjc-test svc/milvus-proxy 19530:19530 &
 
 # Export collections (Python)
 python3 << EOF
@@ -288,7 +288,7 @@ EOF
 aws eks update-kubeconfig --name SEU_CLUSTER_EKS --region us-east-1
 
 # Port-forward para Milvus no EKS
-kubectl port-forward -n milvus-dev svc/milvus-mmjc-dev-proxy 19530:19530 &
+kubectl port-forward -n milvus-dev svc/milvus-mmjc-test-proxy 19530:19530 &
 
 # Import collections
 python3 << EOF
@@ -326,7 +326,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: milvus-mmjc-dev-proxy
+            name: milvus-mmjc-test-proxy
             port:
               number: 19530
 ```
@@ -341,8 +341,8 @@ kubectl apply -f ingress-milvus.yaml
 
 ```bash
 # Ver logs de pods específicos
-kubectl logs -n milvus-dev milvus-mmjc-dev-etcd-0
-kubectl logs -n milvus-dev milvus-mmjc-dev-datanode-xxx
+kubectl logs -n milvus-dev milvus-mmjc-test-etcd-0
+kubectl logs -n milvus-dev milvus-mmjc-test-datanode-xxx
 
 # Ver eventos
 kubectl get events -n milvus-dev --sort-by='.lastTimestamp'
@@ -374,7 +374,7 @@ EOF
 ```bash
 # Verificar DNS interno
 kubectl run -it --rm debug --image=busybox --restart=Never -n milvus-dev -- \
-  nslookup milvus-mmjc-dev-etcd
+  nslookup milvus-mmjc-test-etcd
 
 # Verificar network policies
 kubectl get networkpolicies -n milvus-dev

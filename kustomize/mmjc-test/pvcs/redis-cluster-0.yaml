@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+    volume.beta.kubernetes.io/storage-provisioner: vpc.file.csi.ibm.io
+    volume.kubernetes.io/storage-provisioner: vpc.file.csi.ibm.io
+  creationTimestamp: "2025-06-16T14:01:10Z"
+  finalizers:
+  - kubernetes.io/pvc-protection
+  labels:
+    app: redis-cluster
+  name: data-redis-cluster-test-0
+  namespace: mmjc-test
+  resourceVersion: "10751930"
+  uid: e49cbcc5-4a29-46fb-a990-827331dbb3d4
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: ibmc-vpc-file-1000-iops
+  volumeMode: Filesystem
+  volumeName: pvc-e49cbcc5-4a29-46fb-a990-827331dbb3d4
+status:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 20Gi
+  phase: Bound

@@ -68,7 +68,7 @@ AIRFLOW_SUBDOMAIN=airflow-test
 
 Isso irá:
 1. ✅ Criar RDS PostgreSQL
-2. ✅ Criar ElastiCache Redis
+2. ✅ Criar Redis as Cache
 3. ✅ Criar S3 Buckets
 4. ✅ Gerar secrets automaticamente
 5. ✅ Migrar Airflow

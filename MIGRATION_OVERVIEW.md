@@ -22,22 +22,22 @@ Migrar as seguintes cargas de trabalho do IBM Cloud Kubernetes Service para AWS 
 
 **Dependências:**
 - PostgreSQL 15 (RDS)
-- Redis 7 (ElastiCache)
+- Redis 7 as Cache
 - S3 para logs e DAGs
 
 ### Milvus Dev
 
 | Componente | Tipo | Réplicas | Descrição |
 |------------|------|----------|-----------|
-| `milvus-mmjc-dev-etcd` | StatefulSet | 3 | Armazenamento de metadados |
-| `milvus-mmjc-dev-kafka` | StatefulSet | 3 | Message broker |
-| `milvus-mmjc-dev-minio` | StatefulSet | 4 | Object storage interno |
-| `milvus-mmjc-dev-zookeeper` | StatefulSet | 3 | Coordenação distribuída |
-| `milvus-mmjc-dev-datanode` | Deployment | 2 | Nós de dados |
-| `milvus-mmjc-dev-indexnode` | Deployment | 2 | Nós de indexação |
-| `milvus-mmjc-dev-querynode` | Deployment | 3 | Nós de query |
-| `milvus-mmjc-dev-mixcoord` | Deployment | 1 | Coordenador misto |
-| `milvus-mmjc-dev-proxy` | Deployment | 1 | Proxy API |
+| `milvus-mmjc-test-etcd` | StatefulSet | 3 | Armazenamento de metadados |
+| `milvus-mmjc-test-kafka` | StatefulSet | 3 | Message broker |
+| `milvus-mmjc-test-minio` | StatefulSet | 4 | Object storage interno |
+| `milvus-mmjc-test-zookeeper` | StatefulSet | 3 | Coordenação distribuída |
+| `milvus-mmjc-test-datanode` | Deployment | 2 | Nós de dados |
+| `milvus-mmjc-test-indexnode` | Deployment | 2 | Nós de indexação |
+| `milvus-mmjc-test-querynode` | Deployment | 3 | Nós de query |
+| `milvus-mmjc-test-mixcoord` | Deployment | 1 | Coordenador misto |
+| `milvus-mmjc-test-proxy` | Deployment | 1 | Proxy API |
 | `my-attu` | Deployment | 1 | UI do Milvus |
 | `mcp-milvus-db-dev` | Deployment | 1 | MCP server |
 
@@ -66,7 +66,7 @@ Migrar as seguintes cargas de trabalho do IBM Cloud Kubernetes Service para AWS 
 └─────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────┐
-│ ElastiCache Redis 7                         │
+│ Redis as Cache (Redis 7)                    │
 │  - Engine: Redis                           │
 │  - Node type: cache.t3.medium              │
 │  - Encryption in-transit: Sim              │
@@ -103,7 +103,7 @@ Migrar as seguintes cargas de trabalho do IBM Cloud Kubernetes Service para AWS 
 
 2️⃣  Criação de Infraestrutura (Terraform)
     ✓ RDS PostgreSQL
-    ✓ ElastiCache Redis
+    ✓ Redis as Cache
     ✓ S3 Buckets
     ✓ Security Groups
     ✓ IAM Roles
@@ -216,7 +216,7 @@ ibm-iks-to-aws-eks-migration/
 ├── airflow-test/
 │   └── airflow-test-complete.yaml # Export do kubectl (IKS)
 │
-├── milvus-mmjc-dev/
+├── milvus-mmjc-test/
 │   ├── milvus-complete.yaml       # Export do kubectl (IKS)
 │   └── milvus-workloads.yaml
 │
@@ -240,7 +240,7 @@ ibm-iks-to-aws-eks-migration/
 │   ├── modules/
 │   │   ├── vpc/
 │   │   ├── rds/
-│   │   ├── elasticache/
+│   │   ├── elasticache/     # Redis as Cache
 │   │   └── s3/
 │   └── environments/
 │       ├── dev/
@@ -293,7 +293,7 @@ O `.gitignore` protege:
 | **LB** | IBM Cloud LB | AWS ELB/ALB/NLB |
 | **Registry** | `icr.io` | ECR ou público |
 | **Postgres** | IBM Cloud Databases | RDS |
-| **Redis** | IBM Cloud Databases | ElastiCache |
+| **Redis** | IBM Cloud Databases | Redis as Cache |
 | **Object Storage** | IBM COS | S3 |
 | **DNS** | IBM Cloud Internet Services | Route53 |
 | **Monitoring** | IBM Cloud Monitoring | CloudWatch + Prometheus |
@@ -339,7 +339,7 @@ O `.gitignore` protege:
 | Recurso | Especificação |
 |---------|---------------|
 | **RDS PostgreSQL** | db.t3.medium, 100GB |
-| **ElastiCache Redis** | cache.t3.medium |
+| **Redis as Cache** | cache.t3.medium |
 | **S3 Storage** | Buckets com versioning e lifecycle |
 | **EBS Volumes** | gp3, volumes para StatefulSets |
 | **ALB** | Application Load Balancer |
@@ -375,7 +375,7 @@ kubectl get pods -A | grep -E "airflow|milvus"
 kubectl port-forward -n airflow-test svc/airflow-test-api-server 8080:8080
 
 # Port-forward Milvus
-kubectl port-forward -n milvus-dev svc/milvus-mmjc-dev 19530:19530
+kubectl port-forward -n milvus-dev svc/milvus-mmjc-test 19530:19530
 
 # Executar comando em pod
 kubectl exec -it -n airflow-test <pod-name> -- bash

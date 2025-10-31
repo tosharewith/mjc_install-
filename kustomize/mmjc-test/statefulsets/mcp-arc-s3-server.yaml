@@ -1,0 +1,301 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"StatefulSet","metadata":{"annotations":{},"labels":{"app":"mcp-arc-s3-server","app.kubernetes.io/name":"mcp-arc-s3-server","app.kubernetes.io/part-of":"mcp-platform"},"name":"mcp-arc-s3-server","namespace":"mmjc-test"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"mcp-arc-s3-server"}},"serviceName":"mcp-arc-s3-service","template":{"metadata":{"annotations":{"prometheus.io/path":"/metrics","prometheus.io/port":"8383","prometheus.io/scrape":"true"},"labels":{"app":"mcp-arc-s3-server","app.kubernetes.io/name":"mcp-arc-s3-server","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":""}},"spec":{"containers":[{"env":[{"name":"S3_ENDPOINT","valueFrom":{"configMapKeyRef":{"key":"S3_ENDPOINT","name":"mcp-arc-s3-config"}}},{"name":"S3_REGION","valueFrom":{"configMapKeyRef":{"key":"S3_REGION","name":"mcp-arc-s3-config"}}},{"name":"S3_BUCKET","valueFrom":{"configMapKeyRef":{"key":"S3_BUCKET","name":"mcp-arc-s3-config"}}},{"name":"S3_ACCESS_KEY_ID","valueFrom":{"secretKeyRef":{"key":"S3_ACCESS_KEY","name":"s3-access-key-tools"}}},{"name":"S3_SECRET_ACCESS_KEY","valueFrom":{"secretKeyRef":{"key":"S3_SECRET_KEY","name":"s3-secret-key-tools"}}},{"name":"S3_PROVIDER","valueFrom":{"configMapKeyRef":{"key":"S3_PROVIDER","name":"mcp-arc-s3-config"}}},{"name":"RUN_FOLDER_PATH","valueFrom":{"configMapKeyRef":{"key":"RUN_FOLDER_PATH","name":"mcp-arc-s3-config"}}},{"name":"LOCATION_CONFIG_FILE","value":"/config/location.yaml"},{"name":"SESSION_TIMEOUT_MINUTES","valueFrom":{"configMapKeyRef":{"key":"SESSION_TIMEOUT_MINUTES","name":"mcp-arc-s3-config","optional":true}}},{"name":"JAVA_OPTS","value":"-Xms512m -Xmx1536m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication -XX:+OptimizeStringConcat -XX:+UseCompressedOops -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom"},{"name":"SERVER_PORT","valueFrom":{"configMapKeyRef":{"key":"server.port","name":"mcp-arc-s3-config"}}},{"name":"JCLOUDS_MAX_CONNECTIONS","valueFrom":{"configMapKeyRef":{"key":"jclouds.max.connections","name":"mcp-arc-s3-config"}}},{"name":"JCLOUDS_MPU_PARTS_SIZE","valueFrom":{"configMapKeyRef":{"key":"jclouds.mpu.parts.size","name":"mcp-arc-s3-config"}}},{"name":"LOG_LEVEL","valueFrom":{"configMapKeyRef":{"key":"log.level","name":"mcp-arc-s3-config"}}},{"name":"S3_ENABLE_ZIP_COMPRESSION","valueFrom":{"configMapKeyRef":{"key":"S3_ENABLE_ZIP_COMPRESSION","name":"mcp-arc-s3-config"}}},{"name":"S3_UPLOAD_PARALLELISM","valueFrom":{"configMapKeyRef":{"key":"S3_UPLOAD_PARALLELISM","name":"mcp-arc-s3-config"}}},{"name":"S3_UPLOAD_BATCH_SIZE","valueFrom":{"configMapKeyRef":{"key":"S3_UPLOAD_BATCH_SIZE","name":"mcp-arc-s3-config"}}},{"name":"MCP_SESSION_MANAGER","valueFrom":{"configMapKeyRef":{"key":"MCP_SESSION_MANAGER","name":"mcp-arc-s3-config","optional":true}}},{"name":"MCP_SESSION_CLIENT_ID_ENABLED","valueFrom":{"configMapKeyRef":{"key":"MCP_SESSION_CLIENT_ID_ENABLED","name":"mcp-arc-s3-config","optional":true}}},{"name":"MCP_SESSION_STATELESS_DEFAULT","valueFrom":{"configMapKeyRef":{"key":"MCP_SESSION_STATELESS_DEFAULT","name":"mcp-arc-s3-config","optional":true}}},{"name":"MCP_SESSION_STATELESS_ALLOW_OVERRIDE","valueFrom":{"configMapKeyRef":{"key":"MCP_SESSION_STATELESS_ALLOW_OVERRIDE","name":"mcp-arc-s3-config","optional":true}}},{"name":"TLS_ENABLED","valueFrom":{"configMapKeyRef":{"key":"TLS_ENABLED","name":"mcp-arc-s3-config"}}},{"name":"TLS_KEYSTORE_PATH","valueFrom":{"configMapKeyRef":{"key":"TLS_KEYSTORE_PATH","name":"mcp-arc-s3-config"}}},{"name":"CUSTOM_RESULT_ENABLED","valueFrom":{"configMapKeyRef":{"key":"CUSTOM_RESULT_ENABLED","name":"mcp-arc-s3-config","optional":true}}},{"name":"CUSTOM_RESULT_MAP_FILE","valueFrom":{"configMapKeyRef":{"key":"CUSTOM_RESULT_MAP_FILE","name":"mcp-arc-s3-config","optional":true}}}],"image":"icr.io/mjc-cr/mcp-arc-s3-tool:1.0.112-amd64","imagePullPolicy":"Always","livenessProbe":{"failureThreshold":3,"httpGet":{"path":"/health","port":"http","scheme":"HTTP"},"initialDelaySeconds":60,"periodSeconds":30,"timeoutSeconds":10},"name":"mcp-arc-s3-server","ports":[{"containerPort":8383,"name":"http","protocol":"TCP"},{"containerPort":8443,"name":"https","protocol":"TCP"}],"readinessProbe":{"failureThreshold":3,"httpGet":{"path":"/health","port":"http","scheme":"HTTP"},"initialDelaySeconds":30,"periodSeconds":10,"timeoutSeconds":5},"resources":{"limits":{"cpu":"500m","memory":"2Gi"},"requests":{"cpu":"500m","memory":"2Gi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":false,"runAsNonRoot":true,"runAsUser":1001},"volumeMounts":[{"mountPath":"/app/logs","name":"logs-volume"},{"mountPath":"/app/tmp","name":"tmp-volume"},{"mountPath":"/app/run_folder","name":"run-folder"},{"mountPath":"/app/certs","name":"tls-cert","readOnly":true},{"mountPath":"/config/location.yaml","name":"location-config","readOnly":true,"subPath":"location.yaml"},{"mountPath":"/config/custom_result_map.yaml","name":"custom-result-config","readOnly":true,"subPath":"custom_result_map.yaml"}]}],"imagePullSecrets":[{"name":"all-icr-io-mmjc"}],"nodeSelector":{"kubernetes.io/os":"linux"},"securityContext":{"fsGroup":1001,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"terminationGracePeriodSeconds":30,"volumes":[{"emptyDir":{"sizeLimit":"500Mi"},"name":"logs-volume"},{"emptyDir":{"sizeLimit":"1Gi"},"name":"tmp-volume"},{"name":"tls-cert","secret":{"defaultMode":256,"secretName":"mcp-tls-cert"}},{"configMap":{"name":"mcp-arc-s3-location-config","optional":true},"name":"location-config"},{"configMap":{"name":"mcp-arc-s3-custom-result-config","optional":true},"name":"custom-result-config"}]}},"volumeClaimTemplates":[{"metadata":{"annotations":{"ibm.io/volume-tier":"10iops-tier","volume.beta.kubernetes.io/storage-class":"ibmc-vpc-block-10iops-tier"},"labels":{"app":"mcp-arc-s3-server"},"name":"run-folder"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"100Gi"}},"storageClassName":"ibmc-vpc-block-10iops-tier"}}]}}
+  creationTimestamp: "2025-07-22T07:23:35Z"
+  generation: 59
+  labels:
+    app: mcp-arc-s3-server
+    app.kubernetes.io/name: mcp-arc-s3-server
+    app.kubernetes.io/part-of: mcp-platform
+  name: mcp-arc-s3-server
+  namespace: mmjc-test
+  resourceVersion: "54970664"
+  uid: a29abaa1-0ed9-4cc0-84c5-01d40b10b118
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: mcp-arc-s3-server
+  serviceName: mcp-arc-s3-service
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-10-28T19:37:16-03:00"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "8383"
+        prometheus.io/scrape: "true"
+      creationTimestamp: null
+      labels:
+        app: mcp-arc-s3-server
+        app.kubernetes.io/name: mcp-arc-s3-server
+        app.kubernetes.io/part-of: mcp-platform
+        app.kubernetes.io/version: ""
+    spec:
+      containers:
+      - env:
+        - name: S3_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key: S3_ENDPOINT
+              name: mcp-arc-s3-config
+        - name: S3_REGION
+          valueFrom:
+            configMapKeyRef:
+              key: S3_REGION
+              name: mcp-arc-s3-config
+        - name: S3_BUCKET
+          valueFrom:
+            configMapKeyRef:
+              key: S3_BUCKET
+              name: mcp-arc-s3-config
+        - name: S3_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: S3_ACCESS_KEY
+              name: s3-access-key-tools
+        - name: S3_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: S3_SECRET_KEY
+              name: s3-secret-key-tools
+        - name: S3_PROVIDER
+          valueFrom:
+            configMapKeyRef:
+              key: S3_PROVIDER
+              name: mcp-arc-s3-config
+        - name: RUN_FOLDER_PATH
+          valueFrom:
+            configMapKeyRef:
+              key: RUN_FOLDER_PATH
+              name: mcp-arc-s3-config
+        - name: LOCATION_CONFIG_FILE
+          value: /config/location.yaml
+        - name: SESSION_TIMEOUT_MINUTES
+          valueFrom:
+            configMapKeyRef:
+              key: SESSION_TIMEOUT_MINUTES
+              name: mcp-arc-s3-config
+              optional: true
+        - name: JAVA_OPTS
+          value: -Xms4g -Xmx11g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication
+            -XX:+OptimizeStringConcat -XX:+UseCompressedOops -Djava.awt.headless=true
+            -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom
+        - name: SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: server.port
+              name: mcp-arc-s3-config
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              key: log.level
+              name: mcp-arc-s3-config
+        - name: S3_ENABLE_ZIP_COMPRESSION
+          valueFrom:
+            configMapKeyRef:
+              key: S3_ENABLE_ZIP_COMPRESSION
+              name: mcp-arc-s3-config
+        - name: S3_UPLOAD_PARALLELISM
+          valueFrom:
+            configMapKeyRef:
+              key: S3_UPLOAD_PARALLELISM
+              name: mcp-arc-s3-config
+        - name: S3_UPLOAD_BATCH_SIZE
+          valueFrom:
+            configMapKeyRef:
+              key: S3_UPLOAD_BATCH_SIZE
+              name: mcp-arc-s3-config
+        - name: MCP_SESSION_MANAGER
+          valueFrom:
+            configMapKeyRef:
+              key: MCP_SESSION_MANAGER
+              name: mcp-arc-s3-config
+              optional: true
+        - name: MCP_SESSION_CLIENT_ID_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              key: MCP_SESSION_CLIENT_ID_ENABLED
+              name: mcp-arc-s3-config
+              optional: true
+        - name: MCP_SESSION_STATELESS_DEFAULT
+          valueFrom:
+            configMapKeyRef:
+              key: MCP_SESSION_STATELESS_DEFAULT
+              name: mcp-arc-s3-config
+              optional: true
+        - name: MCP_SESSION_STATELESS_ALLOW_OVERRIDE
+          valueFrom:
+            configMapKeyRef:
+              key: MCP_SESSION_STATELESS_ALLOW_OVERRIDE
+              name: mcp-arc-s3-config
+              optional: true
+        - name: TLS_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              key: TLS_ENABLED
+              name: mcp-arc-s3-config
+        - name: TLS_KEYSTORE_PATH
+          valueFrom:
+            configMapKeyRef:
+              key: TLS_KEYSTORE_PATH
+              name: mcp-arc-s3-config
+        - name: CUSTOM_RESULT_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              key: CUSTOM_RESULT_ENABLED
+              name: mcp-arc-s3-config
+              optional: true
+        - name: CUSTOM_RESULT_MAP_FILE
+          valueFrom:
+            configMapKeyRef:
+              key: CUSTOM_RESULT_MAP_FILE
+              name: mcp-arc-s3-config
+              optional: true
+        - name: COS_MAX_CONNECTIONS
+          value: "20"
+        - name: COS_MPU_PARTS_SIZE
+          value: "33554432"
+        - name: JAVA_HEAP_SIZE
+          value: 11g
+        image: icr.io/mjc-cr/mcp-arc-s3-tool:2.1.17-amd64
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 10
+        name: mcp-arc-s3-server
+        ports:
+        - containerPort: 8383
+          name: http
+          protocol: TCP
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: "4"
+            memory: 12Gi
+          requests:
+            cpu: 500m
+            memory: 2Gi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          runAsUser: 1001
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /app/logs
+          name: logs-volume
+        - mountPath: /app/tmp
+          name: tmp-volume
+        - mountPath: /app/run_folder
+          name: run-folder
+        - mountPath: /app/certs
+          name: tls-cert
+          readOnly: true
+        - mountPath: /config/location.yaml
+          name: location-config
+          readOnly: true
+          subPath: location.yaml
+        - mountPath: /config/custom_result_map.yaml
+          name: custom-result-config
+          readOnly: true
+          subPath: custom_result_map.yaml
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: all-icr-io-mmjc
+      nodeSelector:
+        kubernetes.io/os: linux
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1001
+        runAsGroup: 1001
+        runAsNonRoot: true
+        runAsUser: 1001
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir:
+          sizeLimit: 500Mi
+        name: logs-volume
+      - emptyDir:
+          sizeLimit: 1Gi
+        name: tmp-volume
+      - name: tls-cert
+        secret:
+          defaultMode: 256
+          secretName: mcp-tls-cert
+      - configMap:
+          defaultMode: 420
+          name: mcp-arc-s3-location-config
+          optional: true
+        name: location-config
+      - configMap:
+          defaultMode: 420
+          name: mcp-arc-s3-custom-result-config
+          optional: true
+        name: custom-result-config
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      annotations:
+        ibm.io/volume-tier: 10iops-tier
+        volume.beta.kubernetes.io/storage-class: ibmc-vpc-block-10iops-tier
+      creationTimestamp: null
+      labels:
+        app: mcp-arc-s3-server
+      name: run-folder
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Gi
+      storageClassName: ibmc-vpc-block-10iops-tier
+      volumeMode: Filesystem
+    status:
+      phase: Pending
+status:
+  availableReplicas: 1
+  collisionCount: 0
+  currentReplicas: 1
+  currentRevision: mcp-arc-s3-server-7578f695cd
+  observedGeneration: 59
+  readyReplicas: 1
+  replicas: 1
+  updateRevision: mcp-arc-s3-server-7578f695cd
+  updatedReplicas: 1

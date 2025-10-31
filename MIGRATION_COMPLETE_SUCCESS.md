@@ -93,7 +93,7 @@ Memória           50 GB       2.6 GB
    - ✅ All supporting images available
    - **Status**: Ready to deploy to EKS
 
-2. **Milvus Dev** (namespace: milvus-dev / mmjc-dev)
+2. **Milvus Dev** (namespace: milvus-dev / mmjc-test)
    - ✅ mcp-milvus-db:0.0.1 available
    - ✅ All MCP tools available
    - ✅ All agents and frontend available

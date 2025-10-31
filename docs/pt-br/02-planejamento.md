@@ -14,7 +14,7 @@ Este documento detalha o planejamento necessário antes de executar a migração
 | **Load Balancer** | IBM Cloud LB | AWS ELB/ALB/NLB |
 | **Registry** | `icr.io` | AWS ECR |
 | **Postgres** | IBM Cloud Databases | Amazon RDS |
-| **Redis** | IBM Cloud Databases | Amazon ElastiCache |
+| **Redis** | IBM Cloud Databases | Redis as Cache |
 | **Object Storage** | IBM Cloud Object Storage | Amazon S3 |
 | **Annotations** | `ingress.bluemix.net/*` | `alb.ingress.kubernetes.io/*` |
 
@@ -81,8 +81,8 @@ image: br.icr.io/br-ibm-images/mmjc-airflow-service:latest
 │  └──────────────┘         └──────────────┘                  │
 │         ↓                                                    │
 │  ┌──────────────┐                                            │
-│  │ ElastiCache  │                                            │
-│  │ Redis        │                                            │
+│  │ Redis as     │                                            │
+│  │ Cache        │                                            │
 │  └──────────────┘                                            │
 │                                                              │
 │  Autenticação: OAuth2 Proxy (OIDC)                          │
@@ -104,7 +104,7 @@ image: br.icr.io/br-ibm-images/mmjc-airflow-service:latest
   - Multi-AZ: Sim (produção)
   - Backup: 7 dias
 
-#### ElastiCache Redis
+#### Redis as Cache
 - **Para**: Airflow Celery message broker
 - **Configuração**:
   - Engine: Redis 7.x
@@ -239,7 +239,7 @@ kubectl scale statefulset --all --replicas=0 -n milvus-dev
 - [ ] VPC e subnets criadas
 - [ ] Security groups configurados
 - [ ] RDS PostgreSQL criado e testado
-- [ ] ElastiCache Redis criado e testado
+- [ ] Redis as Cache criado e testado
 - [ ] S3 buckets criados
 - [ ] IAM roles configuradas
 - [ ] EKS cluster disponível

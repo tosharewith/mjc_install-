@@ -64,7 +64,7 @@ aws rds describe-db-instances \
 
 ---
 
-### 2. ⭐ Amazon ElastiCache (Redis) - **OBRIGATÓRIO**
+### 2. ⭐ Redis as Cache - **OBRIGATÓRIO**
 
 **Para**: Message broker do Airflow (Celery)
 
@@ -76,7 +76,7 @@ Number of Nodes: 1 (pode escalar)
 Encryption: In-transit (recomendado)
 ```
 
-**Criado por**: Terraform (`module "elasticache_redis"`)
+**Criado por**: Terraform (`module "redis_cache"`)
 
 **Alternativa**: Pode usar cluster Redis existente
 
@@ -266,7 +266,7 @@ kubectl get storageclass
 #### a) IAM Roles
 - Role para acesso S3 (IRSA - IAM Roles for Service Accounts)
 - Role para RDS (se necessário)
-- Role para ElastiCache (se necessário)
+- Role para Redis as Cache (se necessário)
 
 #### b) IAM Policies
 - Política de acesso S3 (read/write)
@@ -372,7 +372,7 @@ aws ecr describe-repositories
 |---------|-----------|--------|
 | ✅ **EKS Cluster** | Manual (pré-existente) | Antes de tudo |
 | ✅ **RDS PostgreSQL** | Terraform | Durante migração |
-| ✅ **ElastiCache Redis** | Terraform | Durante migração |
+| ✅ **Redis as Cache** | Terraform | Durante migração |
 | ✅ **S3 Buckets** | Terraform + Manual (state) | Antes/Durante migração |
 | ✅ **IAM Roles/Policies** | Terraform | Durante migração |
 | ✅ **ALB Controller** | Manual (Helm) | Antes da migração |
@@ -429,7 +429,7 @@ terraform apply
 
 **Cria**:
 - ✅ RDS PostgreSQL
-- ✅ ElastiCache Redis
+- ✅ Redis as Cache
 - ✅ S3 Buckets (aplicação)
 - ✅ IAM Roles/Policies
 - ✅ Security Groups
@@ -470,7 +470,7 @@ kubectl apply -k kustomize/airflow-test/
 ### Durante Terraform Apply
 
 - [ ] RDS PostgreSQL criado
-- [ ] ElastiCache Redis criado
+- [ ] Redis as Cache criado
 - [ ] S3 buckets da aplicação criados
 - [ ] IAM Roles criados
 - [ ] Security Groups criados
@@ -498,7 +498,7 @@ aws eks describe-cluster --name $EKS_CLUSTER_NAME --query 'cluster.status' || ec
 echo "2. RDS:"
 aws rds describe-db-instances --query 'DBInstances[?contains(DBInstanceIdentifier, `airflow`)].DBInstanceStatus' || echo "❌ RDS não encontrado"
 
-echo "3. ElastiCache:"
+echo "3. Redis as Cache:"
 aws elasticache describe-cache-clusters --query 'CacheClusters[?contains(CacheClusterId, `airflow`)].CacheClusterStatus' || echo "❌ Redis não encontrado"
 
 echo "4. S3 Buckets:"
@@ -523,7 +523,7 @@ chmod +x validate-aws-services.sh
 **Configure alertas e monitoramento para**:
 - EKS Cluster (control plane + nodes)
 - RDS PostgreSQL (instância + storage + backup)
-- ElastiCache Redis (nodes)
+- Redis as Cache (nodes)
 - S3 (storage + requests)
 - EBS Volumes (storage)
 - ALB (data processed)

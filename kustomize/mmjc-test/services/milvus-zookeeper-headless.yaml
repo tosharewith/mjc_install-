@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: milvus-mmjc-test
+    meta.helm.sh/release-namespace: mmjc-test
+  creationTimestamp: "2025-07-31T08:33:13Z"
+  labels:
+    app.kubernetes.io/component: zookeeper
+    app.kubernetes.io/instance: milvus-mmjc-test
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: zookeeper
+    helm.sh/chart: zookeeper-8.1.2
+  name: milvus-mmjc-test-zookeeper-headless
+  namespace: mmjc-test
+  resourceVersion: "22654224"
+  uid: 22ad57fb-a52f-4eab-bfeb-6abeed1319d9
+spec:
+  clusterIP: None
+  clusterIPs:
+  - None
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: tcp-client
+    port: 2181
+    protocol: TCP
+    targetPort: client
+  - name: tcp-follower
+    port: 2888
+    protocol: TCP
+    targetPort: follower
+  - name: tcp-election
+    port: 3888
+    protocol: TCP
+    targetPort: election
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/component: zookeeper
+    app.kubernetes.io/instance: milvus-mmjc-test
+    app.kubernetes.io/name: zookeeper
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

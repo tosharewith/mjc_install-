@@ -183,7 +183,7 @@ kubectl apply -k kustomize/milvus-dev/
 
 # Monitor
 kubectl get pods -n airflow-test
-kubectl get pods -n mmjc-dev
+kubectl get pods -n mmjc-test
 ```
 
 ---

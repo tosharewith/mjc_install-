@@ -4,7 +4,7 @@
 Este repositório contém todos os recursos e instruções para migrar as seguintes cargas de trabalho do IBM Cloud Kubernetes Service (IKS) para Amazon Elastic Kubernetes Service (EKS):
 
 - **Airflow Test** (namespace: `airflow-test`)
-- **Milvus Dev** (namespace: `milvus-dev` / componentes do `mmjc-dev`)
+- **Milvus Dev** (namespace: `milvus-dev` / componentes do `mmjc-test`)
 
 ## 📋 Índice
 
@@ -64,22 +64,22 @@ docker pull br.icr.io/br-ibm-images/understanding-agent-arc:v1.6.57
 
 - **Dependências Externas:**
   - PostgreSQL (RDS)
-  - Redis (ElastiCache)
+  - Redis as Cache
   - S3 (para logs e DAGs)
 
 #### Milvus Dev (namespace: milvus-dev)
 - **StatefulSets:**
-  - `milvus-mmjc-dev-etcd` (3 réplicas)
-  - `milvus-mmjc-dev-kafka` (3 réplicas)
-  - `milvus-mmjc-dev-minio` (4 réplicas)
-  - `milvus-mmjc-dev-zookeeper` (3 réplicas)
+  - `milvus-mmjc-test-etcd` (3 réplicas)
+  - `milvus-mmjc-test-kafka` (3 réplicas)
+  - `milvus-mmjc-test-minio` (4 réplicas)
+  - `milvus-mmjc-test-zookeeper` (3 réplicas)
 
 - **Deployments:**
-  - `milvus-mmjc-dev-datanode` (2 réplicas)
-  - `milvus-mmjc-dev-indexnode` (2 réplicas)
-  - `milvus-mmjc-dev-mixcoord` (1 réplica)
-  - `milvus-mmjc-dev-proxy` (1 réplica)
-  - `milvus-mmjc-dev-querynode` (3 réplicas)
+  - `milvus-mmjc-test-datanode` (2 réplicas)
+  - `milvus-mmjc-test-indexnode` (2 réplicas)
+  - `milvus-mmjc-test-mixcoord` (1 réplica)
+  - `milvus-mmjc-test-proxy` (1 réplica)
+  - `milvus-mmjc-test-querynode` (3 réplicas)
   - `my-attu` (UI do Milvus)
   - `mcp-milvus-db-dev` (MCP server)
 
@@ -92,7 +92,7 @@ docker pull br.icr.io/br-ibm-images/understanding-agent-arc:v1.6.57
 │                     IBM Cloud IKS                            │
 │  ┌──────────────────────┐  ┌────────────────────────────┐   │
 │  │   Namespace:         │  │   Namespace:               │   │
-│  │   airflow-test       │  │   mmjc-dev (Milvus)        │   │
+│  │   airflow-test       │  │   mmjc-test (Milvus)        │   │
 │  │                      │  │                            │   │
 │  │  - API Server        │  │  - Etcd (3)                │   │
 │  │  - Scheduler         │  │  - Kafka (3)               │   │
@@ -130,8 +130,8 @@ docker pull br.icr.io/br-ibm-images/understanding-agent-arc:v1.6.57
 │  └──────────────┘         └──────────────┘                  │
 │         ↓                                                    │
 │  ┌──────────────┐                                            │
-│  │ ElastiCache  │                                            │
-│  │ Redis        │                                            │
+│  │ Redis as     │                                            │
+│  │ Cache        │                                            │
 │  └──────────────┘                                            │
 │                                                              │
 │  Autenticação: OAuth2 Proxy (OIDC)                          │
@@ -161,7 +161,7 @@ kustomize version    # >= 5.0
 - ✅ Acesso ao cluster AWS EKS com permissões de administrador
 - ✅ Credenciais AWS com permissões para criar:
   - RDS (PostgreSQL)
-  - ElastiCache (Redis)
+  - Redis as Cache
   - S3 Buckets
   - IAM Roles
 - ✅ Acesso aos registros de container:
@@ -204,7 +204,7 @@ ibm-iks-to-aws-eks-migration/
 ├── airflow-test/                       # Exportações do namespace airflow-test
 │   └── airflow-test-complete.yaml      # Export completo do kubectl
 │
-├── milvus-mmjc-dev/                    # Exportações dos componentes Milvus
+├── milvus-mmjc-test/                    # Exportações dos componentes Milvus
 │   ├── milvus-complete.yaml            # Export completo
 │   └── milvus-workloads.yaml           # Workloads específicos
 │
@@ -232,7 +232,7 @@ ibm-iks-to-aws-eks-migration/
 │   │   ├── vpc/                        # VPC (opcional)
 │   │   ├── eks/                        # Configurações EKS
 │   │   ├── rds/                        # RDS PostgreSQL
-│   │   ├── elasticache/                # Redis
+│   │   ├── elasticache/                # Redis as Cache
 │   │   └── s3/                         # S3 Buckets
 │   └── environments/
 │       ├── dev/
@@ -258,7 +258,7 @@ Configure seu ambiente local e valide acessos necessários.
 Entenda as diferenças entre IBM IKS e AWS EKS e planeje a migração.
 
 ### 3. [Setup da Infraestrutura (Terraform)](docs/pt-br/03-terraform-setup.md)
-Crie RDS, ElastiCache, S3 e outros recursos AWS necessários.
+Crie RDS, Redis as Cache, S3 e outros recursos AWS necessários.
 
 ### 4. [Migração do Airflow](docs/pt-br/04-airflow-migration.md)
 Migre o namespace airflow-test com downtime mínimo.
@@ -285,7 +285,7 @@ Resolva problemas comuns durante e após a migração.
 | **Load Balancer** | IBM Cloud LB | AWS ELB/ALB/NLB |
 | **Registry** | `icr.io` | `ECR` ou público |
 | **Postgres** | IBM Cloud Databases | RDS |
-| **Redis** | IBM Cloud Databases | ElastiCache |
+| **Redis** | IBM Cloud Databases | Redis as Cache |
 | **Object Storage** | IBM Cloud Object Storage | S3 |
 | **Annotations** | `ingress.bluemix.net/*` | `alb.ingress.kubernetes.io/*` |
 

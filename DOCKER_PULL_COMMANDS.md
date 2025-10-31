@@ -55,7 +55,7 @@ docker pull br.icr.io/br-ibm-images/mmjc-airflow-service:latest
 
 ---
 
-### For Milvus (milvus-mmjc-dev namespace):
+### For Milvus (milvus-mmjc-test namespace):
 
 ```bash
 # MCP Services

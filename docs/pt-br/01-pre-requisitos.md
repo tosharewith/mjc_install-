@@ -80,7 +80,7 @@ docker --version
 - Credenciais AWS configuradas com permissões para:
   - Amazon EKS (criar e gerenciar clusters)
   - Amazon RDS (criar instâncias PostgreSQL)
-  - Amazon ElastiCache (criar clusters Redis)
+  - Redis as Cache (criar clusters Redis)
   - Amazon S3 (criar e gerenciar buckets)
   - Amazon IAM (criar roles e policies)
   - Amazon VPC (gerenciar networking)

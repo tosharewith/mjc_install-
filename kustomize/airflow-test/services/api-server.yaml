@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: airflow-test
+    meta.helm.sh/release-namespace: airflow-test
+  creationTimestamp: "2025-07-14T10:31:38Z"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    chart: airflow-1.17.0
+    component: api-server
+    heritage: Helm
+    release: airflow-test
+    tier: airflow
+  name: airflow-test-api-server
+  namespace: airflow-test
+  resourceVersion: "17792652"
+  uid: 65d8d361-11ff-45a5-a4a7-8aaf87fe5774
+spec:
+  clusterIP: 172.21.204.46
+  clusterIPs:
+  - 172.21.204.46
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: api-server
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    component: api-server
+    release: airflow-test
+    tier: airflow
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

@@ -184,7 +184,7 @@ kubectl apply -k kustomize/milvus-dev/
 
 # Check pods are pulling from new registry
 kubectl get pods -n airflow-test -o jsonpath='{.items[*].spec.containers[*].image}' | tr ' ' '\n'
-kubectl get pods -n mmjc-dev -o jsonpath='{.items[*].spec.containers[*].image}' | tr ' ' '\n'
+kubectl get pods -n mmjc-test -o jsonpath='{.items[*].spec.containers[*].image}' | tr ' ' '\n'
 ```
 
 ---

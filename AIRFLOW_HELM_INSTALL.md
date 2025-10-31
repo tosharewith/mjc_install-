@@ -1,6 +1,6 @@
 # Instalação do Airflow via Helm Chart Oficial
 
-Este guia mostra como instalar o Airflow no AWS EKS usando o **Helm Chart oficial**, baseado na configuração atual do `airflow-dev`.
+Este guia mostra como instalar o Airflow no AWS EKS usando o **Helm Chart oficial**, baseado na configuração atual do `airflow-test`.
 
 ## Visão Geral
 
@@ -45,7 +45,7 @@ helm search repo apache-airflow/airflow --versions | head -10
 ### 3. Infraestrutura AWS Criada
 
 - [ ] RDS PostgreSQL criado (via Terraform)
-- [ ] ElastiCache Redis criado (via Terraform)
+- [ ] Redis criado (via Terraform)
 - [ ] S3 Buckets criados (logs, dags)
 - [ ] IAM Role para Service Account (IRSA)
 - [ ] Certificado SSL no ACM
@@ -56,16 +56,16 @@ helm search repo apache-airflow/airflow --versions | head -10
 ### Etapa 1: Criar Namespace
 
 ```bash
-kubectl create namespace airflow-dev
+kubectl create namespace airflow-test
 
 # Ou aplicar com labels
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: airflow-dev
+  name: airflow-test
   labels:
-    name: airflow-dev
+    name: airflow-test
     environment: dev
     app: airflow
 EOF
@@ -82,10 +82,10 @@ RDS_ENDPOINT=$(cd terraform/environments/dev && terraform output -raw rds_endpoi
 # Criar secret
 kubectl create secret generic airflow-postgres-connection-dev \
   --from-literal=connection="postgresql://airflow_admin:SENHA_FORTE@${RDS_ENDPOINT}:5432/airflow" \
-  -n airflow-dev
+  -n airflow-test
 
 # Verificar
-kubectl get secret airflow-postgres-connection-dev -n airflow-dev -o yaml
+kubectl get secret airflow-postgres-connection-dev -n airflow-test -o yaml
 ```
 
 #### 2.2. Redis Connection
@@ -97,7 +97,7 @@ REDIS_ENDPOINT=$(cd terraform/environments/dev && terraform output -raw redis_en
 # Criar secret
 kubectl create secret generic airflow-redis-connection-dev \
   --from-literal=connection="redis://${REDIS_ENDPOINT}:6379/0" \
-  -n airflow-dev
+  -n airflow-test
 ```
 
 #### 2.3. Fernet Key
@@ -111,7 +111,7 @@ FERNET_KEY=$(python3 -c "from cryptography.fernet import Fernet; print(Fernet.ge
 
 kubectl create secret generic airflow-fernet-key \
   --from-literal=fernet-key="$FERNET_KEY" \
-  -n airflow-dev
+  -n airflow-test
 ```
 
 #### 2.4. Registry Secret (se usar registry privado)
@@ -122,7 +122,7 @@ kubectl create secret docker-registry all-icr-io-mmjc \
   --docker-server=br.icr.io \
   --docker-username=iamapikey \
   --docker-password=SUA_IBM_CLOUD_API_KEY \
-  -n airflow-dev
+  -n airflow-test
 
 # Ou para AWS ECR
 aws ecr get-login-password --region us-east-1 | \
@@ -130,7 +130,7 @@ aws ecr get-login-password --region us-east-1 | \
     --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com \
     --docker-username=AWS \
     --docker-password-stdin \
-    -n airflow-dev
+    -n airflow-test
 ```
 
 #### 2.5. PostgreSQL CA Certificate (se necessário SSL)
@@ -143,7 +143,7 @@ curl -o /tmp/rds-ca.pem https://truststore.pki.rds.amazonaws.com/global/global-b
 # Criar secret
 kubectl create secret generic airflow-postgres-cert-dev \
   --from-file=root.crt=/tmp/rds-ca.pem \
-  -n airflow-dev
+  -n airflow-test
 ```
 
 ### Etapa 3: Configurar values.yaml
@@ -179,22 +179,22 @@ config:
 # Ingress
 ingress:
   hosts:
-    - name: airflow-dev.seu-dominio.com
+    - name: airflow-test.seu-dominio.com
   annotations:
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:ACCOUNT:certificate/CERT_ID
 
 # Service Account com IRSA
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/airflow-dev-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/airflow-test-role
 ```
 
 ### Etapa 4: Instalar via Helm
 
 ```bash
 # Dry-run primeiro (validar configuração)
-helm install airflow-dev apache-airflow/airflow \
-  --namespace airflow-dev \
+helm install airflow-test apache-airflow/airflow \
+  --namespace airflow-test \
   --values helm/airflow-values-dev.yaml \
   --version 1.17.0 \
   --dry-run --debug > /tmp/helm-dry-run.yaml
@@ -203,16 +203,16 @@ helm install airflow-dev apache-airflow/airflow \
 less /tmp/helm-dry-run.yaml
 
 # Instalar
-helm install airflow-dev apache-airflow/airflow \
-  --namespace airflow-dev \
+helm install airflow-test apache-airflow/airflow \
+  --namespace airflow-test \
   --values helm/airflow-values-dev.yaml \
   --version 1.17.0 \
   --timeout 10m \
   --wait
 
 # Output esperado:
-# NAME: airflow-dev
-# NAMESPACE: airflow-dev
+# NAME: airflow-test
+# NAMESPACE: airflow-test
 # STATUS: deployed
 # REVISION: 1
 ```
@@ -221,38 +221,38 @@ helm install airflow-dev apache-airflow/airflow \
 
 ```bash
 # Ver status do release
-helm status airflow-dev -n airflow-dev
+helm status airflow-test -n airflow-test
 
 # Monitorar pods
-kubectl get pods -n airflow-dev -w
+kubectl get pods -n airflow-test -w
 
 # Ver logs
-kubectl logs -n airflow-dev -l component=scheduler -f
+kubectl logs -n airflow-test -l component=scheduler -f
 
 # Ver eventos
-kubectl get events -n airflow-dev --sort-by='.lastTimestamp' | tail -20
+kubectl get events -n airflow-test --sort-by='.lastTimestamp' | tail -20
 ```
 
 ### Etapa 6: Validar Instalação
 
 ```bash
 # Todos os pods devem estar Running
-kubectl get pods -n airflow-dev
+kubectl get pods -n airflow-test
 
 # Esperado:
-# airflow-dev-api-server-xxx        1/1     Running
-# airflow-dev-scheduler-xxx         1/1     Running
-# airflow-dev-dag-processor-xxx     1/1     Running
-# airflow-dev-worker-0              1/1     Running
-# airflow-dev-triggerer-0           1/1     Running
-# airflow-dev-statsd-xxx            1/1     Running
+# airflow-test-api-server-xxx        1/1     Running
+# airflow-test-scheduler-xxx         1/1     Running
+# airflow-test-dag-processor-xxx     1/1     Running
+# airflow-test-worker-0              1/1     Running
+# airflow-test-triggerer-0           1/1     Running
+# airflow-test-statsd-xxx            1/1     Running
 
 # Testar conexão com RDS
-kubectl exec -it -n airflow-dev deployment/airflow-dev-scheduler -- \
+kubectl exec -it -n airflow-test deployment/airflow-test-scheduler -- \
   airflow db check
 
 # Port-forward para UI
-kubectl port-forward -n airflow-dev svc/airflow-dev-api-server 8080:8080 &
+kubectl port-forward -n airflow-test svc/airflow-test-api-server 8080:8080 &
 
 # Abrir no browser
 open http://localhost:8080
@@ -267,15 +267,15 @@ open http://localhost:8080
 vim helm/airflow-values-dev.yaml
 
 # Fazer upgrade
-helm upgrade airflow-dev apache-airflow/airflow \
-  --namespace airflow-dev \
+helm upgrade airflow-test apache-airflow/airflow \
+  --namespace airflow-test \
   --values helm/airflow-values-dev.yaml \
   --version 1.17.0 \
   --timeout 10m \
   --wait
 
 # Ver histórico
-helm history airflow-dev -n airflow-dev
+helm history airflow-test -n airflow-test
 ```
 
 ### Atualizar Versão do Chart
@@ -285,8 +285,8 @@ helm history airflow-dev -n airflow-dev
 helm search repo apache-airflow/airflow --versions
 
 # Upgrade para nova versão
-helm upgrade airflow-dev apache-airflow/airflow \
-  --namespace airflow-dev \
+helm upgrade airflow-test apache-airflow/airflow \
+  --namespace airflow-test \
   --values helm/airflow-values-dev.yaml \
   --version 1.18.0 \
   --timeout 10m \
@@ -303,8 +303,8 @@ vim helm/airflow-values-dev.yaml
 # defaultAirflowTag: v2.0.0
 
 # Aplicar
-helm upgrade airflow-dev apache-airflow/airflow \
-  --namespace airflow-dev \
+helm upgrade airflow-test apache-airflow/airflow \
+  --namespace airflow-test \
   --values helm/airflow-values-dev.yaml \
   --reuse-values \
   --set defaultAirflowTag=v2.0.0 \
@@ -317,13 +317,13 @@ Se algo der errado:
 
 ```bash
 # Ver histórico
-helm history airflow-dev -n airflow-dev
+helm history airflow-test -n airflow-test
 
 # Rollback para revisão anterior
-helm rollback airflow-dev -n airflow-dev
+helm rollback airflow-test -n airflow-test
 
 # Ou rollback para revisão específica
-helm rollback airflow-dev 1 -n airflow-dev
+helm rollback airflow-test 1 -n airflow-test
 ```
 
 ## Migração de DAGs
@@ -334,7 +334,7 @@ Se tem dados no PVC `mmjc-airflow-dags-dev`:
 
 ```bash
 # 1. Backup do PVC atual no IKS
-kubectl exec -it -n airflow-dev POD_NAME -- tar czf - /opt/airflow/dags > /tmp/dags-backup.tar.gz
+kubectl exec -it -n airflow-test POD_NAME -- tar czf - /opt/airflow/dags > /tmp/dags-backup.tar.gz
 
 # 2. Criar PVC no EKS
 kubectl apply -f - <<EOF
@@ -342,7 +342,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mmjc-airflow-dags-dev
-  namespace: airflow-dev
+  namespace: airflow-test
 spec:
   accessModes:
     - ReadWriteMany  # Requer EFS
@@ -399,7 +399,7 @@ dags:
 kubectl create secret generic git-credentials \
   --from-literal=GIT_SYNC_USERNAME=seu-usuario \
   --from-literal=GIT_SYNC_PASSWORD=seu-token \
-  -n airflow-dev
+  -n airflow-test
 ```
 
 ### Opção 3: S3 Bucket
@@ -421,15 +421,15 @@ env:
 
 ```bash
 # Ver logs detalhados
-kubectl describe pod POD_NAME -n airflow-dev
+kubectl describe pod POD_NAME -n airflow-test
 
 # Ver eventos
-kubectl get events -n airflow-dev --sort-by='.lastTimestamp'
+kubectl get events -n airflow-test --sort-by='.lastTimestamp'
 
 # Deletar e recriar
-helm uninstall airflow-dev -n airflow-dev
-helm install airflow-dev apache-airflow/airflow \
-  --namespace airflow-dev \
+helm uninstall airflow-test -n airflow-test
+helm install airflow-test apache-airflow/airflow \
+  --namespace airflow-test \
   --values helm/airflow-values-dev.yaml
 ```
 
@@ -437,11 +437,11 @@ helm install airflow-dev apache-airflow/airflow \
 
 ```bash
 # Testar conectividade
-kubectl run -it --rm psql-test --image=postgres:15 --restart=Never -n airflow-dev -- \
+kubectl run -it --rm psql-test --image=postgres:15 --restart=Never -n airflow-test -- \
   psql -h RDS_ENDPOINT -U airflow_admin -d airflow
 
 # Verificar secret
-kubectl get secret airflow-postgres-connection-dev -n airflow-dev -o jsonpath='{.data.connection}' | base64 -d
+kubectl get secret airflow-postgres-connection-dev -n airflow-test -o jsonpath='{.data.connection}' | base64 -d
 ```
 
 ### Chart não encontrado
@@ -461,13 +461,13 @@ helm repo add apache-airflow https://airflow.apache.org
 
 ```bash
 # Desinstalar Airflow
-helm uninstall airflow-dev -n airflow-dev
+helm uninstall airflow-test -n airflow-test
 
 # Deletar PVCs (cuidado com dados!)
-kubectl delete pvc --all -n airflow-dev
+kubectl delete pvc --all -n airflow-test
 
 # Deletar namespace
-kubectl delete namespace airflow-dev
+kubectl delete namespace airflow-test
 ```
 
 ## Referências

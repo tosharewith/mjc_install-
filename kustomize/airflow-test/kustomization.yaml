@@ -3,62 +3,45 @@ kind: Kustomization
 
 namespace: airflow-test
 
-# Recursos base do Airflow
 resources:
-  - deployments.yaml
-  - statefulsets.yaml
-  - services.yaml
-  - configmaps.yaml
+  # Deployments
+  - deployments/api-server.yaml
+  - deployments/dag-processor.yaml
+  - deployments/scheduler.yaml
+  - deployments/statsd.yaml
 
-# Secrets (aplicar após preencher os placeholders)
-# Descomente após configurar os valores reais
-# - secrets/airflow-test-secrets-template.yaml
+  # StatefulSets
+  - statefulsets/triggerer.yaml
+  - statefulsets/worker.yaml
 
-# ConfigMaps Generators para secrets a partir de arquivos
-secretGenerator:
-  - name: airflow-postgres-connection-test
-    literals:
-      - connection=postgresql://USUARIO:SENHA@HOST:5432/DBNAME
-  - name: airflow-redis-connection-test
-    literals:
-      - connection=redis://HOST:6379/0
-  - name: airflow-test-fernet-key
-    literals:
-      - fernet-key=GERAR_FERNET_KEY_AQUI
-  - name: airflow-test-jwt-secret
-    literals:
-      - jwt-secret=GERAR_JWT_SECRET_AQUI
-  - name: airflow-test-webserver-secret-key
-    literals:
-      - webserver-secret-key=GERAR_WEBSERVER_SECRET_KEY_AQUI
+  # Services
+  - services/api-server.yaml
+  - services/statsd.yaml
+  - services/triggerer.yaml
+  - services/worker.yaml
 
-# Patches para ajustar configurações específicas do EKS
-patchesStrategicMerge:
-  - patches/storage-class.yaml
-  - patches/ingress-eks.yaml
+  # ConfigMaps
+  - configmaps/airflow-config.yaml
+  - configmaps/statsd-config.yaml
 
-# Transformações comuns
-commonLabels:
-  app.kubernetes.io/managed-by: kustomize
-  migration.source: ibm-iks
-  migration.target: aws-eks
+  # PVCs
+  - pvcs/logs-triggerer-0.yaml
+  - pvcs/logs-worker-0.yaml
+  - pvcs/dags.yaml
 
-# Imagens (ajustar registry conforme necessário)
+# Image transformations - Modify these to change registry/prefix
 images:
-  - name: apache/airflow
-    newTag: 2.10.3  # Ajustar conforme versão atual
+  # ICR images
+  - name: icr.io/mjc-cr/mmjc-airflow-service
+    newName: icr.io/mjc-cr/mmjc-airflow-service
+    newTag: latest
 
-# Configurações
-configMapGenerator:
-  - name: migration-config
-    literals:
-      - ENVIRONMENT=test
-      - CLOUD_PROVIDER=aws
-      - REGION=us-east-1
+  # Quay.io images
+  - name: quay.io/prometheus/statsd-exporter
+    newName: quay.io/prometheus/statsd-exporter
+    newTag: v0.28.0
 
-# Recursos para ajustar limites e requests
-replicas:
-  - name: airflow-test-api-server
-    count: 2
-  - name: airflow-test-scheduler
-    count: 1
+# Common labels to add to all resources
+commonLabels:
+  environment: test
+  managed-by: kustomize

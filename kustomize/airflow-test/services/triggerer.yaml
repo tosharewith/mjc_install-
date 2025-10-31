@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: airflow-test
+    meta.helm.sh/release-namespace: airflow-test
+  creationTimestamp: "2025-07-14T10:31:38Z"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    chart: airflow-1.17.0
+    component: triggerer
+    heritage: Helm
+    release: airflow-test
+    tier: airflow
+  name: airflow-test-triggerer
+  namespace: airflow-test
+  resourceVersion: "17792650"
+  uid: 59308f63-bce7-442b-a675-a7b59f138376
+spec:
+  clusterIP: None
+  clusterIPs:
+  - None
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: triggerer-logs
+    port: 8794
+    protocol: TCP
+    targetPort: 8794
+  selector:
+    component: triggerer
+    release: airflow-test
+    tier: airflow
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

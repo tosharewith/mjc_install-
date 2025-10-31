@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"po-mmjc-test","namespace":"mmjc-test"},"spec":{"ports":[{"name":"http-po","port":80,"protocol":"TCP","targetPort":"po-mmjc"}],"selector":{"app":"po-mmjc"}}}
+  creationTimestamp: "2025-06-17T03:51:40Z"
+  name: po-mmjc-test
+  namespace: mmjc-test
+  resourceVersion: "10884918"
+  uid: 595613c9-41be-45e8-8957-cd30662cabe3
+spec:
+  clusterIP: 172.21.34.72
+  clusterIPs:
+  - 172.21.34.72
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http-po
+    port: 80
+    protocol: TCP
+    targetPort: po-mmjc
+  selector:
+    app: po-mmjc
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

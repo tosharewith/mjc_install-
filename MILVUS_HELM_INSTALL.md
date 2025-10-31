@@ -1,14 +1,14 @@
 # Instalação do Milvus via Helm Chart Oficial
 
-Este guia mostra como instalar o Milvus no AWS EKS usando o **Helm Chart oficial**, replicando a configuração atual do `mmjc-dev`.
+Este guia mostra como instalar o Milvus no AWS EKS usando o **Helm Chart oficial**, replicando a configuração atual do `mmjc-test`.
 
 ## Visão Geral
 
-**Configuração atual (IBM IKS - mmjc-dev)**:
+**Configuração atual (IBM IKS - mmjc-test)**:
 - Chart: `milvus-4.2.57`
 - Versão Milvus: `2.5.15`
-- Release name: `milvus-mmjc-dev`
-- Namespace: `mmjc-dev`
+- Release name: `milvus-mmjc-test`
+- Namespace: `mmjc-test`
 - Modo: Cluster
 - Componentes:
   - MixCoordinator (1)
@@ -37,7 +37,7 @@ helm search repo milvus/milvus --versions | head -10
 
 ### 2. Infraestrutura AWS
 
-- [ ] Namespace `mmjc-dev` criado no EKS
+- [ ] Namespace `mmjc-test` criado no EKS
 - [ ] Storage Class `gp3` disponível
 - [ ] (Opcional) S3 Bucket para dados (alternativa ao MinIO)
 - [ ] (Opcional) IAM Role para Service Account (se usar S3)
@@ -47,16 +47,16 @@ helm search repo milvus/milvus --versions | head -10
 ### Etapa 1: Criar Namespace
 
 ```bash
-kubectl create namespace mmjc-dev
+kubectl create namespace mmjc-test
 
 # Ou com labels
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: mmjc-dev
+  name: mmjc-test
   labels:
-    name: mmjc-dev
+    name: mmjc-test
     environment: dev
     app: milvus
 EOF
@@ -89,7 +89,7 @@ Se quiser usar S3 nativo em vez de MinIO:
 
 ```bash
 # Criar bucket S3
-aws s3 mb s3://milvus-mmjc-dev-data --region us-east-1
+aws s3 mb s3://milvus-mmjc-test-data --region us-east-1
 
 # Criar IAM policy
 cat > /tmp/milvus-s3-policy.json <<EOF
@@ -105,8 +105,8 @@ cat > /tmp/milvus-s3-policy.json <<EOF
         "s3:ListBucket"
       ],
       "Resource": [
-        "arn:aws:s3:::milvus-mmjc-dev-data",
-        "arn:aws:s3:::milvus-mmjc-dev-data/*"
+        "arn:aws:s3:::milvus-mmjc-test-data",
+        "arn:aws:s3:::milvus-mmjc-test-data/*"
       ]
     }
   ]
@@ -145,8 +145,8 @@ vim helm/milvus-values-dev.yaml
 
 ```bash
 # Dry-run primeiro
-helm install milvus-mmjc-dev milvus/milvus \
-  --namespace mmjc-dev \
+helm install milvus-mmjc-test milvus/milvus \
+  --namespace mmjc-test \
   --values helm/milvus-values-dev.yaml \
   --version 4.2.57 \
   --dry-run --debug > /tmp/milvus-dry-run.yaml
@@ -155,16 +155,16 @@ helm install milvus-mmjc-dev milvus/milvus \
 less /tmp/milvus-dry-run.yaml
 
 # Instalar
-helm install milvus-mmjc-dev milvus/milvus \
-  --namespace mmjc-dev \
+helm install milvus-mmjc-test milvus/milvus \
+  --namespace mmjc-test \
   --values helm/milvus-values-dev.yaml \
   --version 4.2.57 \
   --timeout 15m \
   --wait
 
 # Output esperado:
-# NAME: milvus-mmjc-dev
-# NAMESPACE: mmjc-dev
+# NAME: milvus-mmjc-test
+# NAMESPACE: mmjc-test
 # STATUS: deployed
 ```
 
@@ -172,52 +172,52 @@ helm install milvus-mmjc-dev milvus/milvus \
 
 ```bash
 # Ver status
-helm status milvus-mmjc-dev -n mmjc-dev
+helm status milvus-mmjc-test -n mmjc-test
 
 # Monitorar pods (StatefulSets demoram mais)
-kubectl get pods -n mmjc-dev -w
+kubectl get pods -n mmjc-test -w
 
 # Ver StatefulSets
-kubectl get statefulset -n mmjc-dev
+kubectl get statefulset -n mmjc-test
 
 # Esperado:
-# milvus-mmjc-dev-etcd       3/3
-# milvus-mmjc-dev-kafka      3/3
-# milvus-mmjc-dev-minio      4/4
+# milvus-mmjc-test-etcd       3/3
+# milvus-mmjc-test-kafka      3/3
+# milvus-mmjc-test-minio      4/4
 
 # Ver logs
-kubectl logs -n mmjc-dev -l component=proxy -f
+kubectl logs -n mmjc-test -l component=proxy -f
 ```
 
 ### Etapa 7: Validar Instalação
 
 ```bash
 # Todos os pods devem estar Running
-kubectl get pods -n mmjc-dev | grep milvus
+kubectl get pods -n mmjc-test | grep milvus
 
 # Esperado (total ~17 pods):
-# milvus-mmjc-dev-datanode-xxx         1/1     Running
-# milvus-mmjc-dev-datanode-xxx         1/1     Running
-# milvus-mmjc-dev-indexnode-xxx        1/1     Running
-# milvus-mmjc-dev-indexnode-xxx        1/1     Running
-# milvus-mmjc-dev-querynode-xxx        1/1     Running
-# milvus-mmjc-dev-querynode-xxx        1/1     Running
-# milvus-mmjc-dev-querynode-xxx        1/1     Running
-# milvus-mmjc-dev-mixcoord-xxx         1/1     Running
-# milvus-mmjc-dev-proxy-xxx            1/1     Running
-# milvus-mmjc-dev-etcd-0               1/1     Running
-# milvus-mmjc-dev-etcd-1               1/1     Running
-# milvus-mmjc-dev-etcd-2               1/1     Running
-# milvus-mmjc-dev-kafka-0              1/1     Running
-# milvus-mmjc-dev-kafka-1              1/1     Running
-# milvus-mmjc-dev-kafka-2              1/1     Running
-# milvus-mmjc-dev-minio-0              1/1     Running
-# milvus-mmjc-dev-minio-1              1/1     Running
-# milvus-mmjc-dev-minio-2              1/1     Running
-# milvus-mmjc-dev-minio-3              1/1     Running
+# milvus-mmjc-test-datanode-xxx         1/1     Running
+# milvus-mmjc-test-datanode-xxx         1/1     Running
+# milvus-mmjc-test-indexnode-xxx        1/1     Running
+# milvus-mmjc-test-indexnode-xxx        1/1     Running
+# milvus-mmjc-test-querynode-xxx        1/1     Running
+# milvus-mmjc-test-querynode-xxx        1/1     Running
+# milvus-mmjc-test-querynode-xxx        1/1     Running
+# milvus-mmjc-test-mixcoord-xxx         1/1     Running
+# milvus-mmjc-test-proxy-xxx            1/1     Running
+# milvus-mmjc-test-etcd-0               1/1     Running
+# milvus-mmjc-test-etcd-1               1/1     Running
+# milvus-mmjc-test-etcd-2               1/1     Running
+# milvus-mmjc-test-kafka-0              1/1     Running
+# milvus-mmjc-test-kafka-1              1/1     Running
+# milvus-mmjc-test-kafka-2              1/1     Running
+# milvus-mmjc-test-minio-0              1/1     Running
+# milvus-mmjc-test-minio-1              1/1     Running
+# milvus-mmjc-test-minio-2              1/1     Running
+# milvus-mmjc-test-minio-3              1/1     Running
 
 # Testar API
-kubectl port-forward -n mmjc-dev svc/milvus-mmjc-dev-proxy 19530:19530 &
+kubectl port-forward -n mmjc-test svc/milvus-mmjc-test-proxy 19530:19530 &
 
 python3 <<EOF
 from pymilvus import connections, utility
@@ -237,7 +237,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: attu
-  namespace: mmjc-dev
+  namespace: mmjc-test
 spec:
   replicas: 1
   selector:
@@ -255,13 +255,13 @@ spec:
         - containerPort: 3000
         env:
         - name: MILVUS_URL
-          value: "milvus-mmjc-dev-proxy:19530"
+          value: "milvus-mmjc-test-proxy:19530"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: attu
-  namespace: mmjc-dev
+  namespace: mmjc-test
 spec:
   selector:
     app: attu
@@ -271,7 +271,7 @@ spec:
 EOF
 
 # Port-forward para acessar
-kubectl port-forward -n mmjc-dev svc/attu 8000:80 &
+kubectl port-forward -n mmjc-test svc/attu 8000:80 &
 open http://localhost:8000
 ```
 
@@ -286,10 +286,10 @@ open http://localhost:8000
 # Configurar backup.yaml
 cat > backup.yaml <<EOF
 milvus:
-  address: milvus-mmjc-dev-proxy
+  address: milvus-mmjc-test-proxy
   port: 19530
 minio:
-  address: milvus-mmjc-dev-minio
+  address: milvus-mmjc-test-minio
   port: 9000
   accessKeyID: minioadmin
   secretAccessKey: minioadmin
@@ -320,25 +320,25 @@ EOF
 helm search repo milvus/milvus --versions
 
 # Upgrade
-helm upgrade milvus-mmjc-dev milvus/milvus \
-  --namespace mmjc-dev \
+helm upgrade milvus-mmjc-test milvus/milvus \
+  --namespace mmjc-test \
   --values helm/milvus-values-dev.yaml \
   --version 4.2.58 \
   --timeout 15m \
   --wait
 
 # Ver histórico
-helm history milvus-mmjc-dev -n mmjc-dev
+helm history milvus-mmjc-test -n mmjc-test
 ```
 
 ## Rollback
 
 ```bash
 # Rollback para revisão anterior
-helm rollback milvus-mmjc-dev -n mmjc-dev
+helm rollback milvus-mmjc-test -n mmjc-test
 
 # Ou para revisão específica
-helm rollback milvus-mmjc-dev 1 -n mmjc-dev
+helm rollback milvus-mmjc-test 1 -n mmjc-test
 ```
 
 ## Troubleshooting
@@ -347,32 +347,32 @@ helm rollback milvus-mmjc-dev 1 -n mmjc-dev
 
 ```bash
 # Ver logs de cada componente
-kubectl logs -n mmjc-dev milvus-mmjc-dev-etcd-0
-kubectl logs -n mmjc-dev milvus-mmjc-dev-kafka-0
+kubectl logs -n mmjc-test milvus-mmjc-test-etcd-0
+kubectl logs -n mmjc-test milvus-mmjc-test-kafka-0
 
 # Ver eventos
-kubectl get events -n mmjc-dev --sort-by='.lastTimestamp'
+kubectl get events -n mmjc-test --sort-by='.lastTimestamp'
 ```
 
 ### Etcd cluster não forma quorum
 
 ```bash
 # Verificar PVCs
-kubectl get pvc -n mmjc-dev | grep etcd
+kubectl get pvc -n mmjc-test | grep etcd
 
 # Verificar network
-kubectl exec -it -n mmjc-dev milvus-mmjc-dev-etcd-0 -- \
-  nslookup milvus-mmjc-dev-etcd-1.milvus-mmjc-dev-etcd
+kubectl exec -it -n mmjc-test milvus-mmjc-test-etcd-0 -- \
+  nslookup milvus-mmjc-test-etcd-1.milvus-mmjc-test-etcd
 ```
 
 ### Kafka não conecta ao Zookeeper
 
 ```bash
 # Verificar Zookeeper (criado pelo Kafka subchart)
-kubectl get pods -n mmjc-dev | grep zookeeper
+kubectl get pods -n mmjc-test | grep zookeeper
 
 # Ver logs
-kubectl logs -n mmjc-dev milvus-mmjc-dev-kafka-0
+kubectl logs -n mmjc-test milvus-mmjc-test-kafka-0
 ```
 
 ### Storage não faz bind
@@ -389,13 +389,13 @@ kubectl get pods -n kube-system | grep ebs-csi
 
 ```bash
 # Desinstalar Milvus
-helm uninstall milvus-mmjc-dev -n mmjc-dev
+helm uninstall milvus-mmjc-test -n mmjc-test
 
 # Deletar PVCs (CUIDADO: perda de dados!)
-kubectl delete pvc -l app.kubernetes.io/instance=milvus-mmjc-dev -n mmjc-dev
+kubectl delete pvc -l app.kubernetes.io/instance=milvus-mmjc-test -n mmjc-test
 
 # Deletar namespace
-kubectl delete namespace mmjc-dev
+kubectl delete namespace mmjc-test
 ```
 
 ## Comparação IKS vs EKS

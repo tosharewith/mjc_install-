@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"attu"},"name":"my-attu","namespace":"mmjc-test"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"attu"}},"template":{"metadata":{"labels":{"app":"attu"}},"spec":{"containers":[{"env":[{"name":"MILVUS_URL","value":"milvus-mmjc-test.mmjc-test.svc.cluster.local:19530"}],"image":"zilliz/attu:v2.5.6","imagePullPolicy":"IfNotPresent","name":"attu","ports":[{"containerPort":3000,"name":"attu","protocol":"TCP"}]}]}}}}
+  creationTimestamp: "2025-07-31T09:24:30Z"
+  generation: 1
+  labels:
+    app: attu
+  name: my-attu
+  namespace: mmjc-test
+  resourceVersion: "22667843"
+  uid: ad2f25a4-f030-4680-a3be-b2931f83d7c3
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: attu
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: attu
+    spec:
+      containers:
+      - env:
+        - name: MILVUS_URL
+          value: milvus-mmjc-test.mmjc-test.svc.cluster.local:19530
+        image: zilliz/attu:v2.5.6
+        imagePullPolicy: IfNotPresent
+        name: attu
+        ports:
+        - containerPort: 3000
+          name: attu
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-07-31T09:24:41Z"
+    lastUpdateTime: "2025-07-31T09:24:41Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2025-07-31T09:24:30Z"
+    lastUpdateTime: "2025-07-31T09:24:41Z"
+    message: ReplicaSet "my-attu-67cf7c78fc" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

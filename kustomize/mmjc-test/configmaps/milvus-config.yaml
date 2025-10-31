@@ -1,0 +1,102 @@
+apiVersion: v1
+data:
+  default.yaml: |
+    # Copyright (C) 2019-2021 Zilliz. All rights reserved.
+    #
+    # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
+    # with the License. You may obtain a copy of the License at
+    #
+    # http://www.apache.org/licenses/LICENSE-2.0
+    #
+    # Unless required by applicable law or agreed to in writing, software distributed under the License
+    # is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    # or implied. See the License for the specific language governing permissions and limitations under the License.
+
+    etcd:
+      endpoints:
+      - milvus-mmjc-test-etcd-0.milvus-mmjc-test-etcd-headless.mmjc-test.svc.cluster.local:2379
+      - milvus-mmjc-test-etcd-1.milvus-mmjc-test-etcd-headless.mmjc-test.svc.cluster.local:2379
+      - milvus-mmjc-test-etcd-2.milvus-mmjc-test-etcd-headless.mmjc-test.svc.cluster.local:2379
+
+    metastore:
+      type: etcd
+
+    minio:
+      address: milvus-mmjc-test-minio
+      port: 9000
+      accessKeyID: minioadmin
+      secretAccessKey: minioadmin
+      useSSL: false
+      bucketName: milvus-bucket
+      rootPath: file
+      useIAM: false
+      useVirtualHost: false
+
+    mq:
+      type: kafka
+
+    messageQueue: kafka
+
+    kafka:
+      brokerList: milvus-mmjc-test-kafka:9092
+
+    rootCoord:
+      address: milvus-mmjc-test-rootcoord
+      port: 53100
+      enableActiveStandby: false  # Enable rootcoord active-standby
+
+    proxy:
+      port: 19530
+      internalPort: 19529
+
+    queryCoord:
+      address: milvus-mmjc-test-querycoord
+      port: 19531
+
+      enableActiveStandby: false  # Enable querycoord active-standby
+
+    queryNode:
+      port: 21123
+      enableDisk: true # Enable querynode load disk index, and search on disk index
+
+    indexCoord:
+      address: milvus-mmjc-test-indexcoord
+      port: 31000
+      enableActiveStandby: false  # Enable indexcoord active-standby
+
+    indexNode:
+      port: 21121
+      enableDisk: true # Enable index node build disk vector index
+
+    dataCoord:
+      address: milvus-mmjc-test-datacoord
+      port: 13333
+      enableActiveStandby: false  # Enable datacoord active-standby
+
+    dataNode:
+      port: 21124
+
+    log:
+      level: info
+      file:
+        rootPath: ""
+        maxSize: 300
+        maxAge: 10
+        maxBackups: 20
+      format: text
+  user.yaml: |-
+    common:
+      security:
+        authorizationEnabled: true
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: milvus-mmjc-test
+    meta.helm.sh/release-namespace: mmjc-test
+  creationTimestamp: "2025-07-31T08:33:13Z"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: milvus-mmjc-test
+  namespace: mmjc-test
+  resourceVersion: "22654219"
+  uid: 4e7ea87e-c668-43a4-8b2b-651a8e5b92d9

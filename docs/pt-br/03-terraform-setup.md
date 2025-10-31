@@ -6,7 +6,7 @@ Este documento detalha como criar a infraestrutura AWS necessária usando Terraf
 
 O Terraform criará os seguintes recursos:
 - Amazon RDS PostgreSQL 15 (metadata do Airflow)
-- Amazon ElastiCache Redis 7 (message broker do Airflow)
+- Redis as Cache (Redis 7 - message broker do Airflow)
 - Amazon S3 Buckets (logs, DAGs, dados do Milvus)
 - Kubernetes Namespaces no EKS
 - Security Groups e regras de rede
@@ -18,7 +18,7 @@ terraform/
 ├── modules/
 │   ├── vpc/           # VPC e networking (opcional)
 │   ├── rds/           # RDS PostgreSQL
-│   ├── elasticache/   # Redis
+│   ├── elasticache/   # Redis as Cache
 │   └── s3/            # S3 Buckets
 └── environments/
     └── dev/
@@ -106,7 +106,7 @@ rds_allocated_storage = 100
 db_username           = "airflow_admin"
 # db_password será solicitado no apply ou usar AWS Secrets Manager
 
-# ElastiCache Redis
+# Redis as Cache
 redis_node_type = "cache.t3.medium"
 
 # Tags
@@ -153,7 +153,7 @@ terraform plan -out=tfplan
 
 Revise o output cuidadosamente. Deve mostrar:
 - 1 RDS instance
-- 1 ElastiCache cluster
+- 1 Redis as Cache cluster
 - 3 S3 buckets
 - 2 Kubernetes namespaces
 - Security groups e regras
@@ -209,7 +209,7 @@ Encryption: Sim
 postgresql://airflow_admin:PASSWORD@ENDPOINT:5432/airflow
 ```
 
-### 2. ElastiCache Redis
+### 2. Redis as Cache
 
 ```
 Cluster: itau-airflow-milvus-airflow-redis
@@ -361,7 +361,7 @@ Estimativa mensal (região us-east-1):
 | Recurso | Tipo | Custo Mensal (USD) |
 |---------|------|---------------------|
 | RDS PostgreSQL | db.t3.medium | ~$60 |
-| ElastiCache Redis | cache.t3.medium | ~$50 |
+| Redis as Cache | cache.t3.medium | ~$50 |
 | S3 (100GB) | Standard | ~$3 |
 | EBS Snapshots (backup RDS) | 100GB | ~$5 |
 | **Total** | | **~$118/mês** |

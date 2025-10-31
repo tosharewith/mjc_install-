@@ -30,7 +30,7 @@
 ### From airflow-test deployment:
 1. `mmjc-airflow-service:latest`
 
-### From milvus-mmjc-dev deployment:
+### From milvus-mmjc-test deployment:
 2. `mcp-arc-s3-tool:2.1.17-amd64`
 3. `mcp-milvus-db:0.0.1`
 4. `mjc-mermaid-validator:1.0.17-llm-ready-amd64`
@@ -153,7 +153,7 @@ docker pull br.icr.io/br-ibm-images/mmjc-airflow-service:latest
 - **After**: `br.icr.io/br-ibm-images/mmjc-airflow-service:latest`
 - **Update**: Run `./scripts/update-image-refs.sh`
 
-### milvus-mmjc-dev namespace:
+### milvus-mmjc-test namespace:
 - **Before**: All images from `icr.io/mjc-cr/*`
 - **After**: All images from `br.icr.io/br-ibm-images/*`
 - **Update**: Run `./scripts/update-image-refs.sh`

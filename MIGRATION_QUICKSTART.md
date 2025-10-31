@@ -5,8 +5,8 @@ Este é um guia rápido para migrar Airflow e Milvus do IBM IKS para AWS EKS usa
 ## 📋 Visão Geral
 
 **Ambientes atuais no IKS (mjc-cluster)**:
-- `airflow-dev` → Airflow 3.0.2 (via Helm chart 1.17.0)
-- `mmjc-dev` → Milvus 2.5.15 (via Helm chart 4.2.57)
+- `airflow-test` → Airflow 3.0.2 (via Helm chart 1.17.0)
+- `mmjc-test` → Milvus 2.5.15 (via Helm chart 4.2.57)
 
 **Estratégia**: Replicar instalação exata usando os mesmos Helm Charts, adaptando apenas:
 - Storage Class (ibmc-block-gold → gp3)
@@ -54,27 +54,27 @@ helm repo add apache-airflow https://airflow.apache.org
 helm repo update
 
 # Criar namespace
-kubectl create namespace airflow-dev
+kubectl create namespace airflow-test
 
 # Criar secrets (ajustar com outputs do Terraform)
 kubectl create secret generic airflow-postgres-connection-dev \
   --from-literal=connection="postgresql://user:pass@RDS_ENDPOINT:5432/airflow" \
-  -n airflow-dev
+  -n airflow-test
 
 kubectl create secret generic airflow-redis-connection-dev \
   --from-literal=connection="redis://REDIS_ENDPOINT:6379/0" \
-  -n airflow-dev
+  -n airflow-test
 
 # Instalar
-helm install airflow-dev apache-airflow/airflow \
-  --namespace airflow-dev \
+helm install airflow-test apache-airflow/airflow \
+  --namespace airflow-test \
   --values helm/airflow-values-aws-eks.yaml \
   --version 1.17.0 \
   --timeout 10m \
   --wait
 
 # Validar
-kubectl get pods -n airflow-dev
+kubectl get pods -n airflow-test
 ```
 
 ### 4. Instalar Milvus via Helm
@@ -87,29 +87,29 @@ helm repo add milvus https://zilliztech.github.io/milvus-helm/
 helm repo update
 
 # Criar namespace
-kubectl create namespace mmjc-dev
+kubectl create namespace mmjc-test
 
 # Instalar
-helm install milvus-mmjc-dev milvus/milvus \
-  --namespace mmjc-dev \
+helm install milvus-mmjc-test milvus/milvus \
+  --namespace mmjc-test \
   --values helm/milvus-values-aws-eks.yaml \
   --version 4.2.57 \
   --timeout 15m \
   --wait
 
 # Validar
-kubectl get pods -n mmjc-dev | grep milvus
+kubectl get pods -n mmjc-test | grep milvus
 ```
 
 ### 5. Validar
 
 ```bash
 # Airflow
-kubectl port-forward -n airflow-dev svc/airflow-dev-api-server 8080:8080 &
+kubectl port-forward -n airflow-test svc/airflow-test-api-server 8080:8080 &
 curl http://localhost:8080/health
 
 # Milvus
-kubectl port-forward -n mmjc-dev svc/milvus-mmjc-dev-proxy 19530:19530 &
+kubectl port-forward -n mmjc-test svc/milvus-mmjc-test-proxy 19530:19530 &
 python3 -c "from pymilvus import connections; connections.connect('localhost', '19530'); print('OK')"
 ```
 
@@ -181,7 +181,7 @@ postgresql:
   enabled: false  # Usar RDS
 
 redis:
-  enabled: false  # Usar ElastiCache
+  enabled: false  # Usar Redis as Cache
 
 data:
   metadataSecretName: airflow-postgres-connection-dev
@@ -222,12 +222,12 @@ minio:
 ### Infraestrutura
 - [ ] Terraform aplicado
 - [ ] RDS PostgreSQL criado
-- [ ] ElastiCache Redis criado
+- [ ] Redis as Cache criado
 - [ ] S3 Buckets criados
 - [ ] Outputs do Terraform salvos
 
 ### Airflow
-- [ ] Namespace `airflow-dev` criado
+- [ ] Namespace `airflow-test` criado
 - [ ] Secrets criados (PostgreSQL, Redis, Fernet)
 - [ ] Registry secret criado (se usar ICR/ECR privado)
 - [ ] Helm chart instalado
@@ -236,7 +236,7 @@ minio:
 - [ ] DAGs carregando
 
 ### Milvus
-- [ ] Namespace `mmjc-dev` criado
+- [ ] Namespace `mmjc-test` criado
 - [ ] Storage Class `gp3` disponível
 - [ ] Helm chart instalado
 - [ ] StatefulSets saudáveis (Etcd, Kafka, MinIO)
@@ -263,10 +263,10 @@ kubectl get events -n NAMESPACE --sort-by='.lastTimestamp'
 ### Erro de conexão com RDS/Redis
 ```bash
 # Testar de dentro do cluster
-kubectl run -it --rm debug --image=postgres:15 --restart=Never -n airflow-dev -- \
+kubectl run -it --rm debug --image=postgres:15 --restart=Never -n airflow-test -- \
   psql -h RDS_ENDPOINT -U airflow_admin -d airflow
 
-kubectl run -it --rm debug --image=redis:7 --restart=Never -n airflow-dev -- \
+kubectl run -it --rm debug --image=redis:7 --restart=Never -n airflow-test -- \
   redis-cli -h REDIS_ENDPOINT ping
 ```
 
@@ -286,20 +286,20 @@ kubectl get pods -n kube-system | grep ebs-csi
 helm list -A
 
 # Ver valores usados
-helm get values airflow-dev -n airflow-dev
-helm get values milvus-mmjc-dev -n mmjc-dev
+helm get values airflow-test -n airflow-test
+helm get values milvus-mmjc-test -n mmjc-test
 
 # Upgrade
-helm upgrade airflow-dev apache-airflow/airflow \
-  --namespace airflow-dev \
+helm upgrade airflow-test apache-airflow/airflow \
+  --namespace airflow-test \
   --values helm/airflow-values-aws-eks.yaml \
   --reuse-values
 
 # Rollback
-helm rollback airflow-dev -n airflow-dev
+helm rollback airflow-test -n airflow-test
 
 # Ver histórico
-helm history airflow-dev -n airflow-dev
+helm history airflow-test -n airflow-test
 ```
 
 ## 🎯 Próximos Passos
@@ -320,5 +320,5 @@ helm history airflow-dev -n airflow-dev
 ---
 
 **Última atualização**: 2025-10-30
-**Namespaces**: `airflow-dev` e `mmjc-dev`
+**Namespaces**: `airflow-test` e `mmjc-test`
 **Método**: Helm Charts oficiais

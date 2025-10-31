@@ -135,7 +135,7 @@ migrate.sh (MASTER)
 - Backups automáticos
 - Encryption at rest
 
-# ElastiCache Redis 7
+# Redis as Cache (Redis 7)
 - Engine: Redis
 - Encryption in-transit
 
@@ -303,7 +303,7 @@ kubectl port-forward -n airflow-test svc/airflow-test-api-server 8080:8080
 curl http://localhost:8080/health
 
 # Testar Milvus
-kubectl port-forward -n milvus-dev svc/milvus-mmjc-dev 19530:19530
+kubectl port-forward -n milvus-dev svc/milvus-mmjc-test 19530:19530
 ```
 
 ## ⚠️ Notas Importantes
@@ -319,7 +319,7 @@ kubectl port-forward -n milvus-dev svc/milvus-mmjc-dev 19530:19530
 
 - **Recursos provisionados**:
   - RDS PostgreSQL
-  - ElastiCache Redis
+  - Redis as Cache
   - S3 Buckets
   - EBS Volumes
   - ALB
@@ -332,7 +332,7 @@ kubectl port-forward -n milvus-dev svc/milvus-mmjc-dev 19530:19530
 ```bash
 # Antes de migrar, faça backup do IKS
 kubectl get all,configmaps,secrets -n airflow-test -o yaml > backup-airflow-$(date +%Y%m%d).yaml
-kubectl get all,configmaps,secrets -n mmjc-dev -o yaml > backup-milvus-$(date +%Y%m%d).yaml
+kubectl get all,configmaps,secrets -n mmjc-test -o yaml > backup-milvus-$(date +%Y%m%d).yaml
 
 # Backup do banco (se aplicável)
 # pg_dump do PostgreSQL atual

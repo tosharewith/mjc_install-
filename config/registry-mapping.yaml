@@ -5,7 +5,7 @@
 # Target Artifactory Registries (per namespace/instance)
 artifactory_instances:
   # Airflow namespace
-  airflow-dev:
+  airflow-test:
     registry: "docker-arc3-remote.artifactory.prod.aws.cloud.ihf"
     description: "Artifactory instance for Airflow Dev"
 
@@ -18,7 +18,7 @@ artifactory_instances:
     description: "Artifactory instance for Airflow Stage"
 
   # Milvus/MMJC namespace
-  mmjc-dev:
+  mmjc-test:
     registry: "docker-arc4-remote.artifactory.prod.aws.cloud.ihf"
     description: "Artifactory instance for MMJC Dev"
 

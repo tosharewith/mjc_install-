@@ -121,10 +121,10 @@ else
 fi
 
 # Milvus
-if kubectl get svc -n milvus-dev milvus-mmjc-dev &>/dev/null; then
-    test_passed "Service milvus-mmjc-dev existe"
+if kubectl get svc -n milvus-dev milvus-mmjc-test &>/dev/null; then
+    test_passed "Service milvus-mmjc-test existe"
 else
-    test_failed "Service milvus-mmjc-dev não encontrado"
+    test_failed "Service milvus-mmjc-test não encontrado"
 fi
 
 # ============================================

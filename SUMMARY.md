@@ -15,7 +15,7 @@ Script automatizado para conectar à conta IBM Cloud **con-itau-industrializacao
 ### Airflow Test (namespace: airflow-test)
 - **Deployments**: 4 (api-server, scheduler, dag-processor, statsd)
 - **StatefulSets**: 2 (worker, triggerer)
-- **Dependências**: PostgreSQL (RDS), Redis (ElastiCache), S3
+- **Dependências**: PostgreSQL (RDS), Redis as Cache, S3
 
 ### Milvus Dev (namespace: milvus-dev)
 - **StatefulSets**: 4 (etcd x3, kafka x3, minio x4, zookeeper x3)
@@ -31,7 +31,7 @@ Script automatizado para conectar à conta IBM Cloud **con-itau-industrializacao
   - Backups automáticos
   - Encryption at rest
 
-✓ ElastiCache Redis 7
+✓ Redis as Cache (Redis 7)
   - Encryption in-transit
   - Configuração otimizada
 
@@ -115,7 +115,7 @@ ibm-iks-to-aws-eks-migration/
 ├── airflow-test/
 │   └── airflow-test-complete.yaml
 │
-├── milvus-mmjc-dev/
+├── milvus-mmjc-test/
 │   ├── milvus-complete.yaml
 │   └── milvus-workloads.yaml
 │
@@ -130,7 +130,7 @@ ibm-iks-to-aws-eks-migration/
 │   ├── modules/
 │   │   ├── vpc/
 │   │   ├── rds/
-│   │   ├── elasticache/
+│   │   ├── elasticache/     # Redis as Cache
 │   │   └── s3/
 │   └── environments/
 │       └── dev/
@@ -185,7 +185,7 @@ ibm-iks-to-aws-eks-migration/
 | **Storage** | ibmc-block-gold | gp3 (EBS) |
 | **Registry** | icr.io | ECR |
 | **Database** | IBM Cloud Databases | RDS |
-| **Cache** | IBM Cloud Databases | ElastiCache |
+| **Cache** | IBM Cloud Databases | Redis as Cache |
 | **Object Storage** | IBM COS | S3 |
 
 ## ✅ Validação

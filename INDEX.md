@@ -32,7 +32,7 @@
 - **[03-terraform-setup.md](docs/pt-br/03-terraform-setup.md)**
   - Setup do backend do Terraform
   - Criação de RDS PostgreSQL
-  - Criação de ElastiCache Redis
+  - Criação de Redis as Cache
   - Criação de S3 Buckets
   - Validação de recursos
 
@@ -81,14 +81,14 @@
 ### Airflow
 - **[helm/airflow-values-aws-eks.yaml](helm/airflow-values-aws-eks.yaml)**
   - Configuração completa do Airflow para EKS
-  - Baseado na configuração atual do `airflow-dev` no IKS
+  - Baseado na configuração atual do `airflow-test` no IKS
   - Adaptações para AWS (storage, node selectors, etc)
   - Recursos, réplicas, e configurações
 
 ### Milvus
 - **[helm/milvus-values-aws-eks.yaml](helm/milvus-values-aws-eks.yaml)**
   - Configuração completa do Milvus para EKS
-  - Baseado na configuração atual do `milvus-mmjc-dev` no IKS
+  - Baseado na configuração atual do `milvus-mmjc-test` no IKS
   - Adaptações para AWS (storage class gp3)
   - Componentes, réplicas e recursos
 
@@ -148,7 +148,7 @@
 
 ## 📊 Namespaces e Componentes
 
-### Airflow (namespace: airflow-dev)
+### Airflow (namespace: airflow-test)
 - API Server (Webserver)
 - Scheduler
 - DAG Processor
@@ -158,10 +158,10 @@
 
 **Dependências externas**:
 - RDS PostgreSQL (metadata)
-- ElastiCache Redis (message broker)
+- Redis as Cache (message broker)
 - S3 (logs, DAGs)
 
-### Milvus (namespace: mmjc-dev)
+### Milvus (namespace: mmjc-test)
 - MixCoordinator
 - DataNode (2 réplicas)
 - IndexNode (2 réplicas)
@@ -212,4 +212,4 @@
 
 **Última atualização**: 2025-10-30
 **Projeto**: Migração IBM IKS → AWS EKS
-**Namespaces**: `airflow-dev` e `mmjc-dev`
+**Namespaces**: `airflow-test` e `mmjc-test`

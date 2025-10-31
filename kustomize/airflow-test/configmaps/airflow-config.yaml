@@ -1,0 +1,38 @@
+apiVersion: v1
+data:
+  airflow.cfg: "[celery]\nflower_url_prefix = \nworker_concurrency = 3\n\n[celery_kubernetes_executor]\nkubernetes_queue
+    = kubernetes\n\n[core]\nauth_manager = airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager\ncolored_console_log
+    = False\ndags_folder = /opt/airflow/dags\nexecution_api_server_url = http://airflow-test-api-server:8080/execution/\nexecutor
+    = CeleryExecutor\nload_examples = False\nremote_logging = False\n\n[elasticsearch]\njson_format
+    = True\nlog_id_template = {dag_id}_{task_id}_{execution_date}_{try_number}\n\n[elasticsearch_configs]\nmax_retries
+    = 3\nretry_timeout = True\ntimeout = 30\n\n[fab]\nenable_proxy_fix = True\n\n[kerberos]\nccache
+    = /var/kerberos-ccache/cache\nkeytab = /etc/airflow.keytab\nprincipal = airflow@FOO.COM\nreinit_frequency
+    = 3600\n\n[kubernetes]\nairflow_configmap = airflow-test-config\nairflow_local_settings_configmap
+    = airflow-test-config\nmulti_namespace_mode = False\nnamespace = airflow-test\npod_template_file
+    = /opt/airflow/pod_templates/pod_template_file.yaml\nworker_container_repository
+    = icr.io/mjc-cr/mmjc-airflow-service\nworker_container_tag = latest\n\n[kubernetes_executor]\nmulti_namespace_mode
+    = False\nnamespace = airflow-test\npod_template_file = /opt/airflow/pod_templates/pod_template_file.yaml\nworker_container_repository
+    = icr.io/mjc-cr/mmjc-airflow-service\nworker_container_tag = latest\n\n[logging]\ncolored_console_log
+    = False\nremote_logging = False\n\n[metrics]\nstatsd_host = airflow-test-statsd\nstatsd_on
+    = True\nstatsd_port = 9125\nstatsd_prefix = airflow\n\n[scheduler]\nrun_duration
+    = 41460\nstandalone_dag_processor = True\nstatsd_host = airflow-test-statsd\nstatsd_on
+    = True\nstatsd_port = 9125\nstatsd_prefix = airflow\n\n[webserver]\nenable_proxy_fix
+    = True\nrbac = True"
+  airflow_local_settings.py: ""
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: airflow-test
+    meta.helm.sh/release-namespace: airflow-test
+  creationTimestamp: "2025-07-14T10:31:38Z"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    chart: airflow-1.17.0
+    component: config
+    heritage: Helm
+    release: airflow-test
+    tier: airflow
+  name: airflow-test-config
+  namespace: airflow-test
+  resourceVersion: "25029026"
+  uid: be63e14d-51c6-4e38-b9c8-454cda0cf773

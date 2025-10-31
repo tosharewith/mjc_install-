@@ -158,19 +158,19 @@ etcd-0 Running, etcd-1 CrashLoopBackOff, etcd-2 Pending
 **Solução**:
 ```bash
 # Verificar logs de cada pod
-kubectl logs -n milvus-dev milvus-mmjc-dev-etcd-0
-kubectl logs -n milvus-dev milvus-mmjc-dev-etcd-1
+kubectl logs -n milvus-dev milvus-mmjc-test-etcd-0
+kubectl logs -n milvus-dev milvus-mmjc-test-etcd-1
 
 # Verificar PVCs
 kubectl get pvc -n milvus-dev | grep etcd
 # Todos devem estar Bound
 
 # Verificar network connectivity
-kubectl exec -it -n milvus-dev milvus-mmjc-dev-etcd-0 -- \
-  nslookup milvus-mmjc-dev-etcd-1.milvus-mmjc-dev-etcd
+kubectl exec -it -n milvus-dev milvus-mmjc-test-etcd-0 -- \
+  nslookup milvus-mmjc-test-etcd-1.milvus-mmjc-test-etcd
 
 # Se necessário, deletar e recriar
-kubectl delete statefulset milvus-mmjc-dev-etcd -n milvus-dev
+kubectl delete statefulset milvus-mmjc-test-etcd -n milvus-dev
 kubectl apply -k kustomize/milvus/
 ```
 
@@ -188,14 +188,14 @@ kubectl get pods -n milvus-dev -l app=zookeeper
 # Todos devem estar Running
 
 # Verificar logs Kafka
-kubectl logs -n milvus-dev milvus-mmjc-dev-kafka-0 --tail=100
+kubectl logs -n milvus-dev milvus-mmjc-test-kafka-0 --tail=100
 
 # Verificar conectividade com Zookeeper
-kubectl exec -it -n milvus-dev milvus-mmjc-dev-kafka-0 -- \
-  bash -c 'echo stat | nc milvus-mmjc-dev-zookeeper-0.milvus-mmjc-dev-zookeeper 2181'
+kubectl exec -it -n milvus-dev milvus-mmjc-test-kafka-0 -- \
+  bash -c 'echo stat | nc milvus-mmjc-test-zookeeper-0.milvus-mmjc-test-zookeeper 2181'
 
 # Reset Kafka se necessário
-kubectl delete statefulset milvus-mmjc-dev-kafka -n milvus-dev
+kubectl delete statefulset milvus-mmjc-test-kafka -n milvus-dev
 kubectl delete pvc -l app=kafka -n milvus-dev
 kubectl apply -k kustomize/milvus/
 ```
@@ -216,10 +216,10 @@ kubectl get pods -n milvus-dev -l component=proxy
 kubectl logs -n milvus-dev -l component=proxy --tail=100
 
 # Verificar service
-kubectl get svc -n milvus-dev milvus-mmjc-dev-proxy
+kubectl get svc -n milvus-dev milvus-mmjc-test-proxy
 
 # Testar port-forward
-kubectl port-forward -n milvus-dev svc/milvus-mmjc-dev-proxy 19530:19530 &
+kubectl port-forward -n milvus-dev svc/milvus-mmjc-test-proxy 19530:19530 &
 python3 -c "from pymilvus import connections; connections.connect('localhost', '19530')"
 ```
 
@@ -233,7 +233,7 @@ Readiness probe failed: HTTP probe failed with statuscode: 503
 **Solução**:
 ```bash
 # Verificar logs
-kubectl logs -n milvus-dev milvus-mmjc-dev-minio-0 --tail=100
+kubectl logs -n milvus-dev milvus-mmjc-test-minio-0 --tail=100
 
 # Verificar PVCs
 kubectl get pvc -n milvus-dev | grep minio
@@ -389,7 +389,7 @@ kubectl run -it --rm psql-test --image=postgres:15 --restart=Never -- \
   psql -h RDS_ENDPOINT -U airflow_admin -d airflow
 ```
 
-### Problema: ElastiCache inacessível
+### Problema: Redis as Cache inacessível
 
 **Sintomas**:
 ```

@@ -9,7 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_FILE="${SCRIPT_DIR}/../config/registry-mapping.yaml"
 
 # Registry per namespace (can be overridden via env vars or CLI args)
-NAMESPACE="${NAMESPACE:-airflow-dev}"
+NAMESPACE="${NAMESPACE:-airflow-test}"
 ARTIFACTORY_REGISTRY="${ARTIFACTORY_REGISTRY:-docker-arc3-remote.artifactory.prod.aws.cloud.ihf}"
 
 # Colors
@@ -334,27 +334,27 @@ Usage: $0 [OPTIONS]
 Mirror Docker images to Artifactory for air-gapped environments.
 
 Options:
-  -n, --namespace NAMESPACE    Target namespace (airflow-dev, mmjc-dev, etc)
+  -n, --namespace NAMESPACE    Target namespace (airflow-test, mmjc-test, etc)
   -r, --registry REGISTRY      Artifactory registry URL
   -h, --help                   Show this help
 
 Environment variables:
-  NAMESPACE              - Target namespace (default: airflow-dev)
+  NAMESPACE              - Target namespace (default: airflow-test)
   ARTIFACTORY_REGISTRY   - Artifactory registry URL
   ARTIFACTORY_USER       - Artifactory username
   ARTIFACTORY_PASSWORD   - Artifactory password (or API token)
 
 Examples:
-  # Mirror for airflow-dev namespace
-  ./scripts/mirror-images-to-artifactory.sh --namespace airflow-dev
+  # Mirror for airflow-test namespace
+  ./scripts/mirror-images-to-artifactory.sh --namespace airflow-test
 
-  # Mirror for mmjc-dev with custom registry
-  NAMESPACE=mmjc-dev ARTIFACTORY_REGISTRY=docker-arc4-remote.artifactory.prod.aws.cloud.ihf \\
+  # Mirror for mmjc-test with custom registry
+  NAMESPACE=mmjc-test ARTIFACTORY_REGISTRY=docker-arc4-remote.artifactory.prod.aws.cloud.ihf \\
     ./scripts/mirror-images-to-artifactory.sh
 
   # With all options
   ./scripts/mirror-images-to-artifactory.sh \\
-    --namespace mmjc-dev \\
+    --namespace mmjc-test \\
     --registry docker-arc4-remote.artifactory.prod.aws.cloud.ihf
 EOF
     exit 0
