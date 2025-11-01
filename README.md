@@ -361,3 +361,178 @@ Este projeto é para uso interno da organização.
 **Última atualização**: 2025-10-29
 **Versão**: 1.0.0
 **Autor**: Equipe de Migração IKS → EKS
+
+---
+
+## 🚀 Instalação Rápida (Kustomize)
+
+Este repositório oferece **deployment pronto para produção** usando Kustomize com **configuração centralizada**.
+
+### ⚡ Quick Start
+
+```bash
+# 1. Configurar registry de imagens
+./kustomize/change-image-registry.sh mmjc-test \
+  icr.io/mjc-cr \
+  br.icr.io/br-ibm-images
+
+# 2. Configurar variáveis comuns (S3, LLM, Database)
+vim kustomize/base/common-config/s3-config.env
+vim kustomize/base/common-config/llm-config.env
+vim kustomize/base/common-config/database-config.env
+
+# 3. Deploy
+kubectl apply -k kustomize/mmjc-test/
+
+# 4. Verificar
+kubectl get all -n mmjc-test
+```
+
+### 📚 Documentação Completa
+
+- **🇺🇸 [Installation Guide (English)](INSTALLATION_GUIDE.md)** - Guia completo de instalação
+- **📦 [Kustomize Guide](kustomize/README.md)** - Como usar Kustomize
+- **🔧 [Common Config Guide](kustomize/COMMON_CONFIG_GUIDE.md)** - Configuração centralizada
+- **🔒 [Security Guide](SECURITY_FIX_SECRETS.md)** - Gerenciamento de secrets
+
+### ✨ Principais Features
+
+#### 1. Configuração Centralizada
+
+**UM único lugar** para toda configuração compartilhada:
+
+```
+kustomize/base/common-config/
+├── s3-config.env          # Endpoints S3, buckets
+├── llm-config.env         # Azure OpenAI, OpenAI
+├── database-config.env    # PostgreSQL, Redis, Milvus
+└── application-config.env # Configurações gerais
+```
+
+**Benefícios:**
+- ✅ Atualizar endpoint S3 → Afeta todos os serviços
+- ✅ Trocar modelo LLM → Atualizar uma vez
+- ✅ Sem duplicação de configuração
+- ✅ Consistência garantida
+
+#### 2. Mudança Fácil de Registry
+
+Trocar de registry com um comando:
+
+```bash
+# Para Artifactory
+./kustomize/change-image-registry.sh mmjc-test \
+  icr.io/mjc-cr \
+  br.icr.io/br-ibm-images
+
+# Para air-gapped
+kubectl apply -k kustomize/overlays/air-gapped/
+```
+
+#### 3. Secrets Seguros
+
+Todos os secrets foram **templatizados** e estão seguros para commit:
+
+```bash
+# Secrets reais (NUNCA commitar - em .gitignore)
+originals/*/secrets/
+
+# Templates seguros (OK para commitar)
+originals/secret-templates/
+```
+
+**Para produção:** Use External Secrets Operator ou Sealed Secrets.
+
+#### 4. Múltiplos Ambientes
+
+Overlays para dev/staging/prod:
+
+```bash
+kubectl apply -k kustomize/overlays/dev/
+kubectl apply -k kustomize/overlays/staging/
+kubectl apply -k kustomize/overlays/prod/
+```
+
+### 📂 Estrutura do Repositório (Atualizada)
+
+```
+.
+├── 📄 INSTALLATION_GUIDE.md      # Guia completo de instalação
+├── 📄 EXTRACTION_SUMMARY.md      # Resumo da extração
+│
+├── 📦 originals/                 # Recursos extraídos do cluster
+│   ├── airflow-test/            # 49 recursos
+│   ├── mmjc-test/               # 115 recursos
+│   ├── mmjc-dev/                # 182 recursos
+│   └── secret-templates/        # 80 templates seguros ✅
+│
+└── 📦 kustomize/                 # Templates para deployment
+    ├── base/
+    │   └── common-config/       # ✨ Configuração centralizada
+    │       ├── s3-config.env
+    │       ├── llm-config.env
+    │       ├── database-config.env
+    │       └── application-config.env
+    │
+    ├── airflow-test/            # Kustomize airflow-test
+    ├── mmjc-test/               # Kustomize mmjc-test
+    │
+    └── overlays/
+        ├── artifactory/         # Overlay para Artifactory
+        └── air-gapped/          # Overlay para air-gapped
+```
+
+### 🔍 Verificar Segurança
+
+Todos os secrets foram verificados e estão **100% seguros**:
+
+```bash
+# Rodar detecção de secrets
+bash verify-extraction.sh
+
+# Resultados:
+# ✅ Nenhuma credencial encontrada
+# ✅ 178 placeholders seguros
+# ✅ 38 annotations perigosas removidas
+# ✅ SAFE para version control
+```
+
+### 📊 Estatísticas
+
+| Métrica | Valor |
+|---------|-------|
+| **Namespaces extraídos** | 3 |
+| **Total de recursos** | 346 |
+| **Imagens únicas** | 11 |
+| **Secrets templatizados** | 80 |
+| **ConfigMaps** | 50 |
+| **Deployments** | 40 |
+| **StatefulSets** | 14 |
+
+### 🛠️ Scripts Úteis
+
+```bash
+# Extrair recursos do cluster
+./extract-all-resources.sh
+
+# Validar kustomize
+./kustomize/validate.sh
+
+# Mudar registry
+./kustomize/change-image-registry.sh
+
+# Templatizar secrets
+./originals/template-secrets-perl.sh
+
+# Verificar segurança
+./verify-extraction.sh
+```
+
+### 🆘 Suporte
+
+1. ✅ Consultar [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)
+2. ✅ Ver [Troubleshooting](#troubleshooting)
+3. ✅ Verificar logs: `kubectl logs -n mmjc-test <pod-name>`
+4. ✅ Validar config: `kubectl kustomize kustomize/mmjc-test/`
+
+---
