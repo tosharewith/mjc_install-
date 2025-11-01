@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"analyzer","app.kubernetes.io/component":"api","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/part-of":"code-analyzer","environment":"dev","language":"java"},"name":"java-analyzer-service","namespace":"mmjc-dev"},"spec":{"ports":[{"name":"http","port":8080,"protocol":"TCP","targetPort":8080}],"selector":{"app":"analyzer","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/part-of":"code-analyzer","environment":"dev","language":"java"},"type":"ClusterIP"}}
+  creationTimestamp: "2025-10-03T15:56:34Z"
+  labels:
+    app: analyzer
+    app.kubernetes.io/component: api
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/part-of: code-analyzer
+    environment: dev
+    language: java
+  name: java-analyzer-service
+  namespace: mmjc-dev
+  resourceVersion: "45208506"
+  uid: 5e9e8cae-4ed9-4dce-9116-afb31ab88083
+spec:
+  clusterIP: 172.21.99.220
+  clusterIPs:
+  - 172.21.99.220
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: analyzer
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/part-of: code-analyzer
+    environment: dev
+    language: java
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

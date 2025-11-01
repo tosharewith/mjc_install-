@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    ibm.io/auto-create-bucket: "false"
+    ibm.io/auto-delete-bucket: "false"
+    ibm.io/bucket: mmjc-airflow-dags-test
+    ibm.io/endpoint: https://s3.direct.us-south.cloud-object-storage.appdomain.cloud
+    ibm.io/secret-name: cos-mmjc-airflow-secret
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{"ibm.io/auto-create-bucket":"false","ibm.io/auto-delete-bucket":"false","ibm.io/bucket":"mmjc-airflow-dags-test","ibm.io/endpoint":"https://s3.direct.us-south.cloud-object-storage.appdomain.cloud","ibm.io/secret-name":"cos-mmjc-airflow-secret"},"labels":{"app":"mmjc-airflow-dags-test"},"name":"mmjc-airflow-dags-test","namespace":"airflow-test"},"spec":{"accessModes":["ReadWriteMany"],"resources":{"requests":{"storage":"8Gi"}},"storageClassName":"ibmc-s3fs-smart-perf-regional"}}
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+    volume.beta.kubernetes.io/storage-provisioner: ibm.io/ibmc-s3fs
+    volume.kubernetes.io/storage-provisioner: ibm.io/ibmc-s3fs
+  creationTimestamp: "2025-07-14T09:04:02Z"
+  finalizers:
+  - kubernetes.io/pvc-protection
+  labels:
+    app: mmjc-airflow-dags-test
+  name: mmjc-airflow-dags-test
+  namespace: airflow-test
+  resourceVersion: "17776608"
+  uid: c5f84815-9751-47f2-b9b9-f5f26b396150
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: ibmc-s3fs-smart-perf-regional
+  volumeMode: Filesystem
+  volumeName: pvc-c5f84815-9751-47f2-b9b9-f5f26b396150
+status:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 8Gi
+  phase: Bound

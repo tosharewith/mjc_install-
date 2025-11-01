@@ -1,0 +1,17 @@
+# ⚠️  WARNING: This is a TEMPLATE - NOT for production use
+# All sensitive data has been replaced with placeholders
+# Replace all <REPLACE_WITH_BASE64_ENCODED_*> values before applying
+#
+# Original: mmjc-dev/secrets/api-auth-tokens-agents.yaml
+# Templated: Fri Oct 31 21:15:03 -03 2025
+#
+apiVersion: v1
+data:
+  API_AUTH_TOKENS: <REPLACE_WITH_BASE64_ENCODED_API_AUTH_TOKENS>
+kind: Secret
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: <REMOVED_CONTAINED_PLAINTEXT_SECRETS>
+  name: api-auth-tokens-agents
+  namespace: mmjc-dev
+type: Opaque

@@ -1,0 +1,146 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    meta.helm.sh/release-name: milvus-mmjc-dev
+    meta.helm.sh/release-namespace: mmjc-dev
+  creationTimestamp: "2025-07-31T07:18:54Z"
+  generation: 1
+  labels:
+    app: minio
+    app.kubernetes.io/managed-by: Helm
+    chart: minio-8.0.17
+    heritage: Helm
+    release: milvus-mmjc-dev
+  name: milvus-mmjc-dev-minio
+  namespace: mmjc-dev
+  resourceVersion: "22637345"
+  uid: 59bd8dde-9385-414c-b1dd-b4e779bf7e04
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  podManagementPolicy: Parallel
+  replicas: 4
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: minio
+      release: milvus-mmjc-dev
+  serviceName: milvus-mmjc-dev-minio-svc
+  template:
+    metadata:
+      annotations:
+        checksum/config: 71246399249639c3402122cd5285ab50e77a1eeea583d47373dd97c3261c8bb9
+        checksum/secrets: dd6e5f9115d4082962b3b194b3d677cdcd150ec2f0db24844eb3363686555c24
+      creationTimestamp: null
+      labels:
+        app: minio
+        release: milvus-mmjc-dev
+      name: milvus-mmjc-dev-minio
+    spec:
+      containers:
+      - command:
+        - /bin/sh
+        - -ce
+        - /usr/bin/docker-entrypoint.sh minio -S /etc/minio/certs/ server  http://milvus-mmjc-dev-minio-{0...3}.milvus-mmjc-dev-minio-svc.mmjc-dev.svc.cluster.local/export
+        env:
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: milvus-mmjc-dev-minio
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secretkey
+              name: milvus-mmjc-dev-minio
+        image: minio/minio:RELEASE.2024-05-28T17-19-04Z
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /minio/health/live
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: minio
+        ports:
+        - containerPort: 9000
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 5
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          tcpSocket:
+            port: http
+          timeoutSeconds: 1
+        resources:
+          requests:
+            memory: 2Gi
+        startupProbe:
+          failureThreshold: 60
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: http
+          timeoutSeconds: 5
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /export
+          name: export
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        ibm-cloud.kubernetes.io/worker-pool-name: milvus-pool
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsUser: 1000
+      serviceAccount: milvus-mmjc-dev-minio
+      serviceAccountName: milvus-mmjc-dev-minio
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - effect: NoSchedule
+        key: reserved
+        operator: Equal
+        value: milvus
+      volumes:
+      - name: minio-user
+        secret:
+          defaultMode: 420
+          secretName: milvus-mmjc-dev-minio
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      name: export
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 20Gi
+      volumeMode: Filesystem
+    status:
+      phase: Pending
+status:
+  availableReplicas: 4
+  collisionCount: 0
+  currentReplicas: 4
+  currentRevision: milvus-mmjc-dev-minio-d7659c7d7
+  observedGeneration: 1
+  readyReplicas: 4
+  replicas: 4
+  updateRevision: milvus-mmjc-dev-minio-d7659c7d7
+  updatedReplicas: 4

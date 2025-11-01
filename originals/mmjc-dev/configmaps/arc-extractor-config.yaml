@@ -1,0 +1,85 @@
+apiVersion: v1
+data:
+  CACHE_TTL_RESOURCES: "3600"
+  CONTROLFLOW_MAX_REPAIR_ATTEMPTS: "3"
+  ENABLE_AUTO_REPAIR: "true"
+  ENABLE_HALLUCINATION_DETECTION: "false"
+  ENABLE_MERMAID_VALIDATION: "true"
+  ENABLE_PERFORMANCE_METRICS: "true"
+  HTTP_TIMEOUT_MERMAID: "30"
+  HTTP_TIMEOUT_PATH_RESOLVE: "30"
+  HTTP_TIMEOUT_RESOURCE_LOAD: "30"
+  HTTP_TIMEOUT_TEMPLATE_LOAD: "30"
+  JOB_QUEUE_TASK_TIMEOUT: "600"
+  LANGFUSE_ENABLED: "true"
+  LANGFUSE_HOST: http://langfuse.mmjc-dev.svc.cluster.local:3000
+  LLM_BASE_URL: https://model-gateway.llm-adapter-dev-c97c2ce0266e6f32de317d52e2a84f46-0001.us-east.containers.appdomain.cloud/v1
+  LLM_CONNECT_TIMEOUT: "60"
+  LLM_DEFAULT_MODEL: sonnet-4-5
+  LLM_MAX_RETRIES: "3"
+  LLM_MAX_TOKENS_CONSOLIDATION: "128000"
+  LLM_MAX_TOKENS_DEFAULT: "4000"
+  LLM_MAX_TOKENS_EXTRACTION: "128000"
+  LLM_MAX_TOKENS_JUDGE: "2000"
+  LLM_MAX_TOKENS_MAPREDUCE_REDUCE: "128000"
+  LLM_MAX_TOKENS_PARAGRAPH: "8000"
+  LLM_MAX_TOKENS_REVIEW: "2000"
+  LLM_RATE_LIMIT_MAX_DELAY: "30"
+  LLM_TEMPERATURE: "0.1"
+  LLM_TIMEOUT_SECONDS: "600"
+  LOG_LEVEL: INFO
+  MAX_PARALLEL_PROGRAMS: "2"
+  MERMAID_VALIDATOR_URL: http://mermaid-validator-api.mmjc-dev-v2/api/v1/validate
+  PREFECT_API_ENABLE_HTTP2: "false"
+  PREFECT_API_URL: http://prefect-server.mmjc-dev.svc.cluster.local:4200/api
+  PREFECT_LOGGING_LEVEL: INFO
+  PREFECT_RETRIES_CONSOLIDATION: "2"
+  PREFECT_RETRIES_DISCOVERY: "2"
+  PREFECT_RETRIES_EXTRACTION: "3"
+  PREFECT_RETRY_DELAY: "10"
+  S3_BUCKET: bucket-v1hdvzfyotonx3x
+  S3_ENDPOINT_URL: https://s3.direct.us-south.cloud-object-storage.appdomain.cloud
+  S3_PREFIX: ""
+  S3_PRESIGNED_URL_EXPIRATION: "3600"
+  S3_REGION: us-south
+  STORAGE_BACKEND: s3
+  UNDERSTANDING_AGENT_MODEL: anthropic/claude-sonnet-4-5-20250929
+  VALIDATION_AGENT_MODEL: anthropic/claude-sonnet-4-5-20250929
+  VALKEY_DB: "0"
+  VALKEY_HOST: redis-service-dev.mmjc-dev.svc.cluster.local
+  VALKEY_PORT: "6379"
+  auto-discover-programs: "true"
+  extraction-method-tier1: map-reduce
+  extraction-method-tier2: map-reduce
+  extraction-method-tier3: consolidation
+  input-base-path: results
+  input-bre-rules: bre/65-business-rules/program-single-tracing-text
+  input-pseudo-code: cobol/04_structure/pseudo-code
+  job-prefix: data-job-mcp-
+  llm-max-tokens: "128000"
+  llm-min-delay-seconds: "2"
+  llm-model: sonnet-4-5
+  llm-temperature: "0.1"
+  max-retries: "3"
+  output-base-path: ai_results
+  output-by-module: by-module
+  output-system-level: system-level
+  retry-delay-seconds: "10"
+  s3-bucket: bucket-v1hdvzfyotonx3x
+  s3-endpoint: https://s3.direct.us-south.cloud-object-storage.appdomain.cloud
+  s3-region: us-south
+  template-path: /app/templates
+  template-source-type: local
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"CACHE_TTL_RESOURCES":"3600","CONTROLFLOW_MAX_REPAIR_ATTEMPTS":"3","ENABLE_AUTO_REPAIR":"true","ENABLE_HALLUCINATION_DETECTION":"false","ENABLE_MERMAID_VALIDATION":"true","ENABLE_PERFORMANCE_METRICS":"true","HTTP_TIMEOUT_MERMAID":"30","HTTP_TIMEOUT_PATH_RESOLVE":"30","HTTP_TIMEOUT_RESOURCE_LOAD":"30","HTTP_TIMEOUT_TEMPLATE_LOAD":"30","JOB_QUEUE_TASK_TIMEOUT":"600","LANGFUSE_ENABLED":"true","LANGFUSE_HOST":"http://langfuse.mmjc-dev.svc.cluster.local:3000","LLM_BASE_URL":"https://model-gateway.llm-adapter-dev-c97c2ce0266e6f32de317d52e2a84f46-0001.us-east.containers.appdomain.cloud/v1","LLM_CONNECT_TIMEOUT":"60","LLM_DEFAULT_MODEL":"sonnet-4-5","LLM_MAX_RETRIES":"3","LLM_MAX_TOKENS_CONSOLIDATION":"128000","LLM_MAX_TOKENS_DEFAULT":"4000","LLM_MAX_TOKENS_EXTRACTION":"128000","LLM_MAX_TOKENS_JUDGE":"2000","LLM_MAX_TOKENS_MAPREDUCE_REDUCE":"128000","LLM_MAX_TOKENS_PARAGRAPH":"8000","LLM_MAX_TOKENS_REVIEW":"2000","LLM_RATE_LIMIT_MAX_DELAY":"30","LLM_TEMPERATURE":"0.1","LLM_TIMEOUT_SECONDS":"600","LOG_LEVEL":"INFO","MAX_PARALLEL_PROGRAMS":"2","MERMAID_VALIDATOR_URL":"http://mermaid-validator-api.mmjc-dev-v2/api/v1/validate","PREFECT_API_ENABLE_HTTP2":"false","PREFECT_API_URL":"http://prefect-server.mmjc-dev.svc.cluster.local:4200/api","PREFECT_LOGGING_LEVEL":"INFO","PREFECT_RETRIES_CONSOLIDATION":"2","PREFECT_RETRIES_DISCOVERY":"2","PREFECT_RETRIES_EXTRACTION":"3","PREFECT_RETRY_DELAY":"10","S3_BUCKET":"bucket-v1hdvzfyotonx3x","S3_ENDPOINT_URL":"https://s3.direct.us-south.cloud-object-storage.appdomain.cloud","S3_PREFIX":"","S3_PRESIGNED_URL_EXPIRATION":"3600","S3_REGION":"us-south","STORAGE_BACKEND":"s3","UNDERSTANDING_AGENT_MODEL":"anthropic/claude-sonnet-4-5-20250929","VALIDATION_AGENT_MODEL":"anthropic/claude-sonnet-4-5-20250929","VALKEY_DB":"0","VALKEY_HOST":"valkey-single.mmjc-dev.svc.cluster.local","VALKEY_PORT":"6379","auto-discover-programs":"true","extraction-method-tier1":"map-reduce","extraction-method-tier2":"map-reduce","extraction-method-tier3":"consolidation","input-base-path":"results","input-bre-rules":"bre/65-business-rules/program-single-tracing-text","input-pseudo-code":"cobol/04_structure/pseudo-code","job-prefix":"data-job-mcp-","llm-max-tokens":"128000","llm-min-delay-seconds":"2","llm-model":"sonnet-4-5","llm-temperature":"0.1","max-retries":"3","output-base-path":"ai_results","output-by-module":"by-module","output-system-level":"system-level","retry-delay-seconds":"10","s3-bucket":"bucket-v1hdvzfyotonx3x","s3-endpoint":"https://s3.direct.us-south.cloud-object-storage.appdomain.cloud","s3-region":"us-south","template-path":"/app/templates","template-source-type":"local"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app":"arc-extractor","component":"config"},"name":"arc-extractor-config","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-10-16T01:27:06Z"
+  labels:
+    app: arc-extractor
+    component: config
+  name: arc-extractor-config
+  namespace: mmjc-dev
+  resourceVersion: "54659198"
+  uid: c7d818ab-032e-4b0e-8294-28b13e526905

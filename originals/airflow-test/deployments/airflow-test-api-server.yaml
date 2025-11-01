@@ -1,0 +1,265 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "27"
+    meta.helm.sh/release-name: airflow-test
+    meta.helm.sh/release-namespace: airflow-test
+  creationTimestamp: "2025-07-14T10:31:39Z"
+  generation: 29
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    chart: airflow-1.17.0
+    component: api-server
+    heritage: Helm
+    release: airflow-test
+    tier: airflow
+  name: airflow-test-api-server
+  namespace: airflow-test
+  resourceVersion: "28905961"
+  uid: ee764e59-33da-4f12-9251-cd80ae8048d7
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      component: api-server
+      release: airflow-test
+      tier: airflow
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/airflow-config: 721608fe60cf37e5eb57ba9d22e2c498f750b2d744a120e4890371707106ccdf
+        checksum/extra-configmaps: e862ea47e13e634cf17d476323784fa27dac20015550c230953b526182f5cac8
+        checksum/extra-secrets: e9582fdd622296c976cbc10a5ba7d6702c28a24fe80795ea5b84ba443a56c827
+        checksum/metadata-secret: b2fe937560e9635aeb01fce9100c2f836c5880f81c802565ce95fbcc8a56da4c
+        checksum/pgbouncer-config-secret: 1dae2adc757473469686d37449d076b0c82404f61413b58ae68b3c5e99527688
+        kubectl.kubernetes.io/restartedAt: "2025-08-14T15:32:15+03:00"
+      creationTimestamp: null
+      labels:
+        component: api-server
+        release: airflow-test
+        tier: airflow
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  component: api-server
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - args:
+        - bash
+        - -c
+        - exec airflow api-server
+        env:
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: fernet-key
+              name: airflow-test-fernet-key
+        - name: AIRFLOW_HOME
+          value: /opt/airflow
+        - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-postgres-connection-test
+        - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-postgres-connection-test
+        - name: AIRFLOW_CONN_AIRFLOW_DB
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-postgres-connection-test
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: webserver-secret-key
+              name: airflow-test-webserver-secret-key
+        - name: AIRFLOW__API_AUTH__JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: jwt-secret
+              name: airflow-test-jwt-secret
+        - name: AIRFLOW__CELERY__BROKER_URL
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-redis-connection-test
+        image: icr.io/mjc-cr/mmjc-airflow-service:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /api/v2/version
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: api-server
+        ports:
+        - containerPort: 8080
+          name: api-server
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /api/v2/version
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        startupProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /api/v2/version
+            port: 8080
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 20
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt/airflow/airflow.cfg
+          name: config
+          readOnly: true
+          subPath: airflow.cfg
+        - mountPath: /opt/airflow/config/airflow_local_settings.py
+          name: config
+          readOnly: true
+          subPath: airflow_local_settings.py
+        - mountPath: /home/airflow/.postgresql
+          name: postgres-ca
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: all-icr-io-mmjc
+      initContainers:
+      - args:
+        - airflow
+        - db
+        - check-migrations
+        - --migration-wait-timeout=60
+        env:
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: fernet-key
+              name: airflow-test-fernet-key
+        - name: AIRFLOW_HOME
+          value: /opt/airflow
+        - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-postgres-connection-test
+        - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-postgres-connection-test
+        - name: AIRFLOW_CONN_AIRFLOW_DB
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-postgres-connection-test
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: webserver-secret-key
+              name: airflow-test-webserver-secret-key
+        - name: AIRFLOW__API_AUTH__JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: jwt-secret
+              name: airflow-test-jwt-secret
+        - name: AIRFLOW__CELERY__BROKER_URL
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-redis-connection-test
+        image: icr.io/mjc-cr/mmjc-airflow-service:latest
+        imagePullPolicy: Always
+        name: wait-for-airflow-migrations
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt/airflow/airflow.cfg
+          name: config
+          readOnly: true
+          subPath: airflow.cfg
+        - mountPath: /opt/airflow/config/airflow_local_settings.py
+          name: config
+          readOnly: true
+          subPath: airflow_local_settings.py
+        - mountPath: /home/airflow/.postgresql
+          name: postgres-ca
+          readOnly: true
+      nodeSelector:
+        ibm-cloud.kubernetes.io/worker-pool-name: airflow-pool
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 0
+        runAsUser: 50000
+      serviceAccount: airflow-test-api-server
+      serviceAccountName: airflow-test-api-server
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: airflow-test-config
+        name: config
+      - name: postgres-ca
+        secret:
+          defaultMode: 420
+          secretName: airflow-postgres-cert-test
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-07-14T10:31:39Z"
+    lastUpdateTime: "2025-08-14T12:33:16Z"
+    message: ReplicaSet "airflow-test-api-server-6c75f9d6df" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: "2025-08-18T12:36:45Z"
+    lastUpdateTime: "2025-08-18T12:36:45Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  observedGeneration: 29
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

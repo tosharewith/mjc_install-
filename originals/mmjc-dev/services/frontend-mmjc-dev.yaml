@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"frontend-mmjc-dev","namespace":"mmjc-dev"},"spec":{"ports":[{"name":"http-frontend","port":80,"protocol":"TCP","targetPort":"frontend"}],"selector":{"app":"frontend-mmjc"}}}
+  creationTimestamp: "2025-05-20T11:47:20Z"
+  name: frontend-mmjc-dev
+  namespace: mmjc-dev
+  resourceVersion: "4534354"
+  uid: f0a8d65c-1032-42b2-aac5-5a422633aed9
+spec:
+  clusterIP: 172.21.24.191
+  clusterIPs:
+  - 172.21.24.191
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http-frontend
+    port: 80
+    protocol: TCP
+    targetPort: frontend
+  selector:
+    app: frontend-mmjc
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

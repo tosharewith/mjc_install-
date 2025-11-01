@@ -1,0 +1,83 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"autoscaling/v2","kind":"HorizontalPodAutoscaler","metadata":{"annotations":{},"name":"mermaid-validator-api-hpa","namespace":"mmjc-test"},"spec":{"behavior":{"scaleDown":{"policies":[{"periodSeconds":15,"type":"Percent","value":50}],"stabilizationWindowSeconds":60},"scaleUp":{"policies":[{"periodSeconds":10,"type":"Percent","value":150},{"periodSeconds":10,"type":"Pods","value":5}],"selectPolicy":"Max","stabilizationWindowSeconds":0}},"maxReplicas":15,"metrics":[{"resource":{"name":"cpu","target":{"averageUtilization":70,"type":"Utilization"}},"type":"Resource"},{"resource":{"name":"memory","target":{"averageUtilization":70,"type":"Utilization"}},"type":"Resource"}],"minReplicas":2,"scaleTargetRef":{"apiVersion":"apps/v1","kind":"Deployment","name":"mermaid-validator-api"}}}
+  creationTimestamp: "2025-09-19T15:04:17Z"
+  name: mermaid-validator-api-hpa
+  namespace: mmjc-test
+  resourceVersion: "55338007"
+  uid: 885403e1-7dd2-4564-84a4-09736f8a0dcf
+spec:
+  behavior:
+    scaleDown:
+      policies:
+      - periodSeconds: 15
+        type: Percent
+        value: 50
+      selectPolicy: Max
+      stabilizationWindowSeconds: 60
+    scaleUp:
+      policies:
+      - periodSeconds: 10
+        type: Percent
+        value: 150
+      - periodSeconds: 10
+        type: Pods
+        value: 5
+      selectPolicy: Max
+      stabilizationWindowSeconds: 0
+  maxReplicas: 3
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 70
+        type: Utilization
+    type: Resource
+  - resource:
+      name: memory
+      target:
+        averageUtilization: 70
+        type: Utilization
+    type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mermaid-validator-api
+status:
+  conditions:
+  - lastTransitionTime: "2025-09-19T15:04:32Z"
+    message: recommended size matches current size
+    reason: ReadyForNewScale
+    status: "True"
+    type: AbleToScale
+  - lastTransitionTime: "2025-10-26T11:25:10Z"
+    message: the HPA was able to successfully calculate a replica count from memory
+      resource utilization (percentage of request)
+    reason: ValidMetricFound
+    status: "True"
+    type: ScalingActive
+  - lastTransitionTime: "2025-10-28T06:24:48Z"
+    message: the desired replica count is less than the minimum replica count
+    reason: TooFewReplicas
+    status: "True"
+    type: ScalingLimited
+  currentMetrics:
+  - resource:
+      current:
+        averageUtilization: 0
+        averageValue: 4m
+      name: cpu
+    type: Resource
+  - resource:
+      current:
+        averageUtilization: 22
+        averageValue: "119197696"
+      name: memory
+    type: Resource
+  currentReplicas: 2
+  desiredReplicas: 2
+  lastScaleTime: "2025-09-19T15:04:32Z"

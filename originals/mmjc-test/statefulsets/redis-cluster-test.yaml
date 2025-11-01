@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"StatefulSet","metadata":{"annotations":{},"name":"redis-cluster-test","namespace":"mmjc-test"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"redis-cluster"}},"serviceName":"redis-service-test","template":{"metadata":{"labels":{"app":"redis-cluster"}},"spec":{"containers":[{"args":["/conf/redis.conf"],"command":["redis-server"],"env":[{"name":"REDIS_CLUSTER_ANNOUNCE_IP","valueFrom":{"fieldRef":{"fieldPath":"status.podIP"}}}],"image":"redis:8.0.2","name":"redis","ports":[{"containerPort":6379,"name":"client"},{"containerPort":16379,"name":"gossip"}],"resources":{"limits":{"cpu":"1","memory":"4Gi"},"requests":{"cpu":"125m","memory":"1Gi"}},"volumeMounts":[{"mountPath":"/conf","name":"conf"},{"mountPath":"/data","name":"data"}]}],"volumes":[{"configMap":{"name":"redis-cluster-configmap-test"},"name":"conf"}]}},"volumeClaimTemplates":[{"metadata":{"name":"data"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"20Gi"}},"storageClassName":"ibmc-vpc-file-1000-iops"}}]}}
+  creationTimestamp: "2025-06-16T14:01:10Z"
+  generation: 1
+  name: redis-cluster-test
+  namespace: mmjc-test
+  resourceVersion: "10751998"
+  uid: 7899a17a-3cff-40c5-9fe9-257174602606
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: redis-cluster
+  serviceName: redis-service-test
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: redis-cluster
+    spec:
+      containers:
+      - args:
+        - /conf/redis.conf
+        command:
+        - redis-server
+        env:
+        - name: REDIS_CLUSTER_ANNOUNCE_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        image: redis:8.0.2
+        imagePullPolicy: IfNotPresent
+        name: redis
+        ports:
+        - containerPort: 6379
+          name: client
+          protocol: TCP
+        - containerPort: 16379
+          name: gossip
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "1"
+            memory: 4Gi
+          requests:
+            cpu: 125m
+            memory: 1Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /conf
+          name: conf
+        - mountPath: /data
+          name: data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: redis-cluster-configmap-test
+        name: conf
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 20Gi
+      storageClassName: ibmc-vpc-file-1000-iops
+      volumeMode: Filesystem
+    status:
+      phase: Pending
+status:
+  availableReplicas: 1
+  collisionCount: 0
+  currentReplicas: 1
+  currentRevision: redis-cluster-test-8b9c756b4
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1
+  updateRevision: redis-cluster-test-8b9c756b4
+  updatedReplicas: 1

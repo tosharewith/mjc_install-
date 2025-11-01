@@ -1,0 +1,186 @@
+# Example: How to use common-config in your deployments
+
+# ============================================================================
+# Example 1: MCP Git S3 Server - Uses S3 config
+# ============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-git-s3-server
+spec:
+  template:
+    spec:
+      containers:
+      - name: mcp-git-s3-server
+        image: icr.io/mjc-cr/go-mcp-git-s3:1.0.31
+        
+        # Inject ALL S3 configuration
+        envFrom:
+          - configMapRef:
+              name: s3-config
+          - secretRef:
+              name: s3-credentials
+        
+        # OR: Selective environment variables
+        env:
+          - name: S3_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: s3-config
+                key: S3_ENDPOINT
+          - name: S3_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: s3-credentials
+                key: access-key
+
+---
+# ============================================================================
+# Example 2: Agents Service - Uses LLM + Database config
+# ============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agents-mmjc-test
+spec:
+  template:
+    spec:
+      containers:
+      - name: agents
+        image: icr.io/mjc-cr/mmjc-agents:0.0.2
+        
+        # Inject multiple config sources
+        envFrom:
+          # LLM configuration
+          - configMapRef:
+              name: llm-config
+          # Database configuration
+          - configMapRef:
+              name: database-config
+          # Application settings
+          - configMapRef:
+              name: application-config
+          # API Keys
+          - secretRef:
+              name: llm-api-keys
+          - secretRef:
+              name: database-credentials
+
+---
+# ============================================================================
+# Example 3: Airflow - Uses S3 + Database config as files
+# ============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-scheduler
+spec:
+  template:
+    spec:
+      containers:
+      - name: scheduler
+        image: icr.io/mjc-cr/mmjc-airflow-service:latest
+        
+        # Mount configs as files
+        volumeMounts:
+          - name: s3-config
+            mountPath: /etc/airflow/s3
+            readOnly: true
+          - name: db-config
+            mountPath: /etc/airflow/database
+            readOnly: true
+        
+        # Also inject as env vars
+        envFrom:
+          - secretRef:
+              name: s3-credentials
+          - secretRef:
+              name: database-credentials
+      
+      volumes:
+        - name: s3-config
+          configMap:
+            name: s3-config
+        - name: db-config
+          configMap:
+            name: database-config
+
+---
+# ============================================================================
+# Example 4: Using Kustomize Patches to Add Common Config
+# ============================================================================
+# In kustomize/mmjc-test/kustomization.yaml:
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../base/common-config
+  - deployments/agents.yaml
+  - deployments/mcp-git-s3-server.yaml
+
+# Patch ALL deployments to inject common config
+patches:
+  - target:
+      kind: Deployment
+      name: ".*"
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/envFrom/-
+        value:
+          configMapRef:
+            name: application-config
+
+# Or use strategic merge patches
+patchesStrategicMerge:
+  - |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: agents-mmjc-test
+    spec:
+      template:
+        spec:
+          containers:
+          - name: agents
+            envFrom:
+              - configMapRef:
+                  name: llm-config
+              - secretRef:
+                  name: llm-api-keys
+
+---
+# ============================================================================
+# Example 5: Environment-Specific Override
+# ============================================================================
+# kustomize/overlays/production/kustomization.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+bases:
+  - ../../mmjc-test
+
+namespace: mmjc-prod
+
+# Override common config for production
+configMapGenerator:
+  - name: application-config
+    behavior: merge
+    literals:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=ERROR
+  
+  - name: s3-config
+    behavior: merge
+    literals:
+      - S3_BUCKET_AIRFLOW_DAGS=mmjc-airflow-dags-prod
+      - S3_BUCKET_MCP_DATA=mmjc-mcp-data-prod
+
+# Use different secrets in production
+secretGenerator:
+  - name: s3-credentials
+    behavior: replace
+    literals:
+      - access-key=${PROD_S3_ACCESS_KEY}
+      - secret-key=${PROD_S3_SECRET_KEY}

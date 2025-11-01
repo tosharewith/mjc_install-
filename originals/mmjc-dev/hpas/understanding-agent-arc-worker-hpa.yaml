@@ -1,0 +1,83 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"autoscaling/v2","kind":"HorizontalPodAutoscaler","metadata":{"annotations":{},"name":"understanding-agent-arc-worker-hpa","namespace":"mmjc-dev"},"spec":{"behavior":{"scaleDown":{"policies":[{"periodSeconds":60,"type":"Percent","value":50}],"selectPolicy":"Min","stabilizationWindowSeconds":300},"scaleUp":{"policies":[{"periodSeconds":60,"type":"Percent","value":100},{"periodSeconds":60,"type":"Pods","value":2}],"selectPolicy":"Max","stabilizationWindowSeconds":60}},"maxReplicas":10,"metrics":[{"resource":{"name":"cpu","target":{"averageUtilization":70,"type":"Utilization"}},"type":"Resource"},{"resource":{"name":"memory","target":{"averageUtilization":80,"type":"Utilization"}},"type":"Resource"}],"minReplicas":1,"scaleTargetRef":{"apiVersion":"apps/v1","kind":"Deployment","name":"understanding-agent-arc-worker"}}}
+  creationTimestamp: "2025-10-20T03:40:28Z"
+  name: understanding-agent-arc-worker-hpa
+  namespace: mmjc-dev
+  resourceVersion: "55338231"
+  uid: 8add9865-fbd1-4591-950b-a20ae951e6ab
+spec:
+  behavior:
+    scaleDown:
+      policies:
+      - periodSeconds: 60
+        type: Percent
+        value: 50
+      selectPolicy: Min
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      policies:
+      - periodSeconds: 60
+        type: Percent
+        value: 100
+      - periodSeconds: 60
+        type: Pods
+        value: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 60
+  maxReplicas: 10
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 70
+        type: Utilization
+    type: Resource
+  - resource:
+      name: memory
+      target:
+        averageUtilization: 80
+        type: Utilization
+    type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: understanding-agent-arc-worker
+status:
+  conditions:
+  - lastTransitionTime: "2025-10-20T03:40:43Z"
+    message: recommended size matches current size
+    reason: ReadyForNewScale
+    status: "True"
+    type: AbleToScale
+  - lastTransitionTime: "2025-10-30T23:48:02Z"
+    message: the HPA was able to successfully calculate a replica count from memory
+      resource utilization (percentage of request)
+    reason: ValidMetricFound
+    status: "True"
+    type: ScalingActive
+  - lastTransitionTime: "2025-10-20T14:58:26Z"
+    message: the desired count is within the acceptable range
+    reason: DesiredWithinRange
+    status: "False"
+    type: ScalingLimited
+  currentMetrics:
+  - resource:
+      current:
+        averageUtilization: 0
+        averageValue: 4m
+      name: cpu
+    type: Resource
+  - resource:
+      current:
+        averageUtilization: 6
+        averageValue: "151703552"
+      name: memory
+    type: Resource
+  currentReplicas: 1
+  desiredReplicas: 1
+  lastScaleTime: "2025-10-28T22:43:01Z"

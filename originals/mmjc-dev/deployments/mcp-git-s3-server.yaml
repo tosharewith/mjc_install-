@@ -1,0 +1,317 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app.kubernetes.io/description: High-performance MCP Git-S3 Tools Server
+    app.kubernetes.io/documentation: https://github.com/your-org/java-mcp-tool-s3git
+    deployment.kubernetes.io/revision: "62"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{"app.kubernetes.io/description":"High-performance MCP Git-S3 Tools Server","app.kubernetes.io/documentation":"https://github.com/your-org/java-mcp-tool-s3git","deployment.kubernetes.io/revision":"51"},"creationTimestamp":"2025-05-26T10:59:32Z","generation":83,"labels":{"app":"mcp-git-s3-server","app.kubernetes.io/component":"api-server","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"mcp-git-s3-server","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":"0.0.1-SNAPSHOT","component":"mcp-server","version":"v1"},"name":"mcp-git-s3-server","namespace":"mmjc-dev","resourceVersion":"53682623","uid":"ecc87687-5bae-4455-b823-1a637fda76b8"},"spec":{"progressDeadlineSeconds":600,"replicas":1,"revisionHistoryLimit":10,"selector":{"matchLabels":{"app":"mcp-git-s3-server","app.kubernetes.io/component":"api-server","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"mcp-git-s3-server","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":"0.0.1-SNAPSHOT"}},"strategy":{"rollingUpdate":{"maxSurge":"25%","maxUnavailable":"25%"},"type":"RollingUpdate"},"template":{"metadata":{"annotations":{"app.kubernetes.io/description":"High-performance MCP Git-S3 Tools Server","app.kubernetes.io/documentation":"https://github.com/your-org/java-mcp-tool-s3git","deployment.kubernetes.io/revision":"1","kubectl.kubernetes.io/restartedAt":"2025-10-26T11:09:24-03:00","prometheus.io/path":"/metrics","prometheus.io/port":"8080","prometheus.io/scrape":"true"},"creationTimestamp":null,"labels":{"app":"mcp-git-s3-server","app.kubernetes.io/component":"api-server","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"mcp-git-s3-server","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":"0.0.1-SNAPSHOT","component":"mcp-server","version":"v1"}},"spec":{"affinity":{"podAntiAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"podAffinityTerm":{"labelSelector":{"matchExpressions":[{"key":"app","operator":"In","values":["mcp-git-s3-server"]}]},"topologyKey":"kubernetes.io/hostname"},"weight":100}]}},"containers":[{"env":[{"name":"GITHUB_APP_PRIVATE_KEY","valueFrom":{"secretKeyRef":{"key":"GITHUB_APP_PRIVATE_KEY","name":"github-app-secrets"}}},{"name":"S3_ENDPOINT_URL","valueFrom":{"configMapKeyRef":{"key":"S3_ENDPOINT_URL","name":"mcp-git-s3-config"}}},{"name":"S3_REGION","valueFrom":{"configMapKeyRef":{"key":"S3_REGION","name":"mcp-git-s3-config"}}},{"name":"S3_BUCKET","valueFrom":{"configMapKeyRef":{"key":"S3_BUCKET","name":"mcp-git-s3-config"}}},{"name":"S3_ACCESS_KEY","valueFrom":{"secretKeyRef":{"key":"S3_ACCESS_KEY","name":"s3-access-key-tools"}}},{"name":"S3_SECRET_KEY","valueFrom":{"secretKeyRef":{"key":"S3_SECRET_KEY","name":"s3-secret-key-tools"}}},{"name":"JAVA_OPTS","value":"-Xms2g -Xmx6g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication -XX:+OptimizeStringConcat -XX:+UseCompressedOops -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom"},{"name":"JCLOUDS_MPU_PARTS_SIZE","valueFrom":{"configMapKeyRef":{"key":"jclouds.mpu.parts.size","name":"mcp-git-s3-config"}}},{"name":"JCLOUDS_MAX_CONNECTIONS","valueFrom":{"configMapKeyRef":{"key":"jclouds.max.connections","name":"mcp-git-s3-config"}}},{"name":"GIT_PARALLEL_THREADS","valueFrom":{"configMapKeyRef":{"key":"git.parallel.threads","name":"mcp-git-s3-config"}}},{"name":"CACHE_SIZE","valueFrom":{"configMapKeyRef":{"key":"cache.size","name":"mcp-git-s3-config"}}},{"name":"SERVER_PORT","value":"8080"},{"name":"TLS_ENABLED","valueFrom":{"configMapKeyRef":{"key":"tls.enabled","name":"mcp-git-s3-config"}}},{"name":"LOG_LEVEL","valueFrom":{"configMapKeyRef":{"key":"log.level","name":"mcp-git-s3-config"}}},{"name":"JGIT_CACHE_LIMIT","valueFrom":{"configMapKeyRef":{"key":"jgit.cache.limit","name":"mcp-git-s3-config"}}},{"name":"JGIT_PARALLEL_THREADS","valueFrom":{"configMapKeyRef":{"key":"jgit.parallel.threads","name":"mcp-git-s3-config"}}},{"name":"TRANSPORT","valueFrom":{"configMapKeyRef":{"key":"TRANSPORT","name":"mcp-git-s3-config"}}},{"name":"PORT","valueFrom":{"configMapKeyRef":{"key":"PORT","name":"mcp-git-s3-config"}}},{"name":"GIT_USERNAME","valueFrom":{"configMapKeyRef":{"key":"GIT_USERNAME","name":"mcp-git-s3-config"}}},{"name":"GIT_PASSWORD","valueFrom":{"secretKeyRef":{"key":"GIT_PASSWORD_SECRET","name":"git-password-secret-agents"}}},{"name":"GITHUB_APP_ID","value":"4398"},{"name":"GITHUB_APP_INSTALLATION_ID","value":"35446"},{"name":"GITHUB_APP_ENABLED","value":"true"},{"name":"GITHUB_API_URL","value":"https://github.ibm.com/api/v3"},{"name":"USE_SESSION_ID_PREFIX","value":"false"},{"name":"STRIP_LEADING_SLASH","value":"false"},{"name":"GITHUB_ENTERPRISE_URL","value":"https://github.ibm.com"},{"name":"GITHUB_APP_PRIVATE_KEY","valueFrom":{"secretKeyRef":{"key":"GITHUB_APP_PRIVATE_KEY","name":"github-app-secrets"}}}],"image":"icr.io/mjc-cr/go-mcp-git-s3:1.0.23","imagePullPolicy":"Always","livenessProbe":{"failureThreshold":3,"httpGet":{"path":"/health","port":"http","scheme":"HTTP"},"initialDelaySeconds":60,"periodSeconds":30,"successThreshold":1,"timeoutSeconds":10},"name":"mcp-git-s3-server","ports":[{"containerPort":8080,"name":"http","protocol":"TCP"},{"containerPort":8443,"name":"https","protocol":"TCP"},{"containerPort":9090,"name":"metrics","protocol":"TCP"}],"readinessProbe":{"failureThreshold":3,"httpGet":{"path":"/health","port":"http","scheme":"HTTP"},"initialDelaySeconds":30,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":5},"resources":{"limits":{"cpu":"1","ephemeral-storage":"5Gi","memory":"512Mi"},"requests":{"cpu":"50m","ephemeral-storage":"500Mi","memory":"64Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":false,"runAsNonRoot":true,"runAsUser":1001},"startupProbe":{"failureThreshold":12,"httpGet":{"path":"/health","port":"http","scheme":"HTTP"},"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":5},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","volumeMounts":[{"mountPath":"/app/config/tls.properties","name":"tls-config","readOnly":true,"subPath":"tls.properties"},{"mountPath":"/app/tmp","name":"tmp-volume"},{"mountPath":"/app/logs","name":"logs-volume"}]}],"dnsPolicy":"ClusterFirst","imagePullSecrets":[{"name":"all-icr-io-mmjc"}],"nodeSelector":{"kubernetes.io/os":"linux"},"restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{"fsGroup":1001,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"serviceAccount":"mcp-git-s3-server","serviceAccountName":"mcp-git-s3-server","terminationGracePeriodSeconds":30,"tolerations":[{"effect":"NoSchedule","key":"performance","operator":"Equal","value":"optimized"}],"topologySpreadConstraints":[{"labelSelector":{"matchLabels":{"app":"mcp-git-s3-server","app.kubernetes.io/component":"api-server","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"mcp-git-s3-server","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":"0.0.1-SNAPSHOT"}},"maxSkew":1,"topologyKey":"topology.kubernetes.io/zone","whenUnsatisfiable":"ScheduleAnyway"}],"volumes":[{"configMap":{"defaultMode":420,"name":"mcp-git-s3-tls-config"},"name":"tls-config"},{"emptyDir":{"sizeLimit":"5Gi"},"name":"tmp-volume"},{"emptyDir":{"sizeLimit":"1Gi"},"name":"logs-volume"}]}}},"status":{"availableReplicas":1,"conditions":[{"lastTransitionTime":"2025-10-25T18:24:53Z","lastUpdateTime":"2025-10-25T18:24:53Z","message":"Deployment has minimum availability.","reason":"MinimumReplicasAvailable","status":"True","type":"Available"},{"lastTransitionTime":"2025-10-21T02:31:05Z","lastUpdateTime":"2025-10-26T23:54:27Z","message":"ReplicaSet \"mcp-git-s3-server-5996c47fc9\" has successfully progressed.","reason":"NewReplicaSetAvailable","status":"True","type":"Progressing"}],"observedGeneration":83,"readyReplicas":1,"replicas":1,"updatedReplicas":1}}
+  creationTimestamp: "2025-05-26T10:59:32Z"
+  generation: 95
+  labels:
+    app: mcp-git-s3-server
+    app.kubernetes.io/component: api-server
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: mcp-git-s3-server
+    app.kubernetes.io/part-of: mcp-platform
+    app.kubernetes.io/version: 0.0.1-SNAPSHOT
+    component: mcp-server
+    version: v1
+  name: mcp-git-s3-server
+  namespace: mmjc-dev
+  resourceVersion: "54471656"
+  uid: ecc87687-5bae-4455-b823-1a637fda76b8
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: mcp-git-s3-server
+      app.kubernetes.io/component: api-server
+      app.kubernetes.io/managed-by: kustomize
+      app.kubernetes.io/name: mcp-git-s3-server
+      app.kubernetes.io/part-of: mcp-platform
+      app.kubernetes.io/version: 0.0.1-SNAPSHOT
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        app.kubernetes.io/description: High-performance MCP Git-S3 Tools Server
+        app.kubernetes.io/documentation: https://github.com/your-org/java-mcp-tool-s3git
+        deployment.kubernetes.io/revision: "1"
+        kubectl.kubernetes.io/restartedAt: "2025-10-26T22:32:51-03:00"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      creationTimestamp: null
+      labels:
+        app: mcp-git-s3-server
+        app.kubernetes.io/component: api-server
+        app.kubernetes.io/managed-by: kustomize
+        app.kubernetes.io/name: mcp-git-s3-server
+        app.kubernetes.io/part-of: mcp-platform
+        app.kubernetes.io/version: 0.0.1-SNAPSHOT
+        component: mcp-server
+        version: v1
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - mcp-git-s3-server
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - env:
+        - name: GITHUB_APP_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: GITHUB_APP_PRIVATE_KEY
+              name: github-app-secrets
+        - name: S3_ENDPOINT_URL
+          valueFrom:
+            configMapKeyRef:
+              key: S3_ENDPOINT_URL
+              name: mcp-git-s3-config
+        - name: S3_REGION
+          valueFrom:
+            configMapKeyRef:
+              key: S3_REGION
+              name: mcp-git-s3-config
+        - name: S3_BUCKET
+          valueFrom:
+            configMapKeyRef:
+              key: S3_BUCKET
+              name: mcp-git-s3-config
+        - name: S3_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: S3_ACCESS_KEY
+              name: s3-access-key-tools
+        - name: S3_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: S3_SECRET_KEY
+              name: s3-secret-key-tools
+        - name: JAVA_OPTS
+          value: -Xms2g -Xmx6g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication
+            -XX:+OptimizeStringConcat -XX:+UseCompressedOops -Djava.awt.headless=true
+            -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom
+        - name: JCLOUDS_MPU_PARTS_SIZE
+          valueFrom:
+            configMapKeyRef:
+              key: jclouds.mpu.parts.size
+              name: mcp-git-s3-config
+        - name: JCLOUDS_MAX_CONNECTIONS
+          valueFrom:
+            configMapKeyRef:
+              key: jclouds.max.connections
+              name: mcp-git-s3-config
+        - name: GIT_PARALLEL_THREADS
+          valueFrom:
+            configMapKeyRef:
+              key: git.parallel.threads
+              name: mcp-git-s3-config
+        - name: CACHE_SIZE
+          valueFrom:
+            configMapKeyRef:
+              key: cache.size
+              name: mcp-git-s3-config
+        - name: SERVER_PORT
+          value: "8080"
+        - name: TLS_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              key: tls.enabled
+              name: mcp-git-s3-config
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              key: log.level
+              name: mcp-git-s3-config
+        - name: JGIT_CACHE_LIMIT
+          valueFrom:
+            configMapKeyRef:
+              key: jgit.cache.limit
+              name: mcp-git-s3-config
+        - name: JGIT_PARALLEL_THREADS
+          valueFrom:
+            configMapKeyRef:
+              key: jgit.parallel.threads
+              name: mcp-git-s3-config
+        - name: TRANSPORT
+          valueFrom:
+            configMapKeyRef:
+              key: TRANSPORT
+              name: mcp-git-s3-config
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              key: PORT
+              name: mcp-git-s3-config
+        - name: GIT_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              key: GIT_USERNAME
+              name: mcp-git-s3-config
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: GIT_PASSWORD_SECRET
+              name: git-password-secret-agents
+        - name: GITHUB_APP_ID
+          value: "4398"
+        - name: GITHUB_APP_ENABLED
+          value: "true"
+        - name: GITHUB_API_URL
+          value: https://github.ibm.com/api/v3
+        - name: USE_SESSION_ID_PREFIX
+          value: "false"
+        - name: STRIP_LEADING_SLASH
+          value: "false"
+        - name: GITHUB_ENTERPRISE_URL
+          value: https://github.ibm.com
+        image: icr.io/mjc-cr/go-mcp-git-s3:1.0.31
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 10
+        name: mcp-git-s3-server
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        - containerPort: 9090
+          name: metrics
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: "1"
+            ephemeral-storage: 5Gi
+            memory: 512Mi
+          requests:
+            cpu: 50m
+            ephemeral-storage: 500Mi
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          runAsUser: 1001
+        startupProbe:
+          failureThreshold: 12
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 5
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /app/config/tls.properties
+          name: tls-config
+          readOnly: true
+          subPath: tls.properties
+        - mountPath: /app/tmp
+          name: tmp-volume
+        - mountPath: /app/logs
+          name: logs-volume
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: all-icr-io-mmjc
+      nodeSelector:
+        kubernetes.io/os: linux
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1001
+        runAsGroup: 1001
+        runAsNonRoot: true
+        runAsUser: 1001
+      serviceAccount: mcp-git-s3-server
+      serviceAccountName: mcp-git-s3-server
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - effect: NoSchedule
+        key: performance
+        operator: Equal
+        value: optimized
+      topologySpreadConstraints:
+      - labelSelector:
+          matchLabels:
+            app: mcp-git-s3-server
+            app.kubernetes.io/component: api-server
+            app.kubernetes.io/managed-by: kustomize
+            app.kubernetes.io/name: mcp-git-s3-server
+            app.kubernetes.io/part-of: mcp-platform
+            app.kubernetes.io/version: 0.0.1-SNAPSHOT
+        maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: mcp-git-s3-tls-config
+        name: tls-config
+      - emptyDir:
+          sizeLimit: 5Gi
+        name: tmp-volume
+      - emptyDir:
+          sizeLimit: 1Gi
+        name: logs-volume
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-10-21T02:31:05Z"
+    lastUpdateTime: "2025-10-28T14:43:06Z"
+    message: ReplicaSet "mcp-git-s3-server-6f4f455bcf" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: "2025-10-29T07:50:21Z"
+    lastUpdateTime: "2025-10-29T07:50:21Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  observedGeneration: 95
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

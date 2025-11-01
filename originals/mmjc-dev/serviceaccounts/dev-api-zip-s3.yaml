@@ -1,0 +1,20 @@
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","automountServiceAccountToken":true,"kind":"ServiceAccount","metadata":{"annotations":{},"labels":{"app":"api-zip-s3","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"api-zip-s3","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":"dev","component":"rbac","environment":"mmjc-dev"},"name":"dev-api-zip-s3","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-10-27T06:32:10Z"
+  labels:
+    app: api-zip-s3
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: api-zip-s3
+    app.kubernetes.io/part-of: mcp-platform
+    app.kubernetes.io/version: dev
+    component: rbac
+    environment: mmjc-dev
+  name: dev-api-zip-s3
+  namespace: mmjc-dev
+  resourceVersion: "53774088"
+  uid: d66a630e-9748-409e-ae78-9fa5eaf2fc9e

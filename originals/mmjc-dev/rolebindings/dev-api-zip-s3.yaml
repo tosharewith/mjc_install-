@@ -1,0 +1,27 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"RoleBinding","metadata":{"annotations":{},"labels":{"app":"api-zip-s3","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"api-zip-s3","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":"dev","component":"rbac","environment":"mmjc-dev"},"name":"dev-api-zip-s3","namespace":"mmjc-dev"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"Role","name":"dev-api-zip-s3"},"subjects":[{"kind":"ServiceAccount","name":"dev-api-zip-s3","namespace":"mmjc-dev"}]}
+  creationTimestamp: "2025-10-27T06:32:12Z"
+  labels:
+    app: api-zip-s3
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: api-zip-s3
+    app.kubernetes.io/part-of: mcp-platform
+    app.kubernetes.io/version: dev
+    component: rbac
+    environment: mmjc-dev
+  name: dev-api-zip-s3
+  namespace: mmjc-dev
+  resourceVersion: "53774092"
+  uid: c077f979-1c7c-4174-ba5c-0d97ff6b9fc3
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: dev-api-zip-s3
+subjects:
+- kind: ServiceAccount
+  name: dev-api-zip-s3
+  namespace: mmjc-dev

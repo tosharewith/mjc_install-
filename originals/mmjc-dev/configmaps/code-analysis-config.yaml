@@ -1,0 +1,53 @@
+apiVersion: v1
+data:
+  ANALYSIS_MAX_FILE_SIZE: "10485760"
+  ANALYSIS_PARALLEL_WORKERS: "4"
+  ANALYSIS_TIMEOUT: "3600"
+  AUTO_DETECT_LANGUAGES: "true"
+  CACHE_CLEANUP_INTERVAL: "300"
+  CACHE_SIZE: "10000"
+  CACHE_TTL: "1800"
+  CODEQL_DATABASE_PATH: codeql-databases/
+  CODEQL_ENABLE_REUSE: "true"
+  CODEQL_QUERY_TIMEOUT: "600"
+  ENABLE_BINDING_ANALYSIS: "true"
+  ENABLE_DATABASE_REUSE: "true"
+  ENABLE_REALTIME_QUERY: "true"
+  ENABLE_STORED_PROCEDURES: "true"
+  LOG_FORMAT: json
+  LOG_LEVEL: DEBUG
+  MAX_LANGUAGES_PER_PROJECT: "10"
+  METRICS_PORT: "9090"
+  MINIO_ENDPOINT: http://minio:9000
+  MINIO_REGION: us-east-1
+  QUERY_MAX_RESULTS: "10000"
+  QUERY_TIMEOUT: "300"
+  RUST_BACKTRACE: "1"
+  RUST_LOG: debug
+  S3_BUCKET: code-analysis-results-dev
+  S3_BUCKET_INPUT: code-analysis-source-dev
+  S3_ENDPOINT_URL: https://s3.direct.us-south.cloud-object-storage.appdomain.cloud
+  S3_MAX_CONNECTIONS: "50"
+  S3_MAX_RETRIES: "3"
+  S3_MULTIPART_SIZE: "33554432"
+  S3_REGION: us-south
+  S3_TIMEOUT: "300"
+  S3_UPLOAD_WORKERS: "10"
+  SERVER_PORT: "8080"
+  USE_INTERNAL_STORAGE: "false"
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"ANALYSIS_MAX_FILE_SIZE":"10485760","ANALYSIS_PARALLEL_WORKERS":"4","ANALYSIS_TIMEOUT":"3600","AUTO_DETECT_LANGUAGES":"true","CACHE_CLEANUP_INTERVAL":"300","CACHE_SIZE":"10000","CACHE_TTL":"1800","CODEQL_DATABASE_PATH":"codeql-databases/","CODEQL_ENABLE_REUSE":"true","CODEQL_QUERY_TIMEOUT":"600","ENABLE_BINDING_ANALYSIS":"true","ENABLE_DATABASE_REUSE":"true","ENABLE_REALTIME_QUERY":"true","ENABLE_STORED_PROCEDURES":"true","LOG_FORMAT":"json","LOG_LEVEL":"DEBUG","MAX_LANGUAGES_PER_PROJECT":"10","METRICS_PORT":"9090","MINIO_ENDPOINT":"http://minio:9000","MINIO_REGION":"us-east-1","QUERY_MAX_RESULTS":"10000","QUERY_TIMEOUT":"300","RUST_BACKTRACE":"1","RUST_LOG":"debug","S3_BUCKET":"code-analysis-results-dev","S3_BUCKET_INPUT":"code-analysis-source-dev","S3_ENDPOINT_URL":"https://s3.direct.us-south.cloud-object-storage.appdomain.cloud","S3_MAX_CONNECTIONS":"50","S3_MAX_RETRIES":"3","S3_MULTIPART_SIZE":"33554432","S3_REGION":"us-south","S3_TIMEOUT":"300","S3_UPLOAD_WORKERS":"10","SERVER_PORT":"8080","USE_INTERNAL_STORAGE":"false"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app":"code-analysis-api","app.kubernetes.io/version":"dev","component":"config","environment":"dev","managed-by":"kustomize"},"name":"code-analysis-config","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-10-30T05:14:59Z"
+  labels:
+    app: code-analysis-api
+    app.kubernetes.io/version: dev
+    component: config
+    environment: dev
+    managed-by: kustomize
+  name: code-analysis-config
+  namespace: mmjc-dev
+  resourceVersion: "54772395"
+  uid: f689746b-6a37-4c0b-8ff0-9b364f6aa384

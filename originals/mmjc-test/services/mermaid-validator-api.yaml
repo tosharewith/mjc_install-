@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"mermaid-validator-api","environment":"test","managed-by":"kustomize"},"name":"mermaid-validator-api","namespace":"mmjc-test"},"spec":{"ports":[{"name":"http","port":80,"protocol":"TCP","targetPort":8000}],"selector":{"app":"mermaid-validator-api","environment":"test","managed-by":"kustomize"},"type":"ClusterIP"}}
+  creationTimestamp: "2025-09-12T03:37:07Z"
+  labels:
+    app: mermaid-validator-api
+    environment: test
+    managed-by: kustomize
+  name: mermaid-validator-api
+  namespace: mmjc-test
+  resourceVersion: "37429248"
+  uid: 5a3d558e-c848-47d2-9c57-cd2631b846a2
+spec:
+  clusterIP: 172.21.129.117
+  clusterIPs:
+  - 172.21.129.117
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: mermaid-validator-api
+    environment: test
+    managed-by: kustomize
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

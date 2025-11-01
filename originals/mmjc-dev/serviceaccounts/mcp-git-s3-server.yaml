@@ -1,0 +1,23 @@
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
+  annotations:
+    app.kubernetes.io/description: High-performance MCP Git-S3 Tools Server
+    app.kubernetes.io/documentation: https://github.com/your-org/java-mcp-tool-s3git
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","automountServiceAccountToken":true,"kind":"ServiceAccount","metadata":{"annotations":{"app.kubernetes.io/description":"High-performance MCP Git-S3 Tools Server","app.kubernetes.io/documentation":"https://github.com/your-org/java-mcp-tool-s3git","deployment.kubernetes.io/revision":"1"},"labels":{"app":"mcp-git-s3-server","app.kubernetes.io/component":"api-server","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"mcp-git-s3-server","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":"0.0.1-SNAPSHOT","component":"rbac"},"name":"mcp-git-s3-server","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-05-26T10:59:26Z"
+  labels:
+    app: mcp-git-s3-server
+    app.kubernetes.io/component: api-server
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: mcp-git-s3-server
+    app.kubernetes.io/part-of: mcp-platform
+    app.kubernetes.io/version: 0.0.1-SNAPSHOT
+    component: rbac
+  name: mcp-git-s3-server
+  namespace: mmjc-dev
+  resourceVersion: "5884685"
+  uid: d915f5e7-26ce-4f19-aa41-c22d32444f2c

@@ -1,0 +1,20 @@
+apiVersion: v1
+data:
+  custom_result_map.yaml: "# Custom Result Mapping Configuration\n# Simple approach:
+    Create full ZIP with ALL content, then duplicate key files separately\n# Key files
+    are uploaded to custom_results/ folder for convenient access\n\n# Essential files
+    to duplicate (everything else stays only in ZIP)\ncustom_results:\n  # COBOL analysis
+    results - most frequently accessed\n  - \"cobol/99-results/**\"\n  \n  # Variable
+    listings and data mappings\n  - \"variablelist/**\"\n  \n  # General analysis
+    summary\n  - \"general/99-results/**\"\n  \n  # Logs for troubleshooting\n  -
+    \"log/*.log\"\n"
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"custom_result_map.yaml":"# Custom Result Mapping Configuration\n# Simple approach: Create full ZIP with ALL content, then duplicate key files separately\n# Key files are uploaded to custom_results/ folder for convenient access\n\n# Essential files to duplicate (everything else stays only in ZIP)\ncustom_results:\n  # COBOL analysis results - most frequently accessed\n  - \"cobol/99-results/**\"\n  \n  # Variable listings and data mappings\n  - \"variablelist/**\"\n  \n  # General analysis summary\n  - \"general/99-results/**\"\n  \n  # Logs for troubleshooting\n  - \"log/*.log\"\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"mcp-arc-s3-custom-result-config","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-06-26T14:11:25Z"
+  name: mcp-arc-s3-custom-result-config
+  namespace: mmjc-dev
+  resourceVersion: "13188466"
+  uid: 62ee9a72-f401-427e-8333-7f283f3e1126

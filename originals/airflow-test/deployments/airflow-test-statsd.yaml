@@ -1,0 +1,126 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "14"
+    meta.helm.sh/release-name: airflow-test
+    meta.helm.sh/release-namespace: airflow-test
+  creationTimestamp: "2025-07-14T10:31:39Z"
+  generation: 14
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    chart: airflow-1.17.0
+    component: statsd
+    heritage: Helm
+    release: airflow-test
+    tier: airflow
+  name: airflow-test-statsd
+  namespace: airflow-test
+  resourceVersion: "27520383"
+  uid: e9e8effb-1a9d-4832-bba5-25b9acb798bf
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      component: statsd
+      release: airflow-test
+      tier: airflow
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-08-14T15:32:15+03:00"
+      creationTimestamp: null
+      labels:
+        component: statsd
+        release: airflow-test
+        tier: airflow
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - --statsd.mapping-config=/etc/statsd-exporter/mappings.yml
+        image: quay.io/prometheus/statsd-exporter:v0.28.0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /metrics
+            port: 9102
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: statsd
+        ports:
+        - containerPort: 9125
+          name: statsd-ingest
+          protocol: UDP
+        - containerPort: 9102
+          name: statsd-scrape
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /metrics
+            port: 9102
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/statsd-exporter/mappings.yml
+          name: config
+          subPath: mappings.yml
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: all-icr-io-mmjc
+      nodeSelector:
+        ibm-cloud.kubernetes.io/worker-pool-name: airflow-pool
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        runAsUser: 65534
+      serviceAccount: airflow-test-statsd
+      serviceAccountName: airflow-test-statsd
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: airflow-test-statsd
+        name: config
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-07-14T10:31:59Z"
+    lastUpdateTime: "2025-07-14T10:31:59Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2025-07-14T10:31:39Z"
+    lastUpdateTime: "2025-08-14T12:32:37Z"
+    message: ReplicaSet "airflow-test-statsd-7c4df86df5" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 14
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

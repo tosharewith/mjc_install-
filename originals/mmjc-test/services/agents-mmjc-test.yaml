@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"agents-mmjc-test","namespace":"mmjc-test"},"spec":{"ports":[{"name":"http-agents","port":80,"protocol":"TCP","targetPort":"agents"}],"selector":{"app":"agents-mmjc"}}}
+  creationTimestamp: "2025-06-16T12:53:44Z"
+  name: agents-mmjc-test
+  namespace: mmjc-test
+  resourceVersion: "10740494"
+  uid: c864585a-e903-4967-80dc-c57113f50434
+spec:
+  clusterIP: 172.21.79.128
+  clusterIPs:
+  - 172.21.79.128
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http-agents
+    port: 80
+    protocol: TCP
+    targetPort: agents
+  selector:
+    app: agents-mmjc
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

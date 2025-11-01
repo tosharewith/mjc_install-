@@ -1,0 +1,21 @@
+# ⚠️  WARNING: This is a TEMPLATE - NOT for production use
+# All sensitive data has been replaced with placeholders
+# Replace all <REPLACE_WITH_BASE64_ENCODED_*> values before applying
+#
+# Original: mmjc-dev/secrets/sh.helm.release.v1.milvus-mmjc-dev.v1.yaml
+# Templated: Fri Oct 31 21:15:04 -03 2025
+#
+apiVersion: v1
+data:
+  release: <REPLACE_WITH_BASE64_ENCODED_RELEASE>
+kind: Secret
+metadata:
+  labels:
+    modifiedAt: "1753946334"
+    name: milvus-mmjc-dev
+    owner: helm
+    status: deployed
+    version: "1"
+  name: sh.helm.release.v1.milvus-mmjc-dev.v1
+  namespace: mmjc-dev
+type: helm.sh/release.v1

@@ -1,0 +1,31 @@
+apiVersion: v1
+data:
+  root-cert.pem: |
+    -----BEGIN CERTIFICATE-----
+    MIIC/TCCAeWgAwIBAgIRAJKr1OJrYbuQ/ftZRLL9ARUwDQYJKoZIhvcNAQELBQAw
+    GDEWMBQGA1UEChMNY2x1c3Rlci5sb2NhbDAeFw0yNTA0MzAxMzMyNDlaFw0zNTA0
+    MjgxMzMyNDlaMBgxFjAUBgNVBAoTDWNsdXN0ZXIubG9jYWwwggEiMA0GCSqGSIb3
+    DQEBAQUAA4IBDwAwggEKAoIBAQC1eRGWaCu2d4pR3fS+WHCfETxmjo8Bwx3aPBQK
+    wrzBDA4j9SKmuZDyGs8snzPiBvXAhHloMzRlXvmXhxGeqGX3LmZhW1vi51Z5vJ2M
+    Io2zWAXY/BRz+/fNRVZZqDI7w7rhrnMRaNDisTKa58QrNOapzHCfMuZ5u5I5fEd8
+    2vaA+GFX3jz/h3aTjPcbxr8b+6cPdSIdI/5SwswLPmDRZ1BdjaYpReGsWpSUI1LC
+    +WkUCMTjaEOoy6LEJwAQqGIQWSocMMzVruZ4NFL0XzN9ZvIeX/IHMzflhPyKUd89
+    WTZPS/NtJeJ1R8+GDpXwTXhcpgL80KbmWWmwwexwSWdD+pILAgMBAAGjQjBAMA4G
+    A1UdDwEB/wQEAwICBDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBQxq46/uC4l
+    spDoptwtXNqVf3bMUDANBgkqhkiG9w0BAQsFAAOCAQEAIOMMjGz7HZVDhdo90Mx9
+    LEkoG8uX1SVesVxf0S7jsrWXWRJhTkdsNxwZQ068rwgZPRIuY1c5jgxwLZsqW0Yh
+    7I9fabSnI5iVK6C0Hi418aWasegZVJd/DmIHMOxpCLenvN8m/QJ2leO06y93sgu4
+    p9hZIcP6dY4zib+OVNkjm2VloZc9X3tgPhJh1zlID4PGDmcAMeY34WhG2YqiKx2V
+    x+JishWZ9Hqsr/TCIqm5qEwFxTEW4SXCax5ykRAGtvI+Y/scS1arsc+pT2Kqr3Q7
+    8CQ00tpkKFExAVDIYhSuOgx7vtnCmnhi9P+b8Ds3gSVxmzpZmkJg7vWMg8hedpBy
+    SQ==
+    -----END CERTIFICATE-----
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2025-07-14T08:50:28Z"
+  labels:
+    istio.io/config: "true"
+  name: istio-ca-root-cert
+  namespace: airflow-test
+  resourceVersion: "17774122"
+  uid: 77997870-8c30-4738-a8e7-ca42fb0a86b2

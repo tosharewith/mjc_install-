@@ -1,0 +1,37 @@
+apiVersion: v1
+data:
+  KEEP_ALIVE_TIMEOUT: "30000"
+  LOG_LEVEL: debug
+  MAX_CONNECTIONS: "2000"
+  MAX_DIAGRAM_CONTENT_LENGTH: "1048576"
+  MAX_DIAGRAMS_PER_FILE: "-1"
+  MAX_FILE_SIZE: "104857600"
+  MAX_FILENAME_LENGTH: "-1"
+  MAX_FILES: "100000"
+  MAX_HEADERS_COUNT: "4000"
+  MAX_REQUEST_SIZE: "0"
+  MAX_TIMEOUT_MS: "-1"
+  MAX_TOTAL_DIAGRAMS: "-1"
+  MERMAID_MAX_EDGES: "-1"
+  MERMAID_MAX_TEXT_SIZE: "1048576"
+  MERMAID_MAX_VERTICES: "-1"
+  NODE_ENV: development
+  PORT: "8000"
+  RATE_LIMIT_MAX_REQUESTS: "-1"
+  RATE_LIMIT_WINDOW_MS: "-1"
+  SERVER_TIMEOUT: "60000"
+  VALIDATION_TIMEOUT: "300000"
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"LOG_LEVEL":"info","NODE_ENV":"production","PORT":"8000"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app":"mermaid-validator-api","environment":"dev","managed-by":"kustomize"},"name":"mermaid-validator-api-config","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-09-11T07:07:40Z"
+  labels:
+    app: mermaid-validator-api
+    environment: dev
+    managed-by: kustomize
+  name: mermaid-validator-api-config
+  namespace: mmjc-dev
+  resourceVersion: "40122050"
+  uid: 97b536d5-4b3e-482d-8579-7780060805d1

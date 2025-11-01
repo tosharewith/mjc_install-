@@ -1,0 +1,19 @@
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
+  annotations:
+    meta.helm.sh/release-name: airflow-test
+    meta.helm.sh/release-namespace: airflow-test
+  creationTimestamp: "2025-07-14T10:31:37Z"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    chart: airflow-1.17.0
+    component: create-user-job
+    heritage: Helm
+    release: airflow-test
+    tier: airflow
+  name: airflow-test-create-user-job
+  namespace: airflow-test
+  resourceVersion: "17792632"
+  uid: b7143f4a-731d-4b64-af66-0b632e210f8c

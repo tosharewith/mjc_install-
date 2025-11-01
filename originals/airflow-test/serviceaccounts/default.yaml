@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2025-07-14T08:50:29Z"
+  name: default
+  namespace: airflow-test
+  resourceVersion: "17774124"
+  uid: 714d1866-bee7-46bc-ab7c-e1aadf67bd07

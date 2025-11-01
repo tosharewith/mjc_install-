@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"mcp-milvus-db-test","namespace":"mmjc-test"},"spec":{"ports":[{"name":"http-mcp-milvus-db","port":8903,"protocol":"TCP","targetPort":"mcp-milvus"}],"selector":{"app":"mcp-milvus-db"}}}
+  creationTimestamp: "2025-08-28T07:24:28Z"
+  name: mcp-milvus-db-test
+  namespace: mmjc-test
+  resourceVersion: "32285830"
+  uid: 1f883742-d578-41e6-85a3-e6f4e43e6269
+spec:
+  clusterIP: 172.21.54.21
+  clusterIPs:
+  - 172.21.54.21
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http-mcp-milvus-db
+    port: 8903
+    protocol: TCP
+    targetPort: mcp-milvus
+  selector:
+    app: mcp-milvus-db
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

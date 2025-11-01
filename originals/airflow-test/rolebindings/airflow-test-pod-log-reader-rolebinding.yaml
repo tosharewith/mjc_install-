@@ -1,0 +1,28 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    meta.helm.sh/release-name: airflow-test
+    meta.helm.sh/release-namespace: airflow-test
+  creationTimestamp: "2025-07-14T10:31:38Z"
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    chart: airflow-1.17.0
+    heritage: Helm
+    release: airflow-test
+    tier: airflow
+  name: airflow-test-pod-log-reader-rolebinding
+  namespace: airflow-test
+  resourceVersion: "17792647"
+  uid: 04b47fcc-0a1d-4a1c-960e-4eb4b8d3e82d
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: airflow-test-pod-log-reader-role
+subjects:
+- kind: ServiceAccount
+  name: airflow-test-api-server
+  namespace: airflow-test
+- kind: ServiceAccount
+  name: airflow-test-triggerer
+  namespace: airflow-test

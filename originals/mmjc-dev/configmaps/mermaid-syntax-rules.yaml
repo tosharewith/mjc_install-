@@ -1,0 +1,219 @@
+apiVersion: v1
+data:
+  classDiagram.txt: |
+    MERMAID CLASS DIAGRAM SYNTAX RULES:
+
+    DECLARATION:
+    - Start with: classDiagram
+
+    CLASS DEFINITION:
+    - class ClassName {
+    -   +attribute: type
+    -   -method(): returnType
+    - }
+
+    VISIBILITY:
+    - + = Public
+    - - = Private
+    - # = Protected
+    - ~ = Package/Internal
+
+    RELATIONSHIPS:
+    - <|-- = Inheritance
+    - *-- = Composition
+    - o-- = Aggregation
+    - --> = Association
+    - ..> = Dependency
+    - ..|> = Realization
+
+    METHOD SYNTAX:
+    - method(param: type): returnType
+    - +publicMethod(): void
+    - -privateMethod(param: string): int
+
+    COMMON ISSUES:
+    - Missing visibility modifiers
+    - Invalid class names with spaces or hyphens
+    - Malformed method signatures
+    - Incorrect relationship arrows
+
+    FIX REQUIREMENTS:
+    1. Use valid class names (PascalCase recommended)
+    2. Include visibility modifiers for all members
+    3. Use proper relationship arrow syntax
+    4. Follow method signature format exactly
+  erDiagram.txt: |
+    MERMAID ER DIAGRAM SYNTAX RULES:
+
+    DECLARATION:
+    - Start with: erDiagram
+
+    ENTITY SYNTAX:
+    - Format: ENTITY_NAME { datatype column_name constraints }
+    - Entity names: ALL_CAPS with underscores only
+    - Column names: lowercase_with_underscores
+    - Data types: string, int, boolean, date, decimal, etc.
+
+    DATA TYPE RESTRICTIONS:
+    - CANNOT use parentheses in data types: DECIMAL(10,2) is INVALID
+    - CANNOT use commas in any context within entity blocks
+    - USE simple types only: decimal, int, string, date, boolean
+    - WHY: Mermaid parser treats commas as separators, parentheses as syntax errors
+
+    CORRECT DATA TYPE EXAMPLES:
+    ✅ decimal SUM_ASSURED
+    ✅ int customer_id PK
+    ✅ string email_address UK
+    ❌ DECIMAL(10,2) SUM_ASSURED (contains comma and parentheses)
+    ❌ VARCHAR(255) name (contains parentheses)
+    ❌ FLOAT(8,2) rate (contains comma and parentheses)
+
+    RELATIONSHIPS:
+    - ||--|| = One to one
+    - ||--o{ = One to many
+    - o{--o{ = Many to many
+    - ||--o| = One to zero or one
+    - }o--|| = Zero or more to one
+    - Format: ENTITY1 ||--o{ ENTITY2 : "relationship_label"
+
+    CONSTRAINTS:
+    - PK = Primary Key
+    - FK = Foreign Key
+    - UK = Unique Key
+    - Place after column name: column_name datatype PK
+
+    COMMON ISSUES:
+    - Invalid entity names with hyphens or spaces
+    - Missing quotes around relationship labels
+    - Invalid data type syntax with commas/parentheses: DECIMAL(10,2) should be decimal
+    - Malformed relationship syntax
+
+    FIX REQUIREMENTS:
+    1. Use valid entity and column naming (underscores only)
+    2. Quote all relationship labels
+    3. Use simple data types without parentheses or commas
+    4. Use proper cardinality notation
+    5. Follow entity block syntax exactly
+  flowchart.txt: |
+    MERMAID FLOWCHART SYNTAX RULES:
+
+    DECLARATION:
+    - Start with: flowchart TD (or LR, BT, RL for direction)
+    - Alternative: graph TD (legacy syntax)
+
+    NODE SHAPES:
+    - [text] = Rectangle (default process)
+    - ([text]) = Stadium/Pill (start/end points)
+    - {text} = Rhombus/Diamond (decision points)
+    - [(text)] = Database (data storage)
+    - [[text]] = Subroutine (function calls)
+    - ((text)) = Circle (connectors)
+    - [/text/] = Parallelogram (input/output)
+
+    ARROWS:
+    - --> = Standard arrow
+    - -.-> = Dotted arrow
+    - ==> = Thick arrow
+    - --x = Arrow with cross
+    - -->|text| = Labeled arrow
+
+    SUBGRAPHS:
+    - subgraph title
+    -   content
+    - end
+
+    STYLING:
+    - style NodeID fill:#color,stroke:#border,color:#text
+
+    COMMON ISSUES:
+    - Invalid node IDs starting with numbers or containing hyphens
+    - Unquoted text with spaces or special characters
+    - Missing arrow labels for decision branches
+    - Unclosed subgraph blocks
+
+    FIX REQUIREMENTS:
+    1. Use valid node identifiers (letters, numbers, underscores)
+    2. Quote text with spaces: ["text with spaces"]
+    3. Label all decision branches clearly
+    4. Close all subgraph blocks with 'end'
+  general.txt: |
+    GENERAL MERMAID SYNTAX RULES:
+
+    NODE IDENTIFIERS:
+    - Must start with a letter (A-Z, a-z)
+    - Can contain letters, numbers, and underscores only
+    - Cannot contain spaces, hyphens, periods, or special characters
+    - Are case-sensitive (A and a are different)
+    - Examples: A, Node1, Process_2, START
+
+    TEXT CONTENT:
+    - Always use quotes for text with spaces or special characters
+    - Use ["text"] format for complex strings
+    - Escape quotes inside text with backslash
+    - Use <br/> for line breaks, never literal breaks
+    - Support HTML entities: &lt;, &gt;, &amp;
+
+    CONNECTIONS:
+    - Use standard arrow syntax for connections
+    - Label decision branches clearly
+    - Ensure all nodes are properly connected
+    - No orphaned or unreachable nodes
+
+    COMMON FIXES:
+    - Replace invalid characters in node IDs with underscores
+    - Quote all text containing spaces or special characters
+    - Replace \n or literal line breaks with <br/> tags
+    - Fix malformed arrow and connection syntax
+  sequenceDiagram.txt: |
+    MERMAID SEQUENCE DIAGRAM SYNTAX RULES:
+
+    DECLARATION:
+    - Start with: sequenceDiagram
+
+    PARTICIPANTS:
+    - Define: participant A as Actor
+    - Use meaningful aliases for clarity
+
+    ARROWS:
+    - ->> = Synchronous message
+    - -->> = Return/Response message
+    - -x = Lost message
+    - -) = Async message
+    - ->>+ = Activate lifeline
+    - ->>- = Deactivate lifeline
+
+    NOTES:
+    - Note over A: Comment text
+    - Note left of A: Left-side note
+    - Note right of A: Right-side note
+
+    BLOCKS:
+    - alt/else/end = Alternative flows
+    - loop/end = Iteration blocks
+    - par/and/end = Parallel execution
+    - opt/end = Optional execution
+
+    COMMON ISSUES:
+    - Missing participant definitions
+    - Invalid arrow syntax (single dash instead of double)
+    - Unclosed alt/loop/par blocks
+    - Invalid participant names with spaces
+
+    FIX REQUIREMENTS:
+    1. Define all participants before first message
+    2. Use proper arrow syntax (->> not ->)
+    3. Close all blocks with appropriate end keyword
+    4. Use valid participant identifiers
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"classDiagram.txt":"MERMAID CLASS DIAGRAM SYNTAX RULES:\n\nDECLARATION:\n- Start with: classDiagram\n\nCLASS DEFINITION:\n- class ClassName {\n-   +attribute: type\n-   -method(): returnType\n- }\n\nVISIBILITY:\n- + = Public\n- - = Private\n- # = Protected\n- ~ = Package/Internal\n\nRELATIONSHIPS:\n- \u003c|-- = Inheritance\n- *-- = Composition\n- o-- = Aggregation\n- --\u003e = Association\n- ..\u003e = Dependency\n- ..|\u003e = Realization\n\nMETHOD SYNTAX:\n- method(param: type): returnType\n- +publicMethod(): void\n- -privateMethod(param: string): int\n\nCOMMON ISSUES:\n- Missing visibility modifiers\n- Invalid class names with spaces or hyphens\n- Malformed method signatures\n- Incorrect relationship arrows\n\nFIX REQUIREMENTS:\n1. Use valid class names (PascalCase recommended)\n2. Include visibility modifiers for all members\n3. Use proper relationship arrow syntax\n4. Follow method signature format exactly\n","erDiagram.txt":"MERMAID ER DIAGRAM SYNTAX RULES:\n\nDECLARATION:\n- Start with: erDiagram\n\nENTITY SYNTAX:\n- Format: ENTITY_NAME { datatype column_name constraints }\n- Entity names: ALL_CAPS with underscores only\n- Column names: lowercase_with_underscores\n- Data types: string, int, boolean, date, decimal, etc.\n\nDATA TYPE RESTRICTIONS:\n- CANNOT use parentheses in data types: DECIMAL(10,2) is INVALID\n- CANNOT use commas in any context within entity blocks\n- USE simple types only: decimal, int, string, date, boolean\n- WHY: Mermaid parser treats commas as separators, parentheses as syntax errors\n\nCORRECT DATA TYPE EXAMPLES:\n✅ decimal SUM_ASSURED\n✅ int customer_id PK\n✅ string email_address UK\n❌ DECIMAL(10,2) SUM_ASSURED (contains comma and parentheses)\n❌ VARCHAR(255) name (contains parentheses)\n❌ FLOAT(8,2) rate (contains comma and parentheses)\n\nRELATIONSHIPS:\n- ||--|| = One to one\n- ||--o{ = One to many\n- o{--o{ = Many to many\n- ||--o| = One to zero or one\n- }o--|| = Zero or more to one\n- Format: ENTITY1 ||--o{ ENTITY2 : \"relationship_label\"\n\nCONSTRAINTS:\n- PK = Primary Key\n- FK = Foreign Key\n- UK = Unique Key\n- Place after column name: column_name datatype PK\n\nCOMMON ISSUES:\n- Invalid entity names with hyphens or spaces\n- Missing quotes around relationship labels\n- Invalid data type syntax with commas/parentheses: DECIMAL(10,2) should be decimal\n- Malformed relationship syntax\n\nFIX REQUIREMENTS:\n1. Use valid entity and column naming (underscores only)\n2. Quote all relationship labels\n3. Use simple data types without parentheses or commas\n4. Use proper cardinality notation\n5. Follow entity block syntax exactly\n","flowchart.txt":"MERMAID FLOWCHART SYNTAX RULES:\n\nDECLARATION:\n- Start with: flowchart TD (or LR, BT, RL for direction)\n- Alternative: graph TD (legacy syntax)\n\nNODE SHAPES:\n- [text] = Rectangle (default process)\n- ([text]) = Stadium/Pill (start/end points)\n- {text} = Rhombus/Diamond (decision points)\n- [(text)] = Database (data storage)\n- [[text]] = Subroutine (function calls)\n- ((text)) = Circle (connectors)\n- [/text/] = Parallelogram (input/output)\n\nARROWS:\n- --\u003e = Standard arrow\n- -.-\u003e = Dotted arrow\n- ==\u003e = Thick arrow\n- --x = Arrow with cross\n- --\u003e|text| = Labeled arrow\n\nSUBGRAPHS:\n- subgraph title\n-   content\n- end\n\nSTYLING:\n- style NodeID fill:#color,stroke:#border,color:#text\n\nCOMMON ISSUES:\n- Invalid node IDs starting with numbers or containing hyphens\n- Unquoted text with spaces or special characters\n- Missing arrow labels for decision branches\n- Unclosed subgraph blocks\n\nFIX REQUIREMENTS:\n1. Use valid node identifiers (letters, numbers, underscores)\n2. Quote text with spaces: [\"text with spaces\"]\n3. Label all decision branches clearly\n4. Close all subgraph blocks with 'end'\n","general.txt":"GENERAL MERMAID SYNTAX RULES:\n\nNODE IDENTIFIERS:\n- Must start with a letter (A-Z, a-z)\n- Can contain letters, numbers, and underscores only\n- Cannot contain spaces, hyphens, periods, or special characters\n- Are case-sensitive (A and a are different)\n- Examples: A, Node1, Process_2, START\n\nTEXT CONTENT:\n- Always use quotes for text with spaces or special characters\n- Use [\"text\"] format for complex strings\n- Escape quotes inside text with backslash\n- Use \u003cbr/\u003e for line breaks, never literal breaks\n- Support HTML entities: \u0026lt;, \u0026gt;, \u0026amp;\n\nCONNECTIONS:\n- Use standard arrow syntax for connections\n- Label decision branches clearly\n- Ensure all nodes are properly connected\n- No orphaned or unreachable nodes\n\nCOMMON FIXES:\n- Replace invalid characters in node IDs with underscores\n- Quote all text containing spaces or special characters\n- Replace \\n or literal line breaks with \u003cbr/\u003e tags\n- Fix malformed arrow and connection syntax\n","sequenceDiagram.txt":"MERMAID SEQUENCE DIAGRAM SYNTAX RULES:\n\nDECLARATION:\n- Start with: sequenceDiagram\n\nPARTICIPANTS:\n- Define: participant A as Actor\n- Use meaningful aliases for clarity\n\nARROWS:\n- -\u003e\u003e = Synchronous message\n- --\u003e\u003e = Return/Response message\n- -x = Lost message\n- -) = Async message\n- -\u003e\u003e+ = Activate lifeline\n- -\u003e\u003e- = Deactivate lifeline\n\nNOTES:\n- Note over A: Comment text\n- Note left of A: Left-side note\n- Note right of A: Right-side note\n\nBLOCKS:\n- alt/else/end = Alternative flows\n- loop/end = Iteration blocks\n- par/and/end = Parallel execution\n- opt/end = Optional execution\n\nCOMMON ISSUES:\n- Missing participant definitions\n- Invalid arrow syntax (single dash instead of double)\n- Unclosed alt/loop/par blocks\n- Invalid participant names with spaces\n\nFIX REQUIREMENTS:\n1. Define all participants before first message\n2. Use proper arrow syntax (-\u003e\u003e not -\u003e)\n3. Close all blocks with appropriate end keyword\n4. Use valid participant identifiers\n"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app":"mermaid-validator-api","component":"syntax-rules"},"name":"mermaid-syntax-rules","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-09-24T21:26:13Z"
+  labels:
+    app: mermaid-validator-api
+    component: syntax-rules
+  name: mermaid-syntax-rules
+  namespace: mmjc-dev
+  resourceVersion: "42016775"
+  uid: 39062db7-6f76-42bc-8e98-6174ffb231f0

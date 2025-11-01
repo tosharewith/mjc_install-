@@ -1,0 +1,10 @@
+apiVersion: v1
+imagePullSecrets:
+- name: ibmcloud-toolchain-1293e0b0-6ea9-43bf-84bb-6accaa9f3ada-us.icr.io
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2025-05-20T10:59:08Z"
+  name: default
+  namespace: mmjc-dev
+  resourceVersion: "14456833"
+  uid: 630f226b-6e16-4f8e-95e9-40ddd2f695ec

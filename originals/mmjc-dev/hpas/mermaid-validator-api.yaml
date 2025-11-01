@@ -1,0 +1,49 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  creationTimestamp: "2025-10-20T12:26:32Z"
+  name: mermaid-validator-api
+  namespace: mmjc-dev
+  resourceVersion: "55334662"
+  uid: fc46d8fd-b6ca-403c-8dad-d700419672ad
+spec:
+  maxReplicas: 3
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 80
+        type: Utilization
+    type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mermaid-validator-api
+status:
+  conditions:
+  - lastTransitionTime: "2025-10-20T12:26:47Z"
+    message: recommended size matches current size
+    reason: ReadyForNewScale
+    status: "True"
+    type: AbleToScale
+  - lastTransitionTime: "2025-10-26T12:25:17Z"
+    message: the HPA was able to successfully calculate a replica count from cpu resource
+      utilization (percentage of request)
+    reason: ValidMetricFound
+    status: "True"
+    type: ScalingActive
+  - lastTransitionTime: "2025-10-20T12:26:47Z"
+    message: the desired count is within the acceptable range
+    reason: DesiredWithinRange
+    status: "False"
+    type: ScalingLimited
+  currentMetrics:
+  - resource:
+      current:
+        averageUtilization: 1
+        averageValue: 4m
+      name: cpu
+    type: Resource
+  currentReplicas: 1
+  desiredReplicas: 1

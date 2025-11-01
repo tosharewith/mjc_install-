@@ -1,0 +1,119 @@
+apiVersion: v1
+data:
+  run_k8s_extraction.py: "#!/usr/bin/env python3\r\n\"\"\"\r\nRun ARC Extraction in
+    Kubernetes\r\n\r\nReads configuration from K8s ConfigMap and Secrets (via environment
+    variables)\r\n\"\"\"\r\n\r\nimport sys\r\nimport os\r\nimport yaml\r\nimport logging\r\nfrom
+    datetime import datetime\r\nfrom pathlib import Path\r\n\r\n# Set up logging\r\nlogging.basicConfig(\r\n
+    \   level=logging.INFO,\r\n    format='%(asctime)s - %(levelname)s - %(message)s',\r\n
+    \   handlers=[\r\n        logging.StreamHandler(sys.stdout)\r\n    ]\r\n)\r\n\r\nlogger
+    = logging.getLogger(__name__)\r\n\r\n# Add src to path\r\nsys.path.insert(0, '/app/src')\r\n\r\nfrom
+    arc_extractor.config.category_discovery import discover_categories\r\nfrom arc_extractor.nodes.extract_mapreduce
+    import extract_node_mapreduce\r\nfrom arc_extractor.utils.storage_manager import
+    get_storage_manager\r\nfrom arc_extractor.utils.program_discovery import get_program_list\r\n\r\n\r\ndef
+    get_config_from_env():\r\n    \"\"\"Build configuration from K8s environment variables\"\"\"\r\n\r\n
+    \   # Read job info from file (created by reorganization script)\r\n    job_info
+    = {}\r\n    if os.path.exists('/app/current_job_info.txt'):\r\n        with open('/app/current_job_info.txt',
+    'r') as f:\r\n            for line in f:\r\n                if '=' in line:\r\n
+    \                   key, value = line.strip().split('=', 1)\r\n                    job_info[key]
+    = value\r\n\r\n    # Get job prefix from env or file\r\n    job_prefix = os.getenv('JOB_PREFIX',
+    job_info.get('JOB_PREFIX', 'data-job-mcp-test/'))\r\n\r\n    config = {\r\n        'project':
+    {\r\n            'name': 'ARC Documentation Extraction',\r\n            'description':
+    'AI-powered documentation extraction'\r\n        },\r\n\r\n        'storage':
+    {\r\n            'backend': 's3',\r\n            's3': {\r\n                'bucket':
+    os.getenv('S3_BUCKET', 'b6504048-46e1-4831-a7e4-a43d0ed465f3-analyze'),\r\n                'endpoint_url':
+    os.getenv('S3_ENDPOINT', 'https://s3.us-south.cloud-object-storage.appdomain.cloud'),\r\n
+    \               'region': os.getenv('S3_REGION', 'us-south'),\r\n                'prefix':
+    job_prefix\r\n            }\r\n        },\r\n\r\n        'source': {\r\n            'base_path':
+    'results',\r\n            'pseudo_code': 'cobol/04_structure/pseudo-code',\r\n
+    \           'business_rules': 'bre/65-business-rules/program-single-tracing-text'\r\n
+    \       },\r\n\r\n        'output': {\r\n            'base_path': 'ai_results',\r\n
+    \           'by_module_path': 'by-module',\r\n            'system_level_path':
+    'system-level'\r\n        },\r\n\r\n        'templates': {\r\n            'path':
+    os.getenv('TEMPLATE_PATH', '/app/templates')\r\n        },\r\n\r\n        'llm':
+    {\r\n            'model': os.getenv('LLM_MODEL', 'global/claude-sonnet-4-20250514'),\r\n
+    \           'max_tokens': int(os.getenv('LLM_MAX_TOKENS', '25000')),\r\n            'temperature':
+    float(os.getenv('LLM_TEMPERATURE', '0.1')),\r\n            'min_delay_seconds':
+    int(os.getenv('LLM_MIN_DELAY_SECONDS', '2'))\r\n        },\r\n\r\n        'extraction':
+    {\r\n            'method_tier1': 'map-reduce',\r\n            'method_tier2':
+    'map-reduce',\r\n            'method_tier3': 'consolidation',\r\n            'max_retries':
+    3,\r\n            'retry_delay_seconds': 5\r\n        }\r\n    }\r\n\r\n    #
+    Set environment variables for boto3 and OpenAI client\r\n    os.environ['AWS_ACCESS_KEY_ID']
+    = os.getenv('S3_ACCESS_KEY', '')\r\n    os.environ['AWS_SECRET_ACCESS_KEY'] =
+    os.getenv('S3_SECRET_KEY', '')\r\n    os.environ['OPENAI_API_KEY'] = os.getenv('LLM_API_KEY',
+    '')\r\n    os.environ['OPENAI_API_BASE'] = os.getenv('LLM_API_BASE', '')\r\n\r\n
+    \   return config\r\n\r\n\r\ndef main():\r\n    logger.info(\"=\" * 80)\r\n    logger.info(\"ARC
+    EXTRACTION - KUBERNETES PRODUCTION RUN\")\r\n    logger.info(\"=\" * 80)\r\n\r\n
+    \   # Load config from environment\r\n    config = get_config_from_env()\r\n\r\n
+    \   logger.info(f\"Job Prefix: {config['storage']['s3']['prefix']}\")\r\n    logger.info(f\"S3
+    Bucket: {config['storage']['s3']['bucket']}\")\r\n    logger.info(f\"LLM Model:
+    {config['llm']['model']}\")\r\n    logger.info(\"\")\r\n\r\n    # Initialize storage\r\n
+    \   storage = get_storage_manager(config)\r\n\r\n    # Discover programs from
+    S3\r\n    programs = get_program_list(storage, config)\r\n\r\n    if not programs:\r\n
+    \       logger.error(\"No programs found!\")\r\n        sys.exit(1)\r\n\r\n    logger.info(f\"Programs
+    to process: {len(programs)}\")\r\n    for p in programs:\r\n        logger.info(f\"
+    \ - {p}\")\r\n    logger.info(\"\")\r\n\r\n    # Discover categories\r\n    template_path
+    = config['templates']['path']\r\n    categories = discover_categories(template_path)\r\n\r\n
+    \   tier1_count = len(programs) * len(categories['tier1'])\r\n    tier2_count
+    = len(programs) * len(categories['tier2'])\r\n    total_extractions = tier1_count
+    + tier2_count\r\n\r\n    logger.info(f\"Categories:\")\r\n    logger.info(f\"
+    \ - Tier 1: {len(categories['tier1'])} categories\")\r\n    logger.info(f\"  -
+    Tier 2: {len(categories['tier2'])} categories\")\r\n    logger.info(f\"  - Tier
+    3: {len(categories['tier3'])} categories\")\r\n    logger.info(\"\")\r\n    logger.info(f\"Total
+    Extractions: {total_extractions}\")\r\n    logger.info(f\"  - Tier 1: {tier1_count}\")\r\n
+    \   logger.info(f\"  - Tier 2: {tier2_count}\")\r\n    logger.info(\"\")\r\n\r\n
+    \   # Initialize state\r\n    state = {\r\n        'config': config,\r\n        'extracted_docs':
+    {},\r\n        'errors': [],\r\n        'completed_extractions': 0,\r\n        'total_extractions':
+    total_extractions,\r\n        'total_progress': 0\r\n    }\r\n\r\n    # Add template_path
+    for compatibility\r\n    state['config']['template_path'] = config['templates']['path']\r\n\r\n
+    \   start_time = datetime.now()\r\n\r\n    # Process each program\r\n    for prog_idx,
+    program in enumerate(programs, 1):\r\n        logger.info(f\"\\n{'='*80}\")\r\n
+    \       logger.info(f\"PROGRAM {prog_idx}/{len(programs)}: {program}\")\r\n        logger.info(f\"{'='*80}\\n\")\r\n\r\n
+    \       # Tier 1 categories\r\n        for cat_idx, category in enumerate(categories['tier1'],
+    1):\r\n            logger.info(f\"\\n[Tier 1] [{cat_idx}/{len(categories['tier1'])}]
+    {program} - {category['key']}\")\r\n\r\n            state['current_program'] =
+    program\r\n            state['current_category'] = category\r\n\r\n            try:\r\n
+    \               state = extract_node_mapreduce(state)\r\n                logger.info(f\"✓
+    Success: {category['key']}\")\r\n            except Exception as e:\r\n                logger.error(f\"✗
+    Failed: {category['key']} - {e}\", exc_info=True)\r\n                state['errors'].append({\r\n
+    \                   'program': program,\r\n                    'category': category['key'],\r\n
+    \                   'error': str(e)\r\n                })\r\n\r\n        # Tier
+    2 categories\r\n        for cat_idx, category in enumerate(categories['tier2'],
+    1):\r\n            logger.info(f\"\\n[Tier 2] [{cat_idx}/{len(categories['tier2'])}]
+    {program} - {category['key']}\")\r\n\r\n            state['current_program'] =
+    program\r\n            state['current_category'] = category\r\n\r\n            try:\r\n
+    \               state = extract_node_mapreduce(state)\r\n                logger.info(f\"✓
+    Success: {category['key']}\")\r\n            except Exception as e:\r\n                logger.error(f\"✗
+    Failed: {category['key']} - {e}\", exc_info=True)\r\n                state['errors'].append({\r\n
+    \                   'program': program,\r\n                    'category': category['key'],\r\n
+    \                   'error': str(e)\r\n                })\r\n\r\n        # Program
+    summary\r\n        elapsed = datetime.now() - start_time\r\n        logger.info(f\"\\n{'='*80}\")\r\n
+    \       logger.info(f\"PROGRAM {program} COMPLETE\")\r\n        logger.info(f\"Progress:
+    {state['completed_extractions']}/{state['total_extractions']} ({state['total_progress']:.1f}%)\")\r\n
+    \       logger.info(f\"Elapsed: {elapsed}\")\r\n        logger.info(f\"Errors:
+    {len(state['errors'])}\")\r\n        logger.info(f\"{'='*80}\\n\")\r\n\r\n    #
+    Final summary\r\n    end_time = datetime.now()\r\n    total_elapsed = end_time
+    - start_time\r\n\r\n    logger.info(\"\\n\" + \"=\" * 80)\r\n    logger.info(\"EXTRACTION
+    COMPLETE\")\r\n    logger.info(\"=\" * 80)\r\n    logger.info(f\"Started: {start_time.strftime('%Y-%m-%d
+    %H:%M:%S')}\")\r\n    logger.info(f\"Finished: {end_time.strftime('%Y-%m-%d %H:%M:%S')}\")\r\n
+    \   logger.info(f\"Duration: {total_elapsed}\")\r\n    logger.info(\"\")\r\n    logger.info(f\"Total
+    Extractions: {state['completed_extractions']}/{state['total_extractions']}\")\r\n
+    \   logger.info(f\"Success Rate: {(state['completed_extractions']/state['total_extractions']*100):.1f}%\")\r\n
+    \   logger.info(f\"Errors: {len(state['errors'])}\")\r\n    logger.info(\"\")\r\n\r\n
+    \   if state['errors']:\r\n        logger.info(\"Errors encountered:\")\r\n        for
+    err in state['errors'][:10]:\r\n            logger.info(f\"  - {err['program']}/{err['category']}:
+    {err['error']}\")\r\n        if len(state['errors']) > 10:\r\n            logger.info(f\"
+    \ ... and {len(state['errors']) - 10} more\")\r\n\r\n    logger.info(\"\")\r\n
+    \   logger.info(f\"Outputs saved to S3:\")\r\n    logger.info(f\"  s3://{config['storage']['s3']['bucket']}/{config['storage']['s3']['prefix']}/ai_results/\")\r\n
+    \   logger.info(\"=\" * 80)\r\n\r\n    # Exit with appropriate code\r\n    if
+    len(state['errors']) > 0:\r\n        sys.exit(1)\r\n    else:\r\n        sys.exit(0)\r\n\r\n\r\nif
+    __name__ == '__main__':\r\n    main()\r\n"
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"run_k8s_extraction.py":"#!/usr/bin/env python3\r\n\"\"\"\r\nRun ARC Extraction in Kubernetes\r\n\r\nReads configuration from K8s ConfigMap and Secrets (via environment variables)\r\n\"\"\"\r\n\r\nimport sys\r\nimport os\r\nimport yaml\r\nimport logging\r\nfrom datetime import datetime\r\nfrom pathlib import Path\r\n\r\n# Set up logging\r\nlogging.basicConfig(\r\n    level=logging.INFO,\r\n    format='%(asctime)s - %(levelname)s - %(message)s',\r\n    handlers=[\r\n        logging.StreamHandler(sys.stdout)\r\n    ]\r\n)\r\n\r\nlogger = logging.getLogger(__name__)\r\n\r\n# Add src to path\r\nsys.path.insert(0, '/app/src')\r\n\r\nfrom arc_extractor.config.category_discovery import discover_categories\r\nfrom arc_extractor.nodes.extract_mapreduce import extract_node_mapreduce\r\nfrom arc_extractor.utils.storage_manager import get_storage_manager\r\nfrom arc_extractor.utils.program_discovery import get_program_list\r\n\r\n\r\ndef get_config_from_env():\r\n    \"\"\"Build configuration from K8s environment variables\"\"\"\r\n\r\n    # Read job info from file (created by reorganization script)\r\n    job_info = {}\r\n    if os.path.exists('/app/current_job_info.txt'):\r\n        with open('/app/current_job_info.txt', 'r') as f:\r\n            for line in f:\r\n                if '=' in line:\r\n                    key, value = line.strip().split('=', 1)\r\n                    job_info[key] = value\r\n\r\n    # Get job prefix from env or file\r\n    job_prefix = os.getenv('JOB_PREFIX', job_info.get('JOB_PREFIX', 'data-job-mcp-test/'))\r\n\r\n    config = {\r\n        'project': {\r\n            'name': 'ARC Documentation Extraction',\r\n            'description': 'AI-powered documentation extraction'\r\n        },\r\n\r\n        'storage': {\r\n            'backend': 's3',\r\n            's3': {\r\n                'bucket': os.getenv('S3_BUCKET', 'b6504048-46e1-4831-a7e4-a43d0ed465f3-analyze'),\r\n                'endpoint_url': os.getenv('S3_ENDPOINT', 'https://s3.us-south.cloud-object-storage.appdomain.cloud'),\r\n                'region': os.getenv('S3_REGION', 'us-south'),\r\n                'prefix': job_prefix\r\n            }\r\n        },\r\n\r\n        'source': {\r\n            'base_path': 'results',\r\n            'pseudo_code': 'cobol/04_structure/pseudo-code',\r\n            'business_rules': 'bre/65-business-rules/program-single-tracing-text'\r\n        },\r\n\r\n        'output': {\r\n            'base_path': 'ai_results',\r\n            'by_module_path': 'by-module',\r\n            'system_level_path': 'system-level'\r\n        },\r\n\r\n        'templates': {\r\n            'path': os.getenv('TEMPLATE_PATH', '/app/templates')\r\n        },\r\n\r\n        'llm': {\r\n            'model': os.getenv('LLM_MODEL', 'global/claude-sonnet-4-20250514'),\r\n            'max_tokens': int(os.getenv('LLM_MAX_TOKENS', '25000')),\r\n            'temperature': float(os.getenv('LLM_TEMPERATURE', '0.1')),\r\n            'min_delay_seconds': int(os.getenv('LLM_MIN_DELAY_SECONDS', '2'))\r\n        },\r\n\r\n        'extraction': {\r\n            'method_tier1': 'map-reduce',\r\n            'method_tier2': 'map-reduce',\r\n            'method_tier3': 'consolidation',\r\n            'max_retries': 3,\r\n            'retry_delay_seconds': 5\r\n        }\r\n    }\r\n\r\n    # Set environment variables for boto3 and OpenAI client\r\n    os.environ['AWS_ACCESS_KEY_ID'] = os.getenv('S3_ACCESS_KEY', '')\r\n    os.environ['AWS_SECRET_ACCESS_KEY'] = os.getenv('S3_SECRET_KEY', '')\r\n    os.environ['OPENAI_API_KEY'] = os.getenv('LLM_API_KEY', '')\r\n    os.environ['OPENAI_API_BASE'] = os.getenv('LLM_API_BASE', '')\r\n\r\n    return config\r\n\r\n\r\ndef main():\r\n    logger.info(\"=\" * 80)\r\n    logger.info(\"ARC EXTRACTION - KUBERNETES PRODUCTION RUN\")\r\n    logger.info(\"=\" * 80)\r\n\r\n    # Load config from environment\r\n    config = get_config_from_env()\r\n\r\n    logger.info(f\"Job Prefix: {config['storage']['s3']['prefix']}\")\r\n    logger.info(f\"S3 Bucket: {config['storage']['s3']['bucket']}\")\r\n    logger.info(f\"LLM Model: {config['llm']['model']}\")\r\n    logger.info(\"\")\r\n\r\n    # Initialize storage\r\n    storage = get_storage_manager(config)\r\n\r\n    # Discover programs from S3\r\n    programs = get_program_list(storage, config)\r\n\r\n    if not programs:\r\n        logger.error(\"No programs found!\")\r\n        sys.exit(1)\r\n\r\n    logger.info(f\"Programs to process: {len(programs)}\")\r\n    for p in programs:\r\n        logger.info(f\"  - {p}\")\r\n    logger.info(\"\")\r\n\r\n    # Discover categories\r\n    template_path = config['templates']['path']\r\n    categories = discover_categories(template_path)\r\n\r\n    tier1_count = len(programs) * len(categories['tier1'])\r\n    tier2_count = len(programs) * len(categories['tier2'])\r\n    total_extractions = tier1_count + tier2_count\r\n\r\n    logger.info(f\"Categories:\")\r\n    logger.info(f\"  - Tier 1: {len(categories['tier1'])} categories\")\r\n    logger.info(f\"  - Tier 2: {len(categories['tier2'])} categories\")\r\n    logger.info(f\"  - Tier 3: {len(categories['tier3'])} categories\")\r\n    logger.info(\"\")\r\n    logger.info(f\"Total Extractions: {total_extractions}\")\r\n    logger.info(f\"  - Tier 1: {tier1_count}\")\r\n    logger.info(f\"  - Tier 2: {tier2_count}\")\r\n    logger.info(\"\")\r\n\r\n    # Initialize state\r\n    state = {\r\n        'config': config,\r\n        'extracted_docs': {},\r\n        'errors': [],\r\n        'completed_extractions': 0,\r\n        'total_extractions': total_extractions,\r\n        'total_progress': 0\r\n    }\r\n\r\n    # Add template_path for compatibility\r\n    state['config']['template_path'] = config['templates']['path']\r\n\r\n    start_time = datetime.now()\r\n\r\n    # Process each program\r\n    for prog_idx, program in enumerate(programs, 1):\r\n        logger.info(f\"\\n{'='*80}\")\r\n        logger.info(f\"PROGRAM {prog_idx}/{len(programs)}: {program}\")\r\n        logger.info(f\"{'='*80}\\n\")\r\n\r\n        # Tier 1 categories\r\n        for cat_idx, category in enumerate(categories['tier1'], 1):\r\n            logger.info(f\"\\n[Tier 1] [{cat_idx}/{len(categories['tier1'])}] {program} - {category['key']}\")\r\n\r\n            state['current_program'] = program\r\n            state['current_category'] = category\r\n\r\n            try:\r\n                state = extract_node_mapreduce(state)\r\n                logger.info(f\"✓ Success: {category['key']}\")\r\n            except Exception as e:\r\n                logger.error(f\"✗ Failed: {category['key']} - {e}\", exc_info=True)\r\n                state['errors'].append({\r\n                    'program': program,\r\n                    'category': category['key'],\r\n                    'error': str(e)\r\n                })\r\n\r\n        # Tier 2 categories\r\n        for cat_idx, category in enumerate(categories['tier2'], 1):\r\n            logger.info(f\"\\n[Tier 2] [{cat_idx}/{len(categories['tier2'])}] {program} - {category['key']}\")\r\n\r\n            state['current_program'] = program\r\n            state['current_category'] = category\r\n\r\n            try:\r\n                state = extract_node_mapreduce(state)\r\n                logger.info(f\"✓ Success: {category['key']}\")\r\n            except Exception as e:\r\n                logger.error(f\"✗ Failed: {category['key']} - {e}\", exc_info=True)\r\n                state['errors'].append({\r\n                    'program': program,\r\n                    'category': category['key'],\r\n                    'error': str(e)\r\n                })\r\n\r\n        # Program summary\r\n        elapsed = datetime.now() - start_time\r\n        logger.info(f\"\\n{'='*80}\")\r\n        logger.info(f\"PROGRAM {program} COMPLETE\")\r\n        logger.info(f\"Progress: {state['completed_extractions']}/{state['total_extractions']} ({state['total_progress']:.1f}%)\")\r\n        logger.info(f\"Elapsed: {elapsed}\")\r\n        logger.info(f\"Errors: {len(state['errors'])}\")\r\n        logger.info(f\"{'='*80}\\n\")\r\n\r\n    # Final summary\r\n    end_time = datetime.now()\r\n    total_elapsed = end_time - start_time\r\n\r\n    logger.info(\"\\n\" + \"=\" * 80)\r\n    logger.info(\"EXTRACTION COMPLETE\")\r\n    logger.info(\"=\" * 80)\r\n    logger.info(f\"Started: {start_time.strftime('%Y-%m-%d %H:%M:%S')}\")\r\n    logger.info(f\"Finished: {end_time.strftime('%Y-%m-%d %H:%M:%S')}\")\r\n    logger.info(f\"Duration: {total_elapsed}\")\r\n    logger.info(\"\")\r\n    logger.info(f\"Total Extractions: {state['completed_extractions']}/{state['total_extractions']}\")\r\n    logger.info(f\"Success Rate: {(state['completed_extractions']/state['total_extractions']*100):.1f}%\")\r\n    logger.info(f\"Errors: {len(state['errors'])}\")\r\n    logger.info(\"\")\r\n\r\n    if state['errors']:\r\n        logger.info(\"Errors encountered:\")\r\n        for err in state['errors'][:10]:\r\n            logger.info(f\"  - {err['program']}/{err['category']}: {err['error']}\")\r\n        if len(state['errors']) \u003e 10:\r\n            logger.info(f\"  ... and {len(state['errors']) - 10} more\")\r\n\r\n    logger.info(\"\")\r\n    logger.info(f\"Outputs saved to S3:\")\r\n    logger.info(f\"  s3://{config['storage']['s3']['bucket']}/{config['storage']['s3']['prefix']}/ai_results/\")\r\n    logger.info(\"=\" * 80)\r\n\r\n    # Exit with appropriate code\r\n    if len(state['errors']) \u003e 0:\r\n        sys.exit(1)\r\n    else:\r\n        sys.exit(0)\r\n\r\n\r\nif __name__ == '__main__':\r\n    main()\r\n"},"kind":"ConfigMap","metadata":{"annotations":{},"creationTimestamp":null,"name":"arc-extractor-scripts","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-10-16T01:28:58Z"
+  name: arc-extractor-scripts
+  namespace: mmjc-dev
+  resourceVersion: "49737810"
+  uid: 1e7c2d3f-e088-4ab0-bb22-ceae984329c8

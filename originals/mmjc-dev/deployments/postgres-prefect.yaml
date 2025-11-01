@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "3"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"postgres-prefect","component":"database"},"name":"postgres-prefect","namespace":"mmjc-dev"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"postgres-prefect"}},"template":{"metadata":{"labels":{"app":"postgres-prefect","component":"database"}},"spec":{"containers":[{"env":[{"name":"POSTGRES_USER","value":"prefect"},{"name":"POSTGRES_PASSWORD","valueFrom":{"secretKeyRef":{"key":"password","name":"postgres-prefect-credentials"}}},{"name":"POSTGRES_DB","value":"prefect"},{"name":"PGDATA","value":"/var/lib/postgresql/data/pgdata"}],"image":"postgres:15-alpine","imagePullPolicy":"IfNotPresent","name":"postgres","ports":[{"containerPort":5432,"name":"postgres","protocol":"TCP"}],"resources":{"limits":{"cpu":"500m","memory":"512Mi"},"requests":{"cpu":"250m","memory":"256Mi"}},"volumeMounts":[{"mountPath":"/var/lib/postgresql/data","name":"postgres-data"}]}],"volumes":[{"name":"postgres-data","persistentVolumeClaim":{"claimName":"postgres-prefect-pvc"}}]}}}}
+  creationTimestamp: "2025-10-22T12:22:15Z"
+  generation: 3
+  labels:
+    app: postgres-prefect
+    component: database
+  name: postgres-prefect
+  namespace: mmjc-dev
+  resourceVersion: "52866149"
+  uid: c72a44b4-9f73-47a9-b956-aaf3f0b00d8b
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: postgres-prefect
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: postgres-prefect
+        component: database
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_USER
+          value: prefect
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: postgres-prefect-credentials
+        - name: POSTGRES_DB
+          value: prefect
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        image: postgres:15-alpine
+        imagePullPolicy: IfNotPresent
+        name: postgres
+        ports:
+        - containerPort: 5432
+          name: postgres
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-prefect-pvc
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-10-22T12:23:59Z"
+    lastUpdateTime: "2025-10-22T12:23:59Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2025-10-24T13:40:28Z"
+    lastUpdateTime: "2025-10-24T13:40:48Z"
+    message: ReplicaSet "postgres-prefect-5bc5b64fc4" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 3
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

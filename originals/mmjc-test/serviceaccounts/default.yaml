@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2025-05-20T10:59:08Z"
+  name: default
+  namespace: mmjc-test
+  resourceVersion: "4526781"
+  uid: 17565e2e-2fb9-4d21-8a96-0706d100ce47

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    meta.helm.sh/release-name: milvus-mmjc-dev
+    meta.helm.sh/release-namespace: mmjc-dev
+  creationTimestamp: "2025-07-31T07:18:52Z"
+  labels:
+    app: minio
+    app.kubernetes.io/managed-by: Helm
+    chart: minio-8.0.17
+    release: milvus-mmjc-dev
+  name: milvus-mmjc-dev-minio
+  namespace: mmjc-dev
+  resourceVersion: "22636376"
+  uid: 96230951-e634-4478-bac1-a129dea82561

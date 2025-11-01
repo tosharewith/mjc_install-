@@ -1,0 +1,86 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"autoscaling/v2","kind":"HorizontalPodAutoscaler","metadata":{"annotations":{},"labels":{"app":"mcp-arc-s3-server","component":"autoscaling"},"name":"mcp-arc-s3-server-hpa","namespace":"mmjc-dev"},"spec":{"behavior":{"scaleDown":{"policies":[{"periodSeconds":60,"type":"Percent","value":50}],"selectPolicy":"Max","stabilizationWindowSeconds":300},"scaleUp":{"policies":[{"periodSeconds":60,"type":"Percent","value":100},{"periodSeconds":60,"type":"Pods","value":1}],"selectPolicy":"Max","stabilizationWindowSeconds":60}},"maxReplicas":3,"metrics":[{"resource":{"name":"cpu","target":{"averageUtilization":70,"type":"Utilization"}},"type":"Resource"},{"resource":{"name":"memory","target":{"averageUtilization":80,"type":"Utilization"}},"type":"Resource"}],"minReplicas":1,"scaleTargetRef":{"apiVersion":"apps/v1","kind":"StatefulSet","name":"mcp-arc-s3-server"}}}
+  creationTimestamp: "2025-10-26T21:27:12Z"
+  labels:
+    app: mcp-arc-s3-server
+    component: autoscaling
+  name: mcp-arc-s3-server-hpa
+  namespace: mmjc-dev
+  resourceVersion: "55338523"
+  uid: 0cc4464f-df5d-4c29-8124-fef517d587b7
+spec:
+  behavior:
+    scaleDown:
+      policies:
+      - periodSeconds: 60
+        type: Percent
+        value: 50
+      selectPolicy: Max
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      policies:
+      - periodSeconds: 60
+        type: Percent
+        value: 100
+      - periodSeconds: 60
+        type: Pods
+        value: 1
+      selectPolicy: Max
+      stabilizationWindowSeconds: 60
+  maxReplicas: 1
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 70
+        type: Utilization
+    type: Resource
+  - resource:
+      name: memory
+      target:
+        averageUtilization: 80
+        type: Utilization
+    type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: mcp-arc-s3-server
+status:
+  conditions:
+  - lastTransitionTime: "2025-10-26T21:27:27Z"
+    message: recommended size matches current size
+    reason: ReadyForNewScale
+    status: "True"
+    type: AbleToScale
+  - lastTransitionTime: "2025-10-30T14:16:35Z"
+    message: the HPA was able to successfully calculate a replica count from memory
+      resource utilization (percentage of request)
+    reason: ValidMetricFound
+    status: "True"
+    type: ScalingActive
+  - lastTransitionTime: "2025-10-31T06:49:34Z"
+    message: the desired replica count is more than the maximum replica count
+    reason: TooManyReplicas
+    status: "True"
+    type: ScalingLimited
+  currentMetrics:
+  - resource:
+      current:
+        averageUtilization: 1
+        averageValue: 8m
+      name: cpu
+    type: Resource
+  - resource:
+      current:
+        averageUtilization: 158
+        averageValue: "3612512256"
+      name: memory
+    type: Resource
+  currentReplicas: 1
+  desiredReplicas: 1
+  lastScaleTime: "2025-10-29T07:53:21Z"

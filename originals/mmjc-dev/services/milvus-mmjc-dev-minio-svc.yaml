@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: milvus-mmjc-dev
+    meta.helm.sh/release-namespace: mmjc-dev
+  creationTimestamp: "2025-07-31T07:18:53Z"
+  labels:
+    app: minio
+    app.kubernetes.io/managed-by: Helm
+    chart: minio-8.0.17
+    heritage: Helm
+    release: milvus-mmjc-dev
+  name: milvus-mmjc-dev-minio-svc
+  namespace: mmjc-dev
+  resourceVersion: "22636384"
+  uid: 38a8a21b-195d-45ac-bb5a-6fc2dfbde7d2
+spec:
+  clusterIP: None
+  clusterIPs:
+  - None
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 9000
+    protocol: TCP
+    targetPort: 9000
+  publishNotReadyAddresses: true
+  selector:
+    app: minio
+    release: milvus-mmjc-dev
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

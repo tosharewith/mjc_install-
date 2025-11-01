@@ -1,0 +1,21 @@
+# ⚠️  WARNING: This is a TEMPLATE - NOT for production use
+# All sensitive data has been replaced with placeholders
+# Replace all <REPLACE_WITH_BASE64_ENCODED_*> values before applying
+#
+# Original: airflow-test/secrets/sh.helm.release.v1.airflow-test.v8.yaml
+# Templated: Fri Oct 31 21:15:01 -03 2025
+#
+apiVersion: v1
+data:
+  release: <REPLACE_WITH_BASE64_ENCODED_RELEASE>
+kind: Secret
+metadata:
+  labels:
+    modifiedAt: "1752489178"
+    name: airflow-test
+    owner: helm
+    status: superseded
+    version: "8"
+  name: sh.helm.release.v1.airflow-test.v8
+  namespace: airflow-test
+type: helm.sh/release.v1

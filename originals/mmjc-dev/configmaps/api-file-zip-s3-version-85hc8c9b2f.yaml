@@ -1,0 +1,20 @@
+apiVersion: v1
+data:
+  build: latest
+  version: 1.0.0
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"build":"latest","version":"1.0.0"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"api-file-zip-s3","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":"dev","environment":"mmjc-dev"},"name":"api-file-zip-s3-version-85hc8c9b2f","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-10-29T05:32:36Z"
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: api-file-zip-s3
+    app.kubernetes.io/part-of: mcp-platform
+    app.kubernetes.io/version: dev
+    environment: mmjc-dev
+  name: api-file-zip-s3-version-85hc8c9b2f
+  namespace: mmjc-dev
+  resourceVersion: "54439546"
+  uid: e1b89e3b-60a7-4403-a556-ecae32bff17b

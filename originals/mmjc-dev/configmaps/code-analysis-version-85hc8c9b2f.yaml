@@ -1,0 +1,19 @@
+apiVersion: v1
+data:
+  build: latest
+  version: 1.0.0
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"build":"latest","version":"1.0.0"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app":"code-analysis-api","app.kubernetes.io/version":"dev","environment":"dev","managed-by":"kustomize"},"name":"code-analysis-version-85hc8c9b2f","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-10-30T05:15:00Z"
+  labels:
+    app: code-analysis-api
+    app.kubernetes.io/version: dev
+    environment: dev
+    managed-by: kustomize
+  name: code-analysis-version-85hc8c9b2f
+  namespace: mmjc-dev
+  resourceVersion: "54772403"
+  uid: b7d60a13-e1e5-4ff7-81f3-6a55b57a2a0f

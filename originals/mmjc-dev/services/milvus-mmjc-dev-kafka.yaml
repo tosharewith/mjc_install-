@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: milvus-mmjc-dev
+    meta.helm.sh/release-namespace: mmjc-dev
+  creationTimestamp: "2025-07-31T07:18:53Z"
+  labels:
+    app.kubernetes.io/component: kafka
+    app.kubernetes.io/instance: milvus-mmjc-dev
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kafka
+    helm.sh/chart: kafka-15.5.1
+  name: milvus-mmjc-dev-kafka
+  namespace: mmjc-dev
+  resourceVersion: "22636423"
+  uid: b1c0a4ef-7ab3-43e4-8f06-4b2e2ceac2bb
+spec:
+  clusterIP: 172.21.127.130
+  clusterIPs:
+  - 172.21.127.130
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: tcp-client
+    port: 9092
+    protocol: TCP
+    targetPort: kafka-client
+  selector:
+    app.kubernetes.io/component: kafka
+    app.kubernetes.io/instance: milvus-mmjc-dev
+    app.kubernetes.io/name: kafka
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

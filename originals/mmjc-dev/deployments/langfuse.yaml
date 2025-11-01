@@ -1,0 +1,188 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "7"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"langfuse","component":"observability"},"name":"langfuse","namespace":"mmjc-dev"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"langfuse"}},"template":{"metadata":{"labels":{"app":"langfuse","component":"observability"}},"spec":{"containers":[{"env":[{"name":"DATABASE_URL","value":"postgresql://langfuse:langfuse@postgres-langfuse.mmjc-dev.svc.cluster.local:5432/langfuse?connection_limit=10\u0026pool_timeout=20"},{"name":"NEXTAUTH_SECRET","valueFrom":{"secretKeyRef":{"key":"nextauth_secret","name":"langfuse-credentials"}}},{"name":"NEXTAUTH_URL","value":"http://langfuse.mmjc-dev.svc.cluster.local:3000"},{"name":"SALT","valueFrom":{"secretKeyRef":{"key":"salt","name":"langfuse-app-secrets"}}},{"name":"ENCRYPTION_KEY","valueFrom":{"secretKeyRef":{"key":"encryption_key","name":"langfuse-app-secrets"}}},{"name":"NODE_ENV","value":"production"},{"name":"TELEMETRY_ENABLED","value":"false"},{"name":"AUTH_DISABLE_USERNAME_PASSWORD","value":"false"},{"name":"LANGFUSE_INIT_ORG_ID","valueFrom":{"secretKeyRef":{"key":"org_id","name":"langfuse-init-config"}}},{"name":"LANGFUSE_INIT_ORG_NAME","valueFrom":{"secretKeyRef":{"key":"org_name","name":"langfuse-init-config"}}},{"name":"LANGFUSE_INIT_PROJECT_ID","valueFrom":{"secretKeyRef":{"key":"project_id","name":"langfuse-init-config"}}},{"name":"LANGFUSE_INIT_PROJECT_NAME","valueFrom":{"secretKeyRef":{"key":"project_name","name":"langfuse-init-config"}}},{"name":"LANGFUSE_INIT_PROJECT_PUBLIC_KEY","valueFrom":{"secretKeyRef":{"key":"public_key","name":"langfuse-init-config"}}},{"name":"LANGFUSE_INIT_PROJECT_SECRET_KEY","valueFrom":{"secretKeyRef":{"key":"secret_key","name":"langfuse-init-config"}}},{"name":"LANGFUSE_INIT_USER_EMAIL","valueFrom":{"secretKeyRef":{"key":"user_email","name":"langfuse-init-config"}}},{"name":"LANGFUSE_INIT_USER_NAME","valueFrom":{"secretKeyRef":{"key":"user_name","name":"langfuse-init-config"}}},{"name":"LANGFUSE_INIT_USER_PASSWORD","valueFrom":{"secretKeyRef":{"key":"user_password","name":"langfuse-init-config"}}}],"image":"langfuse/langfuse:2","imagePullPolicy":"Always","livenessProbe":{"httpGet":{"path":"/","port":3000},"initialDelaySeconds":30,"periodSeconds":30},"name":"langfuse","ports":[{"containerPort":3000,"name":"http","protocol":"TCP"}],"readinessProbe":{"httpGet":{"path":"/","port":3000},"initialDelaySeconds":10,"periodSeconds":10},"resources":{"limits":{"cpu":"1000m","memory":"1Gi"},"requests":{"cpu":"500m","memory":"512Mi"}}}],"initContainers":[{"command":["sh","-c","until pg_isready -h postgres-langfuse.mmjc-dev.svc.cluster.local -p 5432 -U langfuse; do\n  echo \"Waiting for postgres...\"\n  sleep 2\ndone\necho \"Postgres is ready!\"\n"],"image":"postgres:15-alpine","name":"wait-for-postgres"}]}}}}
+  creationTimestamp: "2025-10-22T16:31:49Z"
+  generation: 7
+  labels:
+    app: langfuse
+    component: observability
+  name: langfuse
+  namespace: mmjc-dev
+  resourceVersion: "53261245"
+  uid: c1672a94-eb54-49cc-bce6-e9da61e4331b
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: langfuse
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-10-22T15:23:16-03:00"
+      creationTimestamp: null
+      labels:
+        app: langfuse
+        component: observability
+    spec:
+      containers:
+      - env:
+        - name: DATABASE_URL
+          value: postgresql://langfuse:langfuse@postgres-langfuse.mmjc-dev.svc.cluster.local:5432/langfuse?connection_limit=10&pool_timeout=20
+        - name: NEXTAUTH_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: nextauth_secret
+              name: langfuse-credentials
+        - name: NEXTAUTH_URL
+          value: http://langfuse.mmjc-dev.svc.cluster.local:3000
+        - name: SALT
+          valueFrom:
+            secretKeyRef:
+              key: salt
+              name: langfuse-app-secrets
+        - name: ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              key: encryption_key
+              name: langfuse-app-secrets
+        - name: NODE_ENV
+          value: production
+        - name: TELEMETRY_ENABLED
+          value: "false"
+        - name: AUTH_DISABLE_USERNAME_PASSWORD
+          value: "false"
+        - name: LANGFUSE_INIT_ORG_ID
+          valueFrom:
+            secretKeyRef:
+              key: org_id
+              name: langfuse-init-config
+        - name: LANGFUSE_INIT_ORG_NAME
+          valueFrom:
+            secretKeyRef:
+              key: org_name
+              name: langfuse-init-config
+        - name: LANGFUSE_INIT_PROJECT_ID
+          valueFrom:
+            secretKeyRef:
+              key: project_id
+              name: langfuse-init-config
+        - name: LANGFUSE_INIT_PROJECT_NAME
+          valueFrom:
+            secretKeyRef:
+              key: project_name
+              name: langfuse-init-config
+        - name: LANGFUSE_INIT_PROJECT_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: public_key
+              name: langfuse-init-config
+        - name: LANGFUSE_INIT_PROJECT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secret_key
+              name: langfuse-init-config
+        - name: LANGFUSE_INIT_USER_EMAIL
+          valueFrom:
+            secretKeyRef:
+              key: user_email
+              name: langfuse-init-config
+        - name: LANGFUSE_INIT_USER_NAME
+          valueFrom:
+            secretKeyRef:
+              key: user_name
+              name: langfuse-init-config
+        - name: LANGFUSE_INIT_USER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: user_password
+              name: langfuse-init-config
+        image: langfuse/langfuse:2
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: langfuse
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - |
+          until pg_isready -h postgres-langfuse.mmjc-dev.svc.cluster.local -p 5432 -U langfuse; do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
+          echo "Postgres is ready!"
+        env:
+        - name: NODE_ENV
+          value: production
+        image: postgres:15-alpine
+        imagePullPolicy: IfNotPresent
+        name: wait-for-postgres
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-10-22T18:56:02Z"
+    lastUpdateTime: "2025-10-22T18:56:02Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2025-10-22T18:55:42Z"
+    lastUpdateTime: "2025-10-25T17:37:31Z"
+    message: ReplicaSet "langfuse-599c8d6d45" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 7
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

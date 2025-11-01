@@ -1,0 +1,18 @@
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
+  annotations:
+    meta.helm.sh/release-name: milvus-mmjc-test
+    meta.helm.sh/release-namespace: mmjc-test
+  creationTimestamp: "2025-07-31T08:33:13Z"
+  labels:
+    app.kubernetes.io/component: kafka
+    app.kubernetes.io/instance: milvus-mmjc-test
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kafka
+    helm.sh/chart: kafka-15.5.1
+  name: milvus-mmjc-test-kafka
+  namespace: mmjc-test
+  resourceVersion: "22654217"
+  uid: 31175ec3-3a8a-421b-bb52-b61d0dd279a2

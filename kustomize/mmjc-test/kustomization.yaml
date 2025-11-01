@@ -3,7 +3,9 @@ kind: Kustomization
 
 namespace: mmjc-test
 
+# Include common configuration (S3, LLM, DB configs, etc.)
 resources:
+  - ../base/common-config
   # Deployments
   - deployments/agents.yaml
   - deployments/frontend.yaml

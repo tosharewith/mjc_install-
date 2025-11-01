@@ -1,0 +1,45 @@
+apiVersion: v1
+data:
+  tls.properties: |
+    # TLS Configuration for Production
+    tls.enabled=false
+    tls.port=8443
+
+    # Keystore Configuration
+    tls.keystore.path=/app/config/keystore.p12
+    tls.keystore.password=${TLS_KEYSTORE_PASSWORD:changeit}
+    tls.keystore.type=PKCS12
+    tls.key.password=${TLS_KEY_PASSWORD:changeit}
+
+    # TLS Protocol Configuration
+    tls.protocols=TLSv1.2,TLSv1.3
+    tls.ciphers=TLS_AES_256_GCM_SHA384,TLS_CHACHA20_POLY1305_SHA256,TLS_AES_128_GCM_SHA256
+
+    # Security Settings
+    tls.require.client.auth=false
+    tls.want.client.auth=false
+
+    # Performance Settings
+    tls.session.cache.size=1024
+    tls.session.timeout=300
+kind: ConfigMap
+metadata:
+  annotations:
+    app.kubernetes.io/description: High-performance MCP Git-S3 Tools Server
+    app.kubernetes.io/documentation: https://github.com/your-org/java-mcp-tool-s3git
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"tls.properties":"# TLS Configuration for Production\ntls.enabled=false\ntls.port=8443\n\n# Keystore Configuration\ntls.keystore.path=/app/config/keystore.p12\ntls.keystore.password=${TLS_KEYSTORE_PASSWORD:changeit}\ntls.keystore.type=PKCS12\ntls.key.password=${TLS_KEY_PASSWORD:changeit}\n\n# TLS Protocol Configuration\ntls.protocols=TLSv1.2,TLSv1.3\ntls.ciphers=TLS_AES_256_GCM_SHA384,TLS_CHACHA20_POLY1305_SHA256,TLS_AES_128_GCM_SHA256\n\n# Security Settings\ntls.require.client.auth=false\ntls.want.client.auth=false\n\n# Performance Settings\ntls.session.cache.size=1024\ntls.session.timeout=300\n"},"kind":"ConfigMap","metadata":{"annotations":{"app.kubernetes.io/description":"High-performance MCP Git-S3 Tools Server","app.kubernetes.io/documentation":"https://github.com/your-org/java-mcp-tool-s3git","deployment.kubernetes.io/revision":"1"},"labels":{"app":"mcp-git-s3-server","app.kubernetes.io/component":"api-server","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"mcp-git-s3-server","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":"0.0.1-SNAPSHOT","component":"tls-config"},"name":"mcp-git-s3-tls-config","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-05-26T10:59:29Z"
+  labels:
+    app: mcp-git-s3-server
+    app.kubernetes.io/component: api-server
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: mcp-git-s3-server
+    app.kubernetes.io/part-of: mcp-platform
+    app.kubernetes.io/version: 0.0.1-SNAPSHOT
+    component: tls-config
+  name: mcp-git-s3-tls-config
+  namespace: mmjc-dev
+  resourceVersion: "5884700"
+  uid: 704ff4b8-7434-4c29-a9a3-c4e81f882e51

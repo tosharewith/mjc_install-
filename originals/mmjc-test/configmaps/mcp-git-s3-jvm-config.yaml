@@ -1,0 +1,54 @@
+apiVersion: v1
+data:
+  gc.config: |
+    # G1GC Configuration for large heaps
+    -XX:+UseG1GC
+    -XX:MaxGCPauseMillis=200
+    -XX:G1HeapRegionSize=16m
+    -XX:G1NewSizePercent=30
+    -XX:G1MaxNewSizePercent=40
+    -XX:G1MixedGCCountTarget=8
+    -XX:InitiatingHeapOccupancyPercent=15
+  memory.config: |
+    # Memory Configuration
+    -Xms2g
+    -Xmx6g
+    -XX:MetaspaceSize=256m
+    -XX:MaxMetaspaceSize=512m
+    -XX:CompressedClassSpaceSize=128m
+  optimization.config: |
+    # JVM Optimizations
+    -XX:+UseStringDeduplication
+    -XX:+OptimizeStringConcat
+    -XX:+UseCompressedOops
+    -XX:+UseCompressedClassPointers
+    -XX:+TieredCompilation
+    -XX:TieredStopAtLevel=4
+  system.config: |-
+    # System Properties
+    -Djava.awt.headless=true
+    -Dfile.encoding=UTF-8
+    -Djava.security.egd=file:/dev/./urandom
+    -Djava.net.preferIPv4Stack=true
+    -Dspring.jmx.enabled=false
+kind: ConfigMap
+metadata:
+  annotations:
+    app.kubernetes.io/description: High-performance MCP Git-S3 Tools Server
+    app.kubernetes.io/documentation: https://github.com/your-org/java-mcp-tool-s3git
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"gc.config":"# G1GC Configuration for large heaps\n-XX:+UseG1GC\n-XX:MaxGCPauseMillis=200\n-XX:G1HeapRegionSize=16m\n-XX:G1NewSizePercent=30\n-XX:G1MaxNewSizePercent=40\n-XX:G1MixedGCCountTarget=8\n-XX:InitiatingHeapOccupancyPercent=15\n","memory.config":"# Memory Configuration\n-Xms2g\n-Xmx6g\n-XX:MetaspaceSize=256m\n-XX:MaxMetaspaceSize=512m\n-XX:CompressedClassSpaceSize=128m\n","optimization.config":"# JVM Optimizations\n-XX:+UseStringDeduplication\n-XX:+OptimizeStringConcat\n-XX:+UseCompressedOops\n-XX:+UseCompressedClassPointers\n-XX:+TieredCompilation\n-XX:TieredStopAtLevel=4\n","system.config":"# System Properties\n-Djava.awt.headless=true\n-Dfile.encoding=UTF-8\n-Djava.security.egd=file:/dev/./urandom\n-Djava.net.preferIPv4Stack=true\n-Dspring.jmx.enabled=false"},"kind":"ConfigMap","metadata":{"annotations":{"app.kubernetes.io/description":"High-performance MCP Git-S3 Tools Server","app.kubernetes.io/documentation":"https://github.com/your-org/java-mcp-tool-s3git","deployment.kubernetes.io/revision":"1"},"labels":{"app":"mcp-git-s3-server","app.kubernetes.io/component":"api-server","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"mcp-git-s3-server","app.kubernetes.io/part-of":"mcp-platform","app.kubernetes.io/version":"0.0.1-SNAPSHOT","component":"jvm-config"},"name":"mcp-git-s3-jvm-config","namespace":"mmjc-test"}}
+  creationTimestamp: "2025-06-16T11:56:37Z"
+  labels:
+    app: mcp-git-s3-server
+    app.kubernetes.io/component: api-server
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: mcp-git-s3-server
+    app.kubernetes.io/part-of: mcp-platform
+    app.kubernetes.io/version: 0.0.1-SNAPSHOT
+    component: jvm-config
+  name: mcp-git-s3-jvm-config
+  namespace: mmjc-test
+  resourceVersion: "10730973"
+  uid: 76a75102-5ee5-4da0-a41a-cf9ba42e2552

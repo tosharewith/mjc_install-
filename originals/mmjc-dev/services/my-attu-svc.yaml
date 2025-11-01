@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"attu"},"name":"my-attu-svc","namespace":"mmjc-dev"},"spec":{"ports":[{"name":"attu","port":3000,"protocol":"TCP","targetPort":3000}],"selector":{"app":"attu"},"type":"ClusterIP"}}
+  creationTimestamp: "2025-07-31T09:22:39Z"
+  labels:
+    app: attu
+  name: my-attu-svc
+  namespace: mmjc-dev
+  resourceVersion: "22667222"
+  uid: 6509b1ad-4a6a-491f-8bc5-46ed6782bef0
+spec:
+  clusterIP: 172.21.25.79
+  clusterIPs:
+  - 172.21.25.79
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: attu
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: attu
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

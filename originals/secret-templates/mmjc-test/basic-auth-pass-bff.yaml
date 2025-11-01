@@ -1,0 +1,17 @@
+# ⚠️  WARNING: This is a TEMPLATE - NOT for production use
+# All sensitive data has been replaced with placeholders
+# Replace all <REPLACE_WITH_BASE64_ENCODED_*> values before applying
+#
+# Original: mmjc-test/secrets/basic-auth-pass-bff.yaml
+# Templated: Fri Oct 31 21:15:02 -03 2025
+#
+apiVersion: v1
+data:
+  BASIC_AUTH_PASS: <REPLACE_WITH_BASE64_ENCODED_BASIC_AUTH_PASS>
+kind: Secret
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: <REMOVED_CONTAINED_PLAINTEXT_SECRETS>
+  name: basic-auth-pass-bff
+  namespace: mmjc-test
+type: Opaque

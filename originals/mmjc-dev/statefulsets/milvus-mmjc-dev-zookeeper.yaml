@@ -1,0 +1,202 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    meta.helm.sh/release-name: milvus-mmjc-dev
+    meta.helm.sh/release-namespace: mmjc-dev
+  creationTimestamp: "2025-07-31T07:18:54Z"
+  generation: 2
+  labels:
+    app.kubernetes.io/component: zookeeper
+    app.kubernetes.io/instance: milvus-mmjc-dev
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: zookeeper
+    helm.sh/chart: zookeeper-8.1.2
+    role: zookeeper
+  name: milvus-mmjc-dev-zookeeper
+  namespace: mmjc-dev
+  resourceVersion: "22638950"
+  uid: 717399dc-729e-4be4-9d55-690f069db0f7
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  podManagementPolicy: Parallel
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: zookeeper
+      app.kubernetes.io/instance: milvus-mmjc-dev
+      app.kubernetes.io/name: zookeeper
+  serviceName: milvus-mmjc-dev-zookeeper-headless
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/component: zookeeper
+        app.kubernetes.io/instance: milvus-mmjc-dev
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: zookeeper
+        helm.sh/chart: zookeeper-8.1.2
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: zookeeper
+                  app.kubernetes.io/instance: milvus-mmjc-dev
+                  app.kubernetes.io/name: zookeeper
+              namespaces:
+              - mmjc-dev
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      containers:
+      - command:
+        - /scripts/setup.sh
+        env:
+        - name: BITNAMI_DEBUG
+          value: "false"
+        - name: ZOO_DATA_LOG_DIR
+        - name: ZOO_PORT_NUMBER
+          value: "2181"
+        - name: ZOO_TICK_TIME
+          value: "2000"
+        - name: ZOO_INIT_LIMIT
+          value: "10"
+        - name: ZOO_SYNC_LIMIT
+          value: "5"
+        - name: ZOO_PRE_ALLOC_SIZE
+          value: "65536"
+        - name: ZOO_SNAPCOUNT
+          value: "100000"
+        - name: ZOO_MAX_CLIENT_CNXNS
+          value: "60"
+        - name: ZOO_4LW_COMMANDS_WHITELIST
+          value: srvr, mntr, ruok
+        - name: ZOO_LISTEN_ALLIPS_ENABLED
+          value: "no"
+        - name: ZOO_AUTOPURGE_INTERVAL
+          value: "0"
+        - name: ZOO_AUTOPURGE_RETAIN_COUNT
+          value: "3"
+        - name: ZOO_MAX_SESSION_TIMEOUT
+          value: "40000"
+        - name: ZOO_SERVERS
+          value: milvus-mmjc-dev-zookeeper-0.milvus-mmjc-dev-zookeeper-headless.mmjc-dev.svc.cluster.local:2888:3888::1
+            milvus-mmjc-dev-zookeeper-1.milvus-mmjc-dev-zookeeper-headless.mmjc-dev.svc.cluster.local:2888:3888::2
+            milvus-mmjc-dev-zookeeper-2.milvus-mmjc-dev-zookeeper-headless.mmjc-dev.svc.cluster.local:2888:3888::3
+        - name: ZOO_ENABLE_AUTH
+          value: "no"
+        - name: ZOO_HEAP_SIZE
+          value: "1024"
+        - name: ZOO_LOG_LEVEL
+          value: ERROR
+        - name: ALLOW_ANONYMOUS_LOGIN
+          value: "yes"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        image: docker.io/bitnami/zookeeper:3.7.0-debian-10-r320
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - echo "ruok" | timeout 2 nc -w 2 localhost 2181 | grep imok
+          failureThreshold: 6
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: zookeeper
+        ports:
+        - containerPort: 2181
+          name: client
+          protocol: TCP
+        - containerPort: 2888
+          name: follower
+          protocol: TCP
+        - containerPort: 3888
+          name: election
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - echo "ruok" | timeout 2 nc -w 2 localhost 2181 | grep imok
+          failureThreshold: 6
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1001
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /scripts/setup.sh
+          name: scripts
+          subPath: setup.sh
+        - mountPath: /bitnami/zookeeper
+          name: data
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        ibm-cloud.kubernetes.io/worker-pool-name: milvus-pool
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1001
+      serviceAccount: default
+      serviceAccountName: default
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - effect: NoSchedule
+        key: reserved
+        operator: Equal
+        value: milvus
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: milvus-mmjc-dev-zookeeper-scripts
+        name: scripts
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 8Gi
+      volumeMode: Filesystem
+    status:
+      phase: Pending
+status:
+  availableReplicas: 3
+  collisionCount: 0
+  currentReplicas: 3
+  currentRevision: milvus-mmjc-dev-zookeeper-5d5fcd76cf
+  observedGeneration: 2
+  readyReplicas: 3
+  replicas: 3
+  updateRevision: milvus-mmjc-dev-zookeeper-5d5fcd76cf
+  updatedReplicas: 3

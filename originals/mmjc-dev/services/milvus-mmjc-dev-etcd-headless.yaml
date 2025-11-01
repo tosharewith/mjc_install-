@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: milvus-mmjc-dev
+    meta.helm.sh/release-namespace: mmjc-dev
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  creationTimestamp: "2025-07-31T07:18:53Z"
+  labels:
+    app.kubernetes.io/instance: milvus-mmjc-dev
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: etcd
+    helm.sh/chart: etcd-6.3.3
+  name: milvus-mmjc-dev-etcd-headless
+  namespace: mmjc-dev
+  resourceVersion: "22636390"
+  uid: 8d00eb8d-bf2a-44bd-9805-3587d0805b49
+spec:
+  clusterIP: None
+  clusterIPs:
+  - None
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: client
+    port: 2379
+    protocol: TCP
+    targetPort: client
+  - name: peer
+    port: 2380
+    protocol: TCP
+    targetPort: peer
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/instance: milvus-mmjc-dev
+    app.kubernetes.io/name: etcd
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

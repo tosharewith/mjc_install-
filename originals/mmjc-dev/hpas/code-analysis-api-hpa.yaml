@@ -1,0 +1,84 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"autoscaling/v2","kind":"HorizontalPodAutoscaler","metadata":{"annotations":{},"labels":{"app":"code-analysis-api","app.kubernetes.io/version":"dev","component":"autoscaling","environment":"dev","managed-by":"kustomize"},"name":"code-analysis-api-hpa","namespace":"mmjc-dev"},"spec":{"behavior":{"scaleDown":{"policies":[{"periodSeconds":15,"type":"Percent","value":50}],"stabilizationWindowSeconds":300},"scaleUp":{"policies":[{"periodSeconds":15,"type":"Percent","value":100},{"periodSeconds":15,"type":"Pods","value":2}],"selectPolicy":"Max","stabilizationWindowSeconds":0}},"maxReplicas":10,"metrics":[{"resource":{"name":"cpu","target":{"averageUtilization":70,"type":"Utilization"}},"type":"Resource"},{"resource":{"name":"memory","target":{"averageUtilization":80,"type":"Utilization"}},"type":"Resource"}],"minReplicas":2,"scaleTargetRef":{"apiVersion":"apps/v1","kind":"Deployment","name":"code-analysis-api"}}}
+  creationTimestamp: "2025-10-30T05:15:03Z"
+  labels:
+    app: code-analysis-api
+    app.kubernetes.io/version: dev
+    component: autoscaling
+    environment: dev
+    managed-by: kustomize
+  name: code-analysis-api-hpa
+  namespace: mmjc-dev
+  resourceVersion: "55338170"
+  uid: 8a425f0f-2583-438e-9293-71ea526983db
+spec:
+  behavior:
+    scaleDown:
+      policies:
+      - periodSeconds: 15
+        type: Percent
+        value: 50
+      selectPolicy: Max
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      policies:
+      - periodSeconds: 15
+        type: Percent
+        value: 100
+      - periodSeconds: 15
+        type: Pods
+        value: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 0
+  maxReplicas: 10
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 70
+        type: Utilization
+    type: Resource
+  - resource:
+      name: memory
+      target:
+        averageUtilization: 80
+        type: Utilization
+    type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: code-analysis-api
+status:
+  conditions:
+  - lastTransitionTime: "2025-10-30T05:15:18Z"
+    message: the HPA controller was able to get the target's current scale
+    reason: SucceededGetScale
+    status: "True"
+    type: AbleToScale
+  - lastTransitionTime: "2025-10-31T00:54:58Z"
+    message: 'the HPA was unable to compute the replica count: failed to get cpu utilization:
+      did not receive metrics for targeted pods (pods might be unready)'
+    reason: FailedGetResourceMetric
+    status: "False"
+    type: ScalingActive
+  - lastTransitionTime: "2025-10-30T20:48:40Z"
+    message: the desired count is within the acceptable range
+    reason: DesiredWithinRange
+    status: "False"
+    type: ScalingLimited
+  currentMetrics:
+  - type: ""
+  - resource:
+      current:
+        averageUtilization: 13
+        averageValue: "52705280"
+      name: memory
+    type: Resource
+  currentReplicas: 2
+  desiredReplicas: 2
+  lastScaleTime: "2025-10-30T05:15:18Z"

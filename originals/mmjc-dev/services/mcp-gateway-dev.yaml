@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"mcp-gateway-dev","namespace":"mmjc-dev"},"spec":{"ports":[{"name":"mcp-gateway","port":80,"protocol":"TCP","targetPort":"gateway"}],"selector":{"app":"mcp-gateway"}}}
+  creationTimestamp: "2025-08-04T13:03:50Z"
+  name: mcp-gateway-dev
+  namespace: mmjc-dev
+  resourceVersion: "24044855"
+  uid: 894ab03b-4d53-45f0-ace7-31d5b3e77c45
+spec:
+  clusterIP: 172.21.107.77
+  clusterIPs:
+  - 172.21.107.77
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: mcp-gateway
+    port: 80
+    protocol: TCP
+    targetPort: gateway
+  selector:
+    app: mcp-gateway
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"nginx.ingress.kubernetes.io/backend-protocol":"HTTP","nginx.ingress.kubernetes.io/force-ssl-redirect":"true","nginx.ingress.kubernetes.io/proxy-body-size":"10m","nginx.ingress.kubernetes.io/proxy-connect-timeout":"60","nginx.ingress.kubernetes.io/proxy-read-timeout":"120","nginx.ingress.kubernetes.io/proxy-send-timeout":"120","nginx.ingress.kubernetes.io/rewrite-target":"/","nginx.ingress.kubernetes.io/ssl-redirect":"true"},"labels":{"app":"mermaid-validator-api","environment":"test","managed-by":"kustomize"},"name":"mermaid-validator-api","namespace":"mmjc-test"},"spec":{"ingressClassName":"nginx","rules":[{"host":"mermaid-validator-api-test.mjc.internal","http":{"paths":[{"backend":{"service":{"name":"mermaid-validator-api","port":{"number":80}}},"path":"/","pathType":"Prefix"}]}}],"tls":[{"hosts":["mermaid-validator-api-test.mjc.internal"],"secretName":"mermaid-validator-api-test-tls"}]}}
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 10m
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  creationTimestamp: "2025-09-12T03:37:08Z"
+  generation: 1
+  labels:
+    app: mermaid-validator-api
+    environment: test
+    managed-by: kustomize
+  name: mermaid-validator-api
+  namespace: mmjc-test
+  resourceVersion: "37429270"
+  uid: 22f443b4-285c-46d3-9e1f-b47cd5e0dcd8
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: mermaid-validator-api-test.mjc.internal
+    http:
+      paths:
+      - backend:
+          service:
+            name: mermaid-validator-api
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - mermaid-validator-api-test.mjc.internal
+    secretName: mermaid-validator-api-test-tls
+status:
+  loadBalancer: {}

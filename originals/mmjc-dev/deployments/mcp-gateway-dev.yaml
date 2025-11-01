@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "36"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"mcp-gateway-dev","namespace":"mmjc-dev"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"mcp-gateway"}},"strategy":{"rollingUpdate":{"maxSurge":0,"maxUnavailable":1},"type":"RollingUpdate"},"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true"},"labels":{"app":"mcp-gateway"}},"spec":{"containers":[{"env":[{"name":"MCPGATEWAY_UI_ENABLED","value":"true"},{"name":"MCPGATEWAY_ADMIN_API_ENABLED","value":"true"},{"name":"HOST","value":"0.0.0.0"},{"name":"AUTH_REQUIRED","value":"false"},{"name":"JWT_SECRET_KEY","valueFrom":{"secretKeyRef":{"key":"JWT_SECRET_KEY","name":"mcp-gateway-jwt"}}},{"name":"BASIC_AUTH_USER","value":"admin"},{"name":"BASIC_AUTH_PASSWORD","valueFrom":{"secretKeyRef":{"key":"BASIC_AUTH_PASSWORD","name":"mcp-gateway-pwd"}}},{"name":"POSTGRESQL_HOST","value":"38cbe469-657f-4988-b1ea-cfb0d2e5a24a.btdl8mld0r95fevivv30.private.databases.appdomain.cloud"},{"name":"POSTGRESQL_USERNAME","valueFrom":{"secretKeyRef":{"key":"POSTGRESQL_USERNAME","name":"postgresql-secret-dev"}}},{"name":"POSTGRESQL_PASSWORD","valueFrom":{"secretKeyRef":{"key":"POSTGRESQL_PASSWORD","name":"postgresql-secret-dev"}}},{"name":"DATABASE_URL","value":"postgresql://$(POSTGRESQL_USERNAME):$(POSTGRESQL_PASSWORD)@$(POSTGRESQL_HOST):32396/mcp"}],"image":"icr.io/mjc-cr/mcp-context-forge:0.6.0","imagePullPolicy":"Always","name":"gateway","ports":[{"containerPort":4444,"name":"gateway"}],"resources":{"limits":{"cpu":0.25,"memory":"1Gi"},"requests":{"cpu":0.125,"memory":"1Gi"}}}],"imagePullSecrets":[{"name":"all-icr-io-mmjc"}]}}}}
+  creationTimestamp: "2025-08-04T13:22:11Z"
+  generation: 39
+  name: mcp-gateway-dev
+  namespace: mmjc-dev
+  resourceVersion: "54523787"
+  uid: b4a7d5fe-2ef7-4974-b72f-32c0fcd15a74
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: mcp-gateway
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-10-29T13:33:27+02:00"
+        sidecar.istio.io/inject: "true"
+      creationTimestamp: null
+      labels:
+        app: mcp-gateway
+    spec:
+      containers:
+      - env:
+        - name: MCPGATEWAY_UI_ENABLED
+          value: "true"
+        - name: MCPGATEWAY_ADMIN_API_ENABLED
+          value: "true"
+        - name: HOST
+          value: 0.0.0.0
+        - name: AUTH_REQUIRED
+          value: "false"
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: JWT_SECRET_KEY
+              name: mcp-gateway-jwt
+        - name: BASIC_AUTH_USER
+          value: admin
+        - name: BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: BASIC_AUTH_PASSWORD
+              name: mcp-gateway-pwd
+        - name: POSTGRESQL_HOST
+          value: 38cbe469-657f-4988-b1ea-cfb0d2e5a24a.btdl8mld0r95fevivv30.private.databases.appdomain.cloud
+        - name: POSTGRESQL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRESQL_USERNAME
+              name: postgresql-secret-dev
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRESQL_PASSWORD
+              name: postgresql-secret-dev
+        - name: DATABASE_URL
+          value: postgresql://$(POSTGRESQL_USERNAME):$(POSTGRESQL_PASSWORD)@$(POSTGRESQL_HOST):32396/mcp
+        image: icr.io/mjc-cr/mcp-context-forge:0.6.0
+        imagePullPolicy: Always
+        name: gateway
+        ports:
+        - containerPort: 4444
+          name: gateway
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 250m
+            memory: 1Gi
+          requests:
+            cpu: 125m
+            memory: 1Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: all-icr-io-mmjc
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-08-04T13:22:11Z"
+    lastUpdateTime: "2025-08-04T13:22:11Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2025-09-10T12:54:31Z"
+    lastUpdateTime: "2025-10-29T11:33:33Z"
+    message: ReplicaSet "mcp-gateway-dev-6db765889f" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 39
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

@@ -1,0 +1,142 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "157"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"agents-mmjc-dev","namespace":"mmjc-dev"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"agents-mmjc"}},"strategy":{"rollingUpdate":{"maxSurge":0,"maxUnavailable":1},"type":"RollingUpdate"},"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true"},"labels":{"app":"agents-mmjc"}},"spec":{"containers":[{"env":[{"name":"API_AUTH_TOKENS","valueFrom":{"secretKeyRef":{"key":"API_AUTH_TOKENS","name":"api-auth-tokens-agents"}}},{"name":"MODEL_NAME","value":"openai:sonnet-4-5"},{"name":"OPENAI_API_BASE","value":"https://model-gateway.llm-adapter-dev-c97c2ce0266e6f32de317d52e2a84f46-0001.us-east.containers.appdomain.cloud/v1"},{"name":"OPENAI_API_KEY","valueFrom":{"secretKeyRef":{"key":"OPENAI_API_KEY","name":"openai-api-key-agents"}}},{"name":"MCP_GATEWAY_URL","value":"http://mcp-gateway-dev.mmjc-dev.svc.cluster.local/servers/580b0577e2ab496a8f2a3baffe186c57/sse"},{"name":"MCP_GATEWAY_JWT_TOKEN","valueFrom":{"secretKeyRef":{"key":"jwt_token","name":"mcp-gateway-jwt-token"}}},{"name":"MERMAID_VALIDATOR_URL","value":"http://mermaid-validator-api.mmjc-dev.svc.cluster.local/api/v1/validate"},{"name":"COS_ENDPOINT_URL","value":"https://s3.us-south.cloud-object-storage.appdomain.cloud"},{"name":"COS_ACCESS_KEY_ID","valueFrom":{"secretKeyRef":{"key":"S3_ACCESS_KEY","name":"s3-access-key-tools"}}},{"name":"COS_SECRET_ACCESS_KEY","valueFrom":{"secretKeyRef":{"key":"S3_SECRET_KEY","name":"s3-secret-key-tools"}}},{"name":"MAX_THREADS","value":"10"},{"name":"GIT_USERNAME","value":"romanas-marcenko"},{"name":"GIT_PASSWORD","valueFrom":{"secretKeyRef":{"key":"GIT_PASSWORD_SECRET","name":"git-password-secret-agents"}}},{"name":"POSTGRESQL_HOST","value":"38cbe469-657f-4988-b1ea-cfb0d2e5a24a.btdl8mld0r95fevivv30.private.databases.appdomain.cloud"},{"name":"POSTGRESQL_PORT","value":"32396"},{"name":"POSTGRESQL_USERNAME","valueFrom":{"secretKeyRef":{"key":"POSTGRESQL_USERNAME","name":"postgresql-secret-dev"}}},{"name":"POSTGRESQL_PASSWORD","valueFrom":{"secretKeyRef":{"key":"POSTGRESQL_PASSWORD","name":"postgresql-secret-dev"}}},{"name":"POSTGRESQL_DATABASE","value":"mmjc"},{"name":"POSTGRESQL_SSLMODE","value":"verify-full"}],"image":"icr.io/mjc-cr/mmjc-agents:0.0.1","imagePullPolicy":"Always","name":"agents","ports":[{"containerPort":8080,"name":"agents"}],"resources":{"limits":{"cpu":0.5,"memory":"2Gi"},"requests":{"cpu":0.25,"memory":"1Gi"}}}],"imagePullSecrets":[{"name":"all-icr-io-mmjc"}]}}}}
+  creationTimestamp: "2025-05-23T05:15:38Z"
+  generation: 171
+  name: agents-mmjc-dev
+  namespace: mmjc-dev
+  resourceVersion: "55170288"
+  uid: 8869f249-ca93-43a7-9187-3f32799d3884
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: agents-mmjc
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-10-31T11:26:23+02:00"
+        sidecar.istio.io/inject: "true"
+      creationTimestamp: null
+      labels:
+        app: agents-mmjc
+    spec:
+      containers:
+      - env:
+        - name: API_AUTH_TOKENS
+          valueFrom:
+            secretKeyRef:
+              key: API_AUTH_TOKENS
+              name: api-auth-tokens-agents
+        - name: MODEL_NAME
+          value: openai:sonnet-4-5
+        - name: OPENAI_API_BASE
+          value: https://model-gateway.llm-adapter-dev-c97c2ce0266e6f32de317d52e2a84f46-0001.us-east.containers.appdomain.cloud/v1
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: OPENAI_API_KEY
+              name: openai-api-key-agents
+        - name: MCP_GATEWAY_URL
+          value: http://mcp-gateway-dev.mmjc-dev.svc.cluster.local/servers/580b0577e2ab496a8f2a3baffe186c57/sse
+        - name: MCP_GATEWAY_JWT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: jwt_token
+              name: mcp-gateway-jwt-token
+        - name: MERMAID_VALIDATOR_URL
+          value: http://mermaid-validator-api.mmjc-dev.svc.cluster.local/api/v1/validate
+        - name: COS_ENDPOINT_URL
+          value: https://s3.us-south.cloud-object-storage.appdomain.cloud
+        - name: COS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: S3_ACCESS_KEY
+              name: s3-access-key-tools
+        - name: COS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: S3_SECRET_KEY
+              name: s3-secret-key-tools
+        - name: MAX_THREADS
+          value: "5"
+        - name: GIT_USERNAME
+          value: romanas-marcenko
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: GIT_PASSWORD_SECRET
+              name: git-password-secret-agents
+        - name: POSTGRESQL_HOST
+          value: 38cbe469-657f-4988-b1ea-cfb0d2e5a24a.btdl8mld0r95fevivv30.private.databases.appdomain.cloud
+        - name: POSTGRESQL_PORT
+          value: "32396"
+        - name: POSTGRESQL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRESQL_USERNAME
+              name: postgresql-secret-dev
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRESQL_PASSWORD
+              name: postgresql-secret-dev
+        - name: POSTGRESQL_DATABASE
+          value: mmjc
+        - name: POSTGRESQL_SSLMODE
+          value: verify-full
+        - name: GUNICORN_TIMEOUT
+          value: "1200"
+        image: icr.io/mjc-cr/mmjc-agents:0.0.1
+        imagePullPolicy: Always
+        name: agents
+        ports:
+        - containerPort: 8080
+          name: agents
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2Gi
+          requests:
+            cpu: 250m
+            memory: 1Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: all-icr-io-mmjc
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-10-01T12:42:16Z"
+    lastUpdateTime: "2025-10-01T12:42:16Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2025-05-23T05:15:38Z"
+    lastUpdateTime: "2025-10-31T09:26:45Z"
+    message: ReplicaSet "agents-mmjc-dev-5684689f7d" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 171
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

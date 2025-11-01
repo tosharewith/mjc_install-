@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"cos-file-organizer","environment":"dev","managed-by":"kustomize","version":"0.1.0"},"name":"cos-file-organizer-mmjc-dev","namespace":"mmjc-dev"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"cos-file-organizer","environment":"dev","managed-by":"kustomize"}},"strategy":{"rollingUpdate":{"maxSurge":0,"maxUnavailable":1},"type":"RollingUpdate"},"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true"},"labels":{"app":"cos-file-organizer","environment":"dev","managed-by":"kustomize","version":"0.1.0"}},"spec":{"containers":[{"args":["infinity"],"command":["sleep"],"env":[{"name":"IBM_COS_ENDPOINT","valueFrom":{"configMapKeyRef":{"key":"IBM_COS_ENDPOINT","name":"cos-file-organizer-config-mmjc-dev"}}},{"name":"IBM_COS_API_KEY","valueFrom":{"secretKeyRef":{"key":"S3_ACCESS_KEY","name":"s3-access-key-tools"}}},{"name":"IBM_COS_SERVICE_INSTANCE_ID","valueFrom":{"secretKeyRef":{"key":"S3_SECRET_KEY","name":"s3-secret-key-tools"}}},{"name":"MODEL_NAME","valueFrom":{"configMapKeyRef":{"key":"MODEL_NAME","name":"cos-file-organizer-config-mmjc-dev"}}},{"name":"OPENAI_API_BASE","valueFrom":{"configMapKeyRef":{"key":"OPENAI_API_BASE","name":"cos-file-organizer-config-mmjc-dev"}}},{"name":"OPENAI_API_KEY","valueFrom":{"secretKeyRef":{"key":"OPENAI_API_KEY","name":"openai-api-key-agents"}}}],"image":"icr.io/mjc-cr/cos-file-organizer:0.1.0","imagePullPolicy":"Always","name":"cos-file-organizer","resources":{"limits":{"cpu":"250m","memory":"512Mi"},"requests":{"cpu":"100m","memory":"256Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"runAsNonRoot":true,"runAsUser":1000}}],"imagePullSecrets":[{"name":"all-icr-io-mmjc"}],"restartPolicy":"Always"}}}}
+  creationTimestamp: "2025-10-27T22:38:14Z"
+  generation: 1
+  labels:
+    app: cos-file-organizer
+    environment: dev
+    managed-by: kustomize
+    version: 0.1.0
+  name: cos-file-organizer-mmjc-dev
+  namespace: mmjc-dev
+  resourceVersion: "53997560"
+  uid: 92199dce-4b76-4b4c-b687-9d00ad30a49f
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: cos-file-organizer
+      environment: dev
+      managed-by: kustomize
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+      creationTimestamp: null
+      labels:
+        app: cos-file-organizer
+        environment: dev
+        managed-by: kustomize
+        version: 0.1.0
+    spec:
+      containers:
+      - args:
+        - infinity
+        command:
+        - sleep
+        env:
+        - name: IBM_COS_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key: IBM_COS_ENDPOINT
+              name: cos-file-organizer-config-mmjc-dev
+        - name: IBM_COS_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: S3_ACCESS_KEY
+              name: s3-access-key-tools
+        - name: IBM_COS_SERVICE_INSTANCE_ID
+          valueFrom:
+            secretKeyRef:
+              key: S3_SECRET_KEY
+              name: s3-secret-key-tools
+        - name: MODEL_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: MODEL_NAME
+              name: cos-file-organizer-config-mmjc-dev
+        - name: OPENAI_API_BASE
+          valueFrom:
+            configMapKeyRef:
+              key: OPENAI_API_BASE
+              name: cos-file-organizer-config-mmjc-dev
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: OPENAI_API_KEY
+              name: openai-api-key-agents
+        image: icr.io/mjc-cr/cos-file-organizer:0.1.0
+        imagePullPolicy: Always
+        name: cos-file-organizer
+        resources:
+          limits:
+            cpu: 250m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 1000
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: all-icr-io-mmjc
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-10-27T22:38:14Z"
+    lastUpdateTime: "2025-10-27T22:38:14Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2025-10-27T22:38:14Z"
+    lastUpdateTime: "2025-10-27T22:38:26Z"
+    message: ReplicaSet "cos-file-organizer-mmjc-dev-7695985cbf" has successfully
+      progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

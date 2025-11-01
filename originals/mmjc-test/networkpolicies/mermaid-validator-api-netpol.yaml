@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"labels":{"app":"mermaid-validator-api","environment":"test","managed-by":"kustomize"},"name":"mermaid-validator-api-netpol","namespace":"mmjc-test"},"spec":{"egress":[{}],"ingress":[{"from":[{"namespaceSelector":{}}],"ports":[{"port":8000,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"mermaid-validator-api","environment":"test","managed-by":"kustomize"}},"policyTypes":["Ingress","Egress"]}}
+  creationTimestamp: "2025-09-12T03:37:08Z"
+  generation: 1
+  labels:
+    app: mermaid-validator-api
+    environment: test
+    managed-by: kustomize
+  name: mermaid-validator-api-netpol
+  namespace: mmjc-test
+  resourceVersion: "37429279"
+  uid: 701aa193-993f-439b-8917-217fffa667ea
+spec:
+  egress:
+  - {}
+  ingress:
+  - from:
+    - namespaceSelector: {}
+    ports:
+    - port: 8000
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: mermaid-validator-api
+      environment: test
+      managed-by: kustomize
+  policyTypes:
+  - Ingress
+  - Egress

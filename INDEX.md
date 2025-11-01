@@ -1,215 +1,265 @@
-# Índice Completo da Documentação - Migração IKS → EKS
+# Kubernetes Resources - Complete Index
 
-## 📑 Documentação Principal
+## 📚 Quick Navigation
 
-### Guias de Início Rápido
-- **[README.md](README.md)** - Visão geral do projeto
-- **[MIGRATION_QUICKSTART.md](MIGRATION_QUICKSTART.md)** - Guia rápido de migração (COMECE AQUI!)
-- **[START_HERE.md](START_HERE.md)** - Ponto de partida alternativo
+### 🎯 Start Here
+1. **[EXTRACTION_SUMMARY.md](EXTRACTION_SUMMARY.md)** - Complete overview of what was extracted
+2. **[K8S_RESOURCES_INVENTORY.md](K8S_RESOURCES_INVENTORY.md)** - High-level resource inventory
 
-### Instalação via Helm (Recomendado!)
-- **[AIRFLOW_HELM_INSTALL.md](AIRFLOW_HELM_INSTALL.md)** - Instalação do Airflow via Helm Chart oficial
-- **[MILVUS_HELM_INSTALL.md](MILVUS_HELM_INSTALL.md)** - Instalação do Milvus via Helm Chart oficial
+### 📁 Main Directories
 
-## 📚 Guias Detalhados (docs/pt-br/)
+#### `originals/` - Complete Raw Extraction
+- **[originals/README.md](originals/README.md)** - How to use original YAMLs
+- **[originals/INVENTORY.md](originals/INVENTORY.md)** - Detailed resource listing
+- `originals/airflow-test/` - Airflow production (49 resources)
+- `originals/mmjc-test/` - MMJC test environment (115 resources)
+- `originals/mmjc-dev/` - MMJC development (182 resources)
+- `originals/secret-templates/` - Safe secret templates (80 files)
 
-### Fase 1: Preparação
-- **[01-pre-requisitos.md](docs/pt-br/01-pre-requisitos.md)**
-  - Ferramentas necessárias (Terraform, kubectl, Helm, AWS CLI)
-  - Acessos AWS e Kubernetes
-  - Configuração inicial
-  - Validação de pré-requisitos
+⚠️ **Warning:** `originals/*/secrets/` contains actual credentials!
 
-### Fase 2: Planejamento
-- **[02-planejamento.md](docs/pt-br/02-planejamento.md)**
-  - Diferenças entre IKS e EKS
-  - Arquitetura alvo
-  - Estratégia de migração
-  - Riscos e mitigações
-  - Timeline
+#### `kustomize/` - Templates for Redeployment
+- **[kustomize/README.md](kustomize/README.md)** - Comprehensive Kustomize usage guide
+- `kustomize/airflow-test/` - Airflow Kustomize templates
+- `kustomize/mmjc-test/` - MMJC test Kustomize templates
+- `kustomize/overlays/artifactory/` - Artifactory registry overlay
+- `kustomize/overlays/air-gapped/` - Air-gapped deployment overlay
 
-### Fase 3: Infraestrutura
-- **[03-terraform-setup.md](docs/pt-br/03-terraform-setup.md)**
-  - Setup do backend do Terraform
-  - Criação de RDS PostgreSQL
-  - Criação de Redis as Cache
-  - Criação de S3 Buckets
-  - Validação de recursos
+### 🛠️ Utility Scripts
 
-### Fase 4: Migração Airflow
-- **[04-airflow-migration.md](docs/pt-br/04-airflow-migration.md)**
-  - Preparação de configurações
-  - Criação de secrets
-  - Sincronização de DAGs
-  - Deploy no EKS
-  - Validação
-
-### Fase 5: Migração Milvus
-- **[05-milvus-migration.md](docs/pt-br/05-milvus-migration.md)**
-  - Deploy da infraestrutura (Etcd, Kafka, Zookeeper, MinIO)
-  - Deploy dos componentes Milvus
-  - Migração de dados
-  - Validação
-
-### Fase 6: Autenticação
-- **[06-oauth-setup.md](docs/pt-br/06-oauth-setup.md)**
-  - Configuração do OAuth2 Proxy
-  - Integração com Azure AD
-  - Configuração de ingress
-  - Testes de autenticação
-
-### Fase 7: Validação
-- **[07-validacao.md](docs/pt-br/07-validacao.md)**
-  - Checklist de validação
-  - Testes de conectividade
-  - Validação de componentes
-  - Scripts de validação automatizada
-  - Monitoramento
-
-### Fase 8: Troubleshooting
-- **[08-troubleshooting.md](docs/pt-br/08-troubleshooting.md)**
-  - Problemas comuns e soluções
-  - Airflow (scheduler, workers, DAGs, logs)
-  - Milvus (Etcd, Kafka, API)
-  - Storage (PVCs)
-  - Rede (ingress, DNS)
-  - RDS/Redis
-  - OAuth2
-
-## ⚙️ Configurações Helm
-
-### Airflow
-- **[helm/airflow-values-aws-eks.yaml](helm/airflow-values-aws-eks.yaml)**
-  - Configuração completa do Airflow para EKS
-  - Baseado na configuração atual do `airflow-test` no IKS
-  - Adaptações para AWS (storage, node selectors, etc)
-  - Recursos, réplicas, e configurações
-
-### Milvus
-- **[helm/milvus-values-aws-eks.yaml](helm/milvus-values-aws-eks.yaml)**
-  - Configuração completa do Milvus para EKS
-  - Baseado na configuração atual do `milvus-mmjc-test` no IKS
-  - Adaptações para AWS (storage class gp3)
-  - Componentes, réplicas e recursos
-
-## 🗂️ Outros Documentos
-
-### Documentação Técnica
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Informações de deployment
-- **[INSTALLATION_SUMMARY.md](INSTALLATION_SUMMARY.md)** - Resumo da instalação
-- **[MIGRATION_OVERVIEW.md](MIGRATION_OVERVIEW.md)** - Visão geral da migração
-- **[MIGRATION_WORKFLOW.md](MIGRATION_WORKFLOW.md)** - Workflow de migração
-
-### Guias Específicos
-- **[DOCKER_PULL_COMMANDS.md](DOCKER_PULL_COMMANDS.md)** - Comandos para pull de imagens
-- **[IMAGE_MIGRATION_ANALYSIS.md](IMAGE_MIGRATION_ANALYSIS.md)** - Análise de imagens
-- **[JFROG_ARTIFACTORY_SETUP.md](JFROG_ARTIFACTORY_SETUP.md)** - Setup JFrog
-- **[AWS_SERVICES_REQUIRED.md](AWS_SERVICES_REQUIRED.md)** - Serviços AWS necessários
-- **[SERVICES_AND_IMAGES_GUIDE.md](SERVICES_AND_IMAGES_GUIDE.md)** - Guia de serviços e imagens
-
-### Status e Sumários
-- **[MIGRATION_STATUS.md](MIGRATION_STATUS.md)** - Status da migração
-- **[MIGRATION_STATUS_FINAL.md](MIGRATION_STATUS_FINAL.md)** - Status final
-- **[MIGRATION_COMPLETE_SUCCESS.md](MIGRATION_COMPLETE_SUCCESS.md)** - Sucesso completo
-- **[FINAL_MIGRATION_STATUS.md](FINAL_MIGRATION_STATUS.md)** - Status final detalhado
-- **[SUCCESS_PARTIAL_MIGRATION.md](SUCCESS_PARTIAL_MIGRATION.md)** - Sucesso parcial
-- **[SUMMARY.md](SUMMARY.md)** - Sumário geral
-
-### Guides Rápidos
-- **[QUICKSTART.md](QUICKSTART.md)** - Início rápido (versão 1)
-- **[QUICKSTART_MANUAL_MIGRATION.md](QUICKSTART_MANUAL_MIGRATION.md)** - Migração manual
-- **[RUN_MIGRATION_NOW.md](RUN_MIGRATION_NOW.md)** - Executar migração agora
-
-### Soluções
-- **[QUOTA_SOLUTIONS.md](QUOTA_SOLUTIONS.md)** - Soluções para problemas de quota
-- **[CORRECTED_MIGRATION_READY.md](CORRECTED_MIGRATION_READY.md)** - Migração corrigida
-
-## 🎯 Fluxo Recomendado de Leitura
-
-### Para Iniciantes (Nunca fez migração antes)
-1. [README.md](README.md) - Entender o projeto
-2. [MIGRATION_QUICKSTART.md](MIGRATION_QUICKSTART.md) - Visão rápida
-3. [docs/pt-br/01-pre-requisitos.md](docs/pt-br/01-pre-requisitos.md) - Preparar ambiente
-4. [docs/pt-br/02-planejamento.md](docs/pt-br/02-planejamento.md) - Planejar
-5. [AIRFLOW_HELM_INSTALL.md](AIRFLOW_HELM_INSTALL.md) - Instalar Airflow
-6. [MILVUS_HELM_INSTALL.md](MILVUS_HELM_INSTALL.md) - Instalar Milvus
-
-### Para Quem Quer Fazer Rápido (Já sabe o que está fazendo)
-1. [MIGRATION_QUICKSTART.md](MIGRATION_QUICKSTART.md) - Comandos essenciais
-2. [helm/airflow-values-aws-eks.yaml](helm/airflow-values-aws-eks.yaml) - Editar configurações
-3. [helm/milvus-values-aws-eks.yaml](helm/milvus-values-aws-eks.yaml) - Editar configurações
-4. Executar comandos Helm
-5. [docs/pt-br/07-validacao.md](docs/pt-br/07-validacao.md) - Validar
-
-### Para Troubleshooting
-1. [docs/pt-br/08-troubleshooting.md](docs/pt-br/08-troubleshooting.md) - Problemas comuns
-2. Logs: `kubectl logs -n NAMESPACE POD_NAME`
-3. Eventos: `kubectl get events -n NAMESPACE`
-
-## 📊 Namespaces e Componentes
-
-### Airflow (namespace: airflow-test)
-- API Server (Webserver)
-- Scheduler
-- DAG Processor
-- Workers (Celery)
-- Triggerer
-- StatsD
-
-**Dependências externas**:
-- RDS PostgreSQL (metadata)
-- Redis as Cache (message broker)
-- S3 (logs, DAGs)
-
-### Milvus (namespace: mmjc-test)
-- MixCoordinator
-- DataNode (2 réplicas)
-- IndexNode (2 réplicas)
-- QueryNode (3 réplicas)
-- Proxy
-- Etcd (3 pods - StatefulSet)
-- Kafka (3 pods - StatefulSet)
-- Zookeeper (3 pods - via Kafka subchart)
-- MinIO (4 pods - StatefulSet)
-- Attu UI
-- MCP Milvus DB
-
-**Dependências**:
-- PVCs (EBS gp3)
-- (Opcional) S3 em vez de MinIO
-
-## 🔗 Links Externos Úteis
-
-### Helm Charts
-- [Apache Airflow Helm Chart](https://airflow.apache.org/docs/helm-chart/)
-- [Milvus Helm Chart](https://github.com/zilliztech/milvus-helm)
-
-### Documentação Oficial
-- [Apache Airflow Docs](https://airflow.apache.org/docs/)
-- [Milvus Docs](https://milvus.io/docs/)
-- [AWS EKS Docs](https://docs.aws.amazon.com/eks/)
-- [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
-
-### Ferramentas
-- [kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
-- [Helm Docs](https://helm.sh/docs/)
-
-## 📝 Como Usar Este Índice
-
-1. **Primeira Migração?** Leia na ordem: README → Quickstart → Guias 01-08
-2. **Referência Rápida?** Use MIGRATION_QUICKSTART.md
-3. **Problema Específico?** Vá direto para 08-troubleshooting.md
-4. **Configurar Helm?** Edite os arquivos em `helm/`
-
-## 🆘 Precisa de Ajuda?
-
-1. Verifique [docs/pt-br/08-troubleshooting.md](docs/pt-br/08-troubleshooting.md)
-2. Veja logs: `kubectl logs -n NAMESPACE POD_NAME`
-3. Veja eventos: `kubectl get events -n NAMESPACE --sort-by='.lastTimestamp'`
-4. Consulte documentação oficial dos componentes
+| Script | Purpose |
+|--------|---------|
+| `extract-all-resources.sh` | Re-extract all resources from cluster |
+| `verify-extraction.sh` | Verify extraction completeness |
+| `kustomize/validate.sh` | Validate Kustomize configurations |
+| `kustomize/change-image-registry.sh` | Helper to change image registries |
+| `originals/template-secrets.sh` | Advanced secret templating (Python) |
+| `originals/template-secrets-simple.sh` | Simple secret templating (Shell) |
 
 ---
 
-**Última atualização**: 2025-10-30
-**Projeto**: Migração IBM IKS → AWS EKS
-**Namespaces**: `airflow-test` e `mmjc-test`
+## 🚀 Common Tasks
+
+### View Resources
+
+```bash
+# List all deployments
+ls originals/*/deployments/
+
+# View a specific deployment
+cat originals/mmjc-test/deployments/agents-mmjc-test.yaml
+
+# Find all images used
+grep -r "image:" kustomize/*/deployments/ | grep -v "imagePullPolicy"
+```
+
+### Change Image Registry
+
+```bash
+# Option 1: Use helper script
+./kustomize/change-image-registry.sh mmjc-test \
+  icr.io/mjc-cr \
+  br.icr.io/br-ibm-images
+
+# Option 2: Edit kustomization.yaml
+vim kustomize/mmjc-test/kustomization.yaml
+
+# Option 3: Use overlay
+kubectl apply -k kustomize/overlays/artifactory/
+```
+
+### Deploy Resources
+
+```bash
+# Preview with kustomize
+kubectl kustomize kustomize/mmjc-test/
+
+# Dry-run deployment
+kubectl apply -k kustomize/mmjc-test/ --dry-run=client
+
+# Deploy
+kubectl apply -k kustomize/mmjc-test/
+```
+
+### Work with Secrets
+
+```bash
+# Create safe templates
+bash originals/template-secrets-simple.sh
+
+# View templates
+ls originals/secret-templates/mmjc-test/
+
+# Use template (after replacing placeholders)
+kubectl apply -f originals/secret-templates/mmjc-test/api-key.yaml
+```
+
+---
+
+## 📊 Statistics
+
+| Metric | Value |
+|--------|-------|
+| **Namespaces** | 3 |
+| **Total Resources** | 346 |
+| **Deployments** | 40 |
+| **StatefulSets** | 14 |
+| **Services** | 71 |
+| **Secrets** | 80 |
+| **ConfigMaps** | 50 |
+| **PVCs** | 44 |
+| **Ingresses** | 5 |
+| **Total YAML Files** | 527 |
+| **Secret Templates** | 80 |
+| **Unique Images** | 11 |
+
+---
+
+## 🔍 Find Resources
+
+### By Type
+
+```bash
+# All deployments
+find originals -path "*/deployments/*.yaml"
+
+# All services
+find originals -path "*/services/*.yaml"
+
+# All secrets (be careful!)
+find originals -path "*/secrets/*.yaml" -not -path "*/secret-templates/*"
+```
+
+### By Name Pattern
+
+```bash
+# Find all airflow resources
+find originals -name "*airflow*"
+
+# Find all milvus resources
+find originals -name "*milvus*"
+
+# Find all agent resources
+find originals -name "*agent*"
+```
+
+### By Content
+
+```bash
+# Find resources using specific image
+grep -r "icr.io/mjc-cr/mmjc-agents" originals/
+
+# Find LoadBalancer services
+grep -r "type: LoadBalancer" originals/*/services/
+
+# Find resources with specific labels
+grep -r "app: mcp-gateway" originals/
+```
+
+---
+
+## 🔒 Security Checklist
+
+- [ ] Secrets directory added to .gitignore ✅
+- [ ] File permissions set on secrets: `chmod 600 originals/*/secrets/*.yaml`
+- [ ] Secret templates created: `bash originals/template-secrets-simple.sh` ✅
+- [ ] Documented secret management strategy
+- [ ] Credentials rotated after extraction (recommended)
+- [ ] Backup encrypted and stored securely
+- [ ] Access to originals/ restricted
+
+---
+
+## 📖 Documentation Index
+
+### Overview Documents
+- [INDEX.md](INDEX.md) ← You are here
+- [EXTRACTION_SUMMARY.md](EXTRACTION_SUMMARY.md) - Complete summary
+- [K8S_RESOURCES_INVENTORY.md](K8S_RESOURCES_INVENTORY.md) - Resource inventory
+
+### Detailed Guides
+- [originals/README.md](originals/README.md) - Working with original YAMLs
+- [originals/INVENTORY.md](originals/INVENTORY.md) - Resource listing
+- [kustomize/README.md](kustomize/README.md) - Kustomize usage guide
+
+### Script Documentation
+- Scripts are self-documenting with `--help` or usage info
+- Read script headers for detailed usage
+
+---
+
+## 🆘 Troubleshooting
+
+### Issue: Too many files to commit
+
+**Solution:** Only commit templates, not originals:
+```bash
+git add kustomize/ originals/secret-templates/ *.md
+git add .gitignore
+# DO NOT: git add originals/*/secrets/
+```
+
+### Issue: Images not accessible
+
+**Solution:** Update image references:
+```bash
+./kustomize/change-image-registry.sh <namespace> <old-prefix> <new-prefix>
+```
+
+### Issue: Resources already exist
+
+**Solution:** Use server-side apply:
+```bash
+kubectl apply -k kustomize/mmjc-test/ --server-side
+```
+
+---
+
+## 📅 Maintenance
+
+### Regular Tasks (Monthly)
+
+1. **Re-extract resources:**
+   ```bash
+   bash extract-all-resources.sh
+   ```
+
+2. **Update templates:**
+   ```bash
+   bash originals/template-secrets-simple.sh
+   ```
+
+3. **Verify extraction:**
+   ```bash
+   bash verify-extraction.sh
+   ```
+
+4. **Commit changes:**
+   ```bash
+   git add kustomize/ originals/secret-templates/ *.md
+   git commit -m "Update k8s templates - $(date +%Y-%m-%d)"
+   git tag "snapshot-$(date +%Y-%m-%d)"
+   ```
+
+### Backup Strategy
+
+1. Keep `originals/` as point-in-time snapshot
+2. Tag git commits: `git tag v1.0-snapshot-YYYY-MM-DD`
+3. Store encrypted backups of `secrets/` separately
+4. Document manual cluster changes
+
+---
+
+## 🔗 External Resources
+
+- [Kubernetes Documentation](https://kubernetes.io/docs/)
+- [Kustomize Documentation](https://kustomize.io/)
+- [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets)
+- [External Secrets Operator](https://external-secrets.io/)
+
+---
+
+**Last Updated:** $(date +"%Y-%m-%d %H:%M:%S")
+**Status:** ✅ Complete and Verified
+**Total Files:** 527 YAML files
+**Maintainer:** DevOps Team

@@ -1,0 +1,127 @@
+mjc_install-/
+│
+├── 📄 INDEX.md                          # Main navigation and quick reference
+├── 📄 EXTRACTION_SUMMARY.md             # Complete extraction summary
+├── 📄 K8S_RESOURCES_INVENTORY.md        # High-level resource inventory
+├── 📄 DIRECTORY_STRUCTURE.txt           # This file
+├── 📄 .gitignore                        # Protects secrets from version control
+│
+├── 🔧 extract-all-resources.sh          # Re-extract from cluster
+├── 🔧 verify-extraction.sh              # Verify extraction completeness
+│
+├── 📦 originals/                        # Complete raw extraction (346 files)
+│   ├── 📄 README.md                     # Comprehensive usage guide
+│   ├── 📄 INVENTORY.md                  # Detailed resource listing
+│   ├── 🔧 template-secrets.sh           # Advanced Python-based templating
+│   ├── 🔧 template-secrets-simple.sh    # Simple shell-based templating
+│   │
+│   ├── 📂 airflow-test/                 # Airflow production (49 resources)
+│   │   ├── 📁 deployments/              # 4 deployments
+│   │   ├── 📁 statefulsets/             # 2 statefulsets
+│   │   ├── 📁 services/                 # 4 services
+│   │   ├── 📁 configmaps/               # 4 configmaps
+│   │   ├── 🔒 secrets/                  # 19 secrets ⚠️ ACTUAL CREDENTIALS
+│   │   ├── 📁 pvcs/                     # 3 PVCs
+│   │   ├── 📁 serviceaccounts/          # 9 service accounts
+│   │   ├── 📁 roles/                    # 2 roles
+│   │   └── 📁 rolebindings/             # 2 role bindings
+│   │
+│   ├── 📂 mmjc-test/                    # MMJC test (115 resources)
+│   │   ├── 📁 deployments/              # 13 deployments
+│   │   ├── 📁 statefulsets/             # 6 statefulsets
+│   │   ├── 📁 services/                 # 25 services
+│   │   ├── 📁 configmaps/               # 17 configmaps
+│   │   ├── 🔒 secrets/                  # 24 secrets ⚠️ ACTUAL CREDENTIALS
+│   │   ├── 📁 pvcs/                     # 17 PVCs
+│   │   ├── 📁 ingresses/                # 2 ingresses
+│   │   ├── 📁 networkpolicies/          # 1 network policy
+│   │   ├── 📁 serviceaccounts/          # 5 service accounts
+│   │   ├── 📁 roles/                    # 1 role
+│   │   ├── 📁 rolebindings/             # 1 role binding
+│   │   └── 📁 hpas/                     # 3 horizontal pod autoscalers
+│   │
+│   ├── 📂 mmjc-dev/                     # MMJC development (182 resources)
+│   │   ├── 📁 deployments/              # 23 deployments
+│   │   ├── 📁 statefulsets/             # 6 statefulsets
+│   │   ├── 📁 services/                 # 42 services
+│   │   ├── 📁 configmaps/               # 29 configmaps
+│   │   ├── 🔒 secrets/                  # 37 secrets ⚠️ ACTUAL CREDENTIALS
+│   │   ├── 📁 pvcs/                     # 24 PVCs
+│   │   ├── 📁 ingresses/                # 3 ingresses
+│   │   ├── 📁 networkpolicies/          # 1 network policy
+│   │   ├── 📁 serviceaccounts/          # 7 service accounts
+│   │   ├── 📁 roles/                    # 2 roles
+│   │   ├── 📁 rolebindings/             # 2 role bindings
+│   │   ├── 📁 hpas/                     # 5 horizontal pod autoscalers
+│   │   └── 📁 jobs/                     # 1 job
+│   │
+│   └── 📂 secret-templates/             # Safe secret templates (80 files)
+│       ├── 📁 airflow-test/             # 19 templated secrets
+│       ├── 📁 mmjc-test/                # 24 templated secrets
+│       └── 📁 mmjc-dev/                 # 37 templated secrets
+│
+└── 📦 kustomize/                        # Kustomize templates (101 files)
+    ├── 📄 README.md                     # Comprehensive Kustomize guide
+    ├── 🔧 change-image-registry.sh      # Helper to change image registries
+    ├── 🔧 validate.sh                   # Validate kustomize configs
+    │
+    ├── 📂 airflow-test/                 # Airflow Kustomize templates
+    │   ├── 📄 kustomization.yaml        # Main kustomize config with images
+    │   ├── 📁 deployments/              # 4 deployments
+    │   ├── 📁 statefulsets/             # 2 statefulsets
+    │   ├── 📁 services/                 # 4 services
+    │   ├── 📁 configmaps/               # 2 configmaps
+    │   └── 📁 pvcs/                     # 3 PVCs
+    │
+    ├── 📂 mmjc-test/                    # MMJC test Kustomize templates
+    │   ├── 📄 kustomization.yaml        # Main kustomize config with images
+    │   ├── 📁 deployments/              # 13 deployments
+    │   ├── 📁 statefulsets/             # 6 statefulsets
+    │   ├── 📁 services/                 # 25 services
+    │   ├── 📁 configmaps/               # 15 configmaps
+    │   ├── 📁 pvcs/                     # 17 PVCs
+    │   └── 📁 ingresses/                # 2 ingresses
+    │
+    └── 📂 overlays/                     # Environment-specific overlays
+        ├── 📂 artifactory/              # Artifactory registry overlay
+        │   └── 📄 kustomization.yaml    # br.icr.io/br-ibm-images
+        └── 📂 air-gapped/               # Air-gapped deployment overlay
+            └── 📄 kustomization.yaml    # internal-registry.company.local
+
+═══════════════════════════════════════════════════════════════════
+
+SUMMARY
+═══════════════════════════════════════════════════════════════════
+
+📊 Total Files:           527 YAML files
+📦 Namespaces:            3 (airflow-test, mmjc-test, mmjc-dev)
+🚀 Resources:             346 Kubernetes resources
+🔐 Secrets:               80 (with 80 safe templates)
+🖼️  Unique Images:         11
+📝 Documentation:         7 markdown files
+🔧 Scripts:               6 helper scripts
+
+═══════════════════════════════════════════════════════════════════
+
+QUICK COMMANDS
+═══════════════════════════════════════════════════════════════════
+
+# View summary
+cat EXTRACTION_SUMMARY.md
+
+# Change image registry
+./kustomize/change-image-registry.sh mmjc-test icr.io/mjc-cr new-registry.com
+
+# Preview deployment
+kubectl kustomize kustomize/mmjc-test/
+
+# Deploy with kustomize
+kubectl apply -k kustomize/mmjc-test/
+
+# Verify extraction
+bash verify-extraction.sh
+
+# Create secret templates
+bash originals/template-secrets-simple.sh
+
+═══════════════════════════════════════════════════════════════════

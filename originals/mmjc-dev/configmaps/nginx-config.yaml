@@ -1,0 +1,71 @@
+apiVersion: v1
+data:
+  nginx.conf: |
+    user nginx;
+    worker_processes auto;
+    error_log /var/log/nginx/error.log warn;
+    pid /var/run/nginx.pid;
+
+    events {
+        worker_connections 4096;   # Reduced for stability
+        use epoll;
+        multi_accept on;
+    }
+
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+
+        # Performance settings for high concurrency
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        keepalive_requests 1000;
+        client_max_body_size 100m;
+
+        # Connection optimizations
+        reset_timedout_connection on;
+        client_body_timeout 60;
+        client_header_timeout 60;
+        send_timeout 60;
+
+        # Connection pooling to backend
+        upstream backend {
+            keepalive 64;
+            keepalive_requests 1000;
+            keepalive_timeout 60s;
+            server 127.0.0.1:8000 max_fails=0;
+        }
+
+        server {
+            listen 80;
+            server_name _;
+
+            location / {
+                proxy_pass http://backend;
+                proxy_http_version 1.1;
+                proxy_set_header Connection "";
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+
+                # High-performance timeouts
+                proxy_connect_timeout 1s;
+                proxy_send_timeout 300s;
+                proxy_read_timeout 300s;
+                proxy_buffering off;
+            }
+        }
+    }
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"nginx.conf":"user nginx;\nworker_processes auto;\nerror_log /var/log/nginx/error.log warn;\npid /var/run/nginx.pid;\n\nevents {\n    worker_connections 4096;   # Reduced for stability\n    use epoll;\n    multi_accept on;\n}\n\nhttp {\n    include /etc/nginx/mime.types;\n    default_type application/octet-stream;\n\n    # Performance settings for high concurrency\n    sendfile on;\n    tcp_nopush on;\n    tcp_nodelay on;\n    keepalive_timeout 65;\n    keepalive_requests 1000;\n    client_max_body_size 100m;\n\n    # Connection optimizations\n    reset_timedout_connection on;\n    client_body_timeout 60;\n    client_header_timeout 60;\n    send_timeout 60;\n\n    # Connection pooling to backend\n    upstream backend {\n        keepalive 64;\n        keepalive_requests 1000;\n        keepalive_timeout 60s;\n        server 127.0.0.1:8000 max_fails=0;\n    }\n\n    server {\n        listen 80;\n        server_name _;\n\n        location / {\n            proxy_pass http://backend;\n            proxy_http_version 1.1;\n            proxy_set_header Connection \"\";\n            proxy_set_header Host $host;\n            proxy_set_header X-Real-IP $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n            proxy_set_header X-Forwarded-Proto $scheme;\n\n            # High-performance timeouts\n            proxy_connect_timeout 1s;\n            proxy_send_timeout 300s;\n            proxy_read_timeout 300s;\n            proxy_buffering off;\n        }\n    }\n}\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"nginx-config","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-09-19T16:03:31Z"
+  name: nginx-config
+  namespace: mmjc-dev
+  resourceVersion: "40121545"
+  uid: e32a867b-f4df-4bae-b997-d2e4df4ebd09

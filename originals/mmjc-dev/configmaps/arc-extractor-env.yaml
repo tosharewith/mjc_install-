@@ -1,0 +1,23 @@
+apiVersion: v1
+data:
+  CONSOLE_LOG: "true"
+  LOG_FILE: /app/logs/extraction.log
+  LOG_LEVEL: INFO
+  MODEL_NAME: sonnet-4-5
+  OPENAI_API_BASE: https://model-gateway.llm-adapter-dev-c97c2ce0266e6f32de317d52e2a84f46-0001.us-east.containers.appdomain.cloud/v1
+  OPENAI_API_KEY: LPS_aaaaaCofqlYDKi4UcA2BlBbSSAfTZRqhnmshw
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONUNBUFFERED: "1"
+  VALKEY_DB: "0"
+  VALKEY_HOST: redis-service-dev.mmjc-dev.svc.cluster.local
+  VALKEY_PORT: "6379"
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"CONSOLE_LOG":"true","LOG_FILE":"/app/logs/extraction.log","LOG_LEVEL":"INFO","MODEL_NAME":"sonnet-3-7","OPENAI_API_BASE":"https://model-gateway.llm-adapter-dev-c97c2ce0266e6f32de317d52e2a84f46-0001.us-east.containers.appdomain.cloud/v1","OPENAI_API_KEY":"LPS_aaaaaagnAWnyjqhorpKQe0o9YJQG9jrdOq3xp","PYTHONDONTWRITEBYTECODE":"1","PYTHONUNBUFFERED":"1"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"arc-extractor-env","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-10-14T18:22:40Z"
+  name: arc-extractor-env
+  namespace: mmjc-dev
+  resourceVersion: "54670139"
+  uid: 44214c72-d400-490e-9298-afc9632f2165

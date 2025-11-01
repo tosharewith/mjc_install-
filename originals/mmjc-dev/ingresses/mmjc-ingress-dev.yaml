@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"nginx.ingress.kubernetes.io/ssl-redirect":"true"},"name":"mmjc-ingress-dev","namespace":"mmjc-dev"},"spec":{"ingressClassName":"public-iks-k8s-nginx","rules":[{"host":"mmjc-dev.mjc-cluster-c97c2ce0266e6f32de317d52e2a84f46-0001.us-south.containers.appdomain.cloud","http":{"paths":[{"backend":{"service":{"name":"frontend-mmjc-dev","port":{"number":80}}},"path":"/","pathType":"Prefix"}]}}]}}
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  creationTimestamp: "2025-10-04T22:44:45Z"
+  generation: 1
+  name: mmjc-ingress-dev
+  namespace: mmjc-dev
+  resourceVersion: "54461468"
+  uid: 0cea5d65-e952-444a-8442-4ea1e0ce6048
+spec:
+  ingressClassName: public-iks-k8s-nginx
+  rules:
+  - host: mmjc-dev.mjc-cluster-c97c2ce0266e6f32de317d52e2a84f46-0001.us-south.containers.appdomain.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: frontend-mmjc-dev
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer:
+    ingress:
+    - hostname: 687fd729-us-south.lb.appdomain.cloud

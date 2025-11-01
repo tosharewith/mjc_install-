@@ -10,8 +10,8 @@ config/terraform-outputs.json
 *.p12
 *.pfx
 *.jks
-*-key.yaml
-*-secrets.yaml
+# Note: Not ignoring *-key.yaml to allow secret templates
+# Actual secrets are protected by originals/*/secrets/ pattern below
 
 # ============================================
 # Terraform
@@ -86,3 +86,12 @@ exports/
 !kustomize/**/secrets/*-template.yaml
 !config/*.example
 !config/*.sample
+
+# Kubernetes secret files - NEVER commit these!
+originals/*/secrets/
+originals/**/secrets/
+
+# Backup files
+*.backup
+*~
+.DS_Store

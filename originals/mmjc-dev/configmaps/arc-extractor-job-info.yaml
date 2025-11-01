@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  current_job_info.txt: |
+    JOB_UUID=6866dca7-2f77-49e9-aab1-cdf72461e479
+    JOB_PREFIX=data-job-mcp-6866dca7-2f77-49e9-aab1-cdf72461e479
+    BUCKET=b6504048-46e1-4831-a7e4-a43d0ed465f3-analyze
+    CREATED=2025-10-15T22:24:01.216258
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"current_job_info.txt":"JOB_UUID=6866dca7-2f77-49e9-aab1-cdf72461e479\nJOB_PREFIX=data-job-mcp-6866dca7-2f77-49e9-aab1-cdf72461e479\nBUCKET=b6504048-46e1-4831-a7e4-a43d0ed465f3-analyze\nCREATED=2025-10-15T22:24:01.216258\n"},"kind":"ConfigMap","metadata":{"annotations":{},"creationTimestamp":null,"name":"arc-extractor-job-info","namespace":"mmjc-dev"}}
+  creationTimestamp: "2025-10-16T01:28:28Z"
+  name: arc-extractor-job-info
+  namespace: mmjc-dev
+  resourceVersion: "49737683"
+  uid: 678bc34d-5e84-405b-a1a5-8083fd2452d3
