@@ -1,0 +1,190 @@
+# Installation-Specific Values Template
+# Copy this file to installation-values.yaml and fill in your values
+# This file should NOT be committed to git (add to .gitignore)
+
+# ============================================================================
+# Installation Metadata
+# ============================================================================
+installation:
+  name: "INSTALLATION_NAME"  # e.g., "production", "staging", "customer-xyz"
+  environment: "ENV"  # test, dev, prod
+  cloud_provider: "CLOUD"  # ibm-cloud, aws, azure, on-prem
+  region: "REGION"  # us-south, us-east-1, etc.
+
+# ============================================================================
+# Database Configuration (PostgreSQL)
+# ============================================================================
+database:
+  host: "DB_HOST"  # e.g., "postgres.example.com" or RDS endpoint
+  port: "DB_PORT"  # typically 5432 (standard), 32337 (IBM Cloud)
+  name: "DB_NAME"  # database name, e.g., "mmjc"
+  ssl_mode: "SSL_MODE"  # verify-full, require, disable
+
+  # Note: Username and password should be in Kubernetes secrets, not here
+  # Secret name: postgresql-secret-{env}
+  # Keys: POSTGRESQL_USERNAME, POSTGRESQL_PASSWORD
+
+# ============================================================================
+# Object Storage (S3-compatible)
+# ============================================================================
+object_storage:
+  # Endpoint URL
+  endpoint: "S3_ENDPOINT"
+  # Examples:
+  #   AWS:       https://s3.us-east-1.amazonaws.com
+  #   IBM Cloud: https://s3.us-south.cloud-object-storage.appdomain.cloud
+  #   MinIO:     https://minio.example.com
+
+  region: "S3_REGION"  # us-south, us-east-1, etc.
+
+  # Bucket names
+  buckets:
+    airflow_dags: "AIRFLOW_DAGS_BUCKET"
+    airflow_logs: "AIRFLOW_LOGS_BUCKET"
+    artifacts: "ARTIFACTS_BUCKET"
+    arc_results: "ARC_RESULTS_BUCKET"
+    uploads: "UPLOADS_BUCKET"
+
+  # Note: Access keys should be in Kubernetes secrets
+  # Secret names: s3-access-key-tools, cos-mmjc-airflow-secret
+  # Keys: S3_ACCESS_KEY, S3_SECRET_KEY
+
+# ============================================================================
+# LLM Gateway Configuration
+# ============================================================================
+llm:
+  gateway_url: "LLM_GATEWAY_URL"  # e.g., "https://llm-api.example.com/v1"
+  default_model: "MODEL_NAME"  # e.g., "openai:sonnet-4-5", "gpt-4", etc.
+
+  # Note: API keys should be in Kubernetes secrets
+  # Secret name: openai-api-key-agents
+  # Key: OPENAI_API_KEY
+
+# ============================================================================
+# MCP (Model Context Protocol) Configuration
+# ============================================================================
+mcp:
+  gateway:
+    server_id: "MCP_SERVER_ID"  # UUID for MCP gateway server
+    # Example: "d22371abbe0042559ae52772ff3b9337"
+
+  # Note: JWT tokens should be in Kubernetes secrets
+  # Secret name: mcp-gateway-jwt-token
+  # Key: jwt_token
+
+# ============================================================================
+# Git Configuration
+# ============================================================================
+git:
+  username: "GIT_USER"  # GitHub/GitLab username
+  default_repo: "GIT_REPO_URL"  # Base repository URL
+
+  # Note: Password/token should be in Kubernetes secrets
+  # Secret name: git-password-secret-agents
+  # Key: GIT_PASSWORD_SECRET
+
+# ============================================================================
+# Kubernetes Configuration
+# ============================================================================
+kubernetes:
+  namespace:
+    mmjc: "MMJC_NAMESPACE"  # e.g., "mmjc-test", "mmjc-prod"
+    airflow: "AIRFLOW_NAMESPACE"  # e.g., "airflow-test", "airflow-prod"
+
+  # Image registry
+  image_registry: "IMAGE_REGISTRY"
+  # Options:
+  #   - icr.io/mjc-cr  (IBM Cloud Container Registry)
+  #   - br.icr.io/br-ibm-images  (Artifactory - air-gapped)
+  #   - ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com  (AWS ECR)
+
+  # Storage class
+  storage_class: "STORAGE_CLASS"
+  # Examples:
+  #   - ibmc-block-gold (IBM Cloud)
+  #   - gp3 (AWS EBS)
+  #   - standard (default)
+
+# ============================================================================
+# External Services
+# ============================================================================
+external:
+  # Mermaid Validator API
+  mermaid_validator_url: "MERMAID_VALIDATOR_URL"
+  # Default: http://mermaid-validator-api.NAMESPACE.svc.cluster.local/api/v1/validate
+
+  # Milvus Vector DB
+  milvus_host: "MILVUS_HOST"
+  # Default: milvus-mmjc-ENVIRONMENT-proxy.NAMESPACE.svc.cluster.local
+
+  # Redis
+  redis_host: "REDIS_HOST"
+  # Default: redis-cluster-ENVIRONMENT.NAMESPACE.svc.cluster.local
+
+# ============================================================================
+# Application Configuration
+# ============================================================================
+application:
+  # Agents configuration
+  agents:
+    max_threads: "MAX_THREADS"  # e.g., "10"
+    timeout: "TIMEOUT"  # Gunicorn timeout in seconds, e.g., "1200"
+
+  # Airflow configuration
+  airflow:
+    executor: "EXECUTOR"  # CeleryExecutor, KubernetesExecutor
+    worker_concurrency: "WORKER_CONCURRENCY"  # e.g., "3"
+
+  # Frontend configuration
+  frontend:
+    api_url: "FRONTEND_API_URL"  # Backend API URL
+
+# ============================================================================
+# Monitoring & Observability
+# ============================================================================
+monitoring:
+  enabled: true
+  metrics_port: "9090"
+  statsd_host: "STATSD_HOST"
+  # Default: airflow-ENVIRONMENT-statsd.NAMESPACE.svc.cluster.local
+
+# ============================================================================
+# Security
+# ============================================================================
+security:
+  # TLS/SSL
+  tls_enabled: true
+  cert_manager_issuer: "CERT_ISSUER"  # letsencrypt-prod, selfsigned
+
+  # Network policies
+  network_policies_enabled: false
+
+  # Pod security
+  pod_security_standard: "restricted"  # privileged, baseline, restricted
+
+# ============================================================================
+# Resource Limits (Optional - for auto-scaling)
+# ============================================================================
+resources:
+  agents:
+    requests_cpu: "250m"
+    requests_memory: "1Gi"
+    limits_cpu: "500m"
+    limits_memory: "2Gi"
+
+  airflow_scheduler:
+    requests_cpu: "500m"
+    requests_memory: "1Gi"
+    limits_cpu: "1000m"
+    limits_memory: "2Gi"
+
+# ============================================================================
+# Notes
+# ============================================================================
+# - This template uses placeholder values in ALL_CAPS_WITH_UNDERSCORES
+# - Replace all placeholders with actual values for your installation
+# - Secrets (passwords, API keys, tokens) should NEVER be in this file
+# - Use Kubernetes secrets for all sensitive data
+# - This file can be used with envsubst or yq for templating
+# - Keep installation-specific values in version control (without secrets)
+# - Use different files for different environments (dev, test, prod)

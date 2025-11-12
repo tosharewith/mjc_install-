@@ -123,10 +123,20 @@ images:
     newName: icr.io/mjc-cr/mjc-mermaid-validator
     newTag: 1.0.17-llm-ready-amd64
 
-  # GHCR images
-  - name: ghcr.io/ibm/mcp-context-forge
-    newName: ghcr.io/ibm/mcp-context-forge
-    newTag: 0.6.0
+  # MCP Context Forge (migrated to ICR)
+  - name: icr.io/mjc-cr/mcp-context-forge
+    newName: icr.io/mjc-cr/mcp-context-forge
+    newTag: 0.8.0
+
+  # MCP ARC S3 Server
+  - name: icr.io/mjc-cr/mcp-arc-s3-server
+    newName: icr.io/mjc-cr/mcp-arc-s3-server
+    newTag: 2.1.45-amd64
+
+  # Redis
+  - name: redis
+    newName: redis
+    newTag: "8.0.2"
 
   # Milvus images
   - name: milvusdb/milvus
@@ -136,6 +146,23 @@ images:
   - name: zilliz/attu
     newName: zilliz/attu
     newTag: v2.5.6
+
+  # Milvus dependencies
+  - name: docker.io/milvusdb/etcd
+    newName: docker.io/milvusdb/etcd
+    newTag: 3.5.18-r1
+
+  - name: docker.io/bitnami/kafka
+    newName: docker.io/bitnami/kafka
+    newTag: 3.1.0-debian-10-r52
+
+  - name: minio/minio
+    newName: minio/minio
+    newTag: RELEASE.2024-05-28T17-19-04Z
+
+  - name: docker.io/bitnami/zookeeper
+    newName: docker.io/bitnami/zookeeper
+    newTag: 3.7.0-debian-10-r320
 
 # Common labels to add to all resources
 commonLabels:

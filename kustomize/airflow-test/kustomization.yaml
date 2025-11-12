@@ -31,10 +31,10 @@ resources:
 
 # Image transformations - Modify these to change registry/prefix
 images:
-  # ICR images
+  # ICR images (pinned to specific version for consistency)
   - name: icr.io/mjc-cr/mmjc-airflow-service
     newName: icr.io/mjc-cr/mmjc-airflow-service
-    newTag: latest
+    newTag: "3.0.2"  # Airflow version - matches cluster
 
   # Quay.io images
   - name: quay.io/prometheus/statsd-exporter

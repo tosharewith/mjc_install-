@@ -1,0 +1,192 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-mmjc-database
+  namespace: mmjc-test
+  labels:
+    app: database-init
+    component: setup
+spec:
+  ttlSecondsAfterFinished: 86400  # Keep for 24 hours after completion
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: database-init
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: init-db
+        image: postgres:16.8
+        command:
+          - /bin/bash
+          - -c
+          - |
+            set -e
+            echo "=========================================="
+            echo "MMJC Database Initialization"
+            echo "=========================================="
+            echo "PostgreSQL Host: $POSTGRES_HOST"
+            echo "PostgreSQL Database: $POSTGRES_DB"
+            echo "PostgreSQL User: $POSTGRES_USER"
+            echo ""
+
+            # Wait for PostgreSQL to be ready
+            echo "Checking PostgreSQL connectivity..."
+            until pg_isready -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER"; do
+              echo "PostgreSQL is unavailable - sleeping"
+              sleep 2
+            done
+            echo "✓ PostgreSQL is ready"
+            echo ""
+
+            # Run initialization script
+            echo "Running database initialization script..."
+            psql -h "$POSTGRES_HOST" \
+                 -p "$POSTGRES_PORT" \
+                 -U "$POSTGRES_USER" \
+                 -d "$POSTGRES_DB" \
+                 -f /scripts/init-mmjc-database.sql
+
+            echo ""
+            echo "=========================================="
+            echo "✓ Database initialization completed"
+            echo "=========================================="
+
+            # Verify checkpoints table
+            echo ""
+            echo "Verifying checkpoints table..."
+            psql -h "$POSTGRES_HOST" \
+                 -p "$POSTGRES_PORT" \
+                 -U "$POSTGRES_USER" \
+                 -d "$POSTGRES_DB" \
+                 -c "\d checkpoints"
+
+            echo ""
+            echo "✓ All done!"
+        env:
+          - name: POSTGRES_HOST
+            value: "7bce9b8c-e602-4ae6-8a44-ad87cc332d96.c9v3nahd0oekcvsra2t0.private.databases.appdomain.cloud"
+          - name: POSTGRES_PORT
+            value: "32337"
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-secret-test
+                key: POSTGRESQL_USERNAME
+          - name: PGPASSWORD  # PostgreSQL reads this automatically
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-secret-test
+                key: POSTGRESQL_PASSWORD
+          - name: POSTGRES_DB
+            value: "mmjc"
+          - name: PGSSLMODE
+            value: "require"
+        volumeMounts:
+          - name: init-script
+            mountPath: /scripts
+            readOnly: true
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+      volumes:
+        - name: init-script
+          configMap:
+            name: database-init-scripts
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database-init-scripts
+  namespace: mmjc-test
+  labels:
+    app: database-init
+data:
+  init-mmjc-database.sql: |
+    -- MMJC Database Initialization Script
+    -- Database: mmjc
+    -- PostgreSQL Version: 16.x
+
+    -- ============================================================================
+    -- 1. EXTENSIONS
+    -- ============================================================================
+    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+    CREATE EXTENSION IF NOT EXISTS "btree_gin";
+
+    -- ============================================================================
+    -- 2. LANGGRAPH CHECKPOINTS TABLE
+    -- ============================================================================
+    CREATE TABLE IF NOT EXISTS checkpoints (
+        thread_id TEXT NOT NULL,
+        checkpoint_ns TEXT NOT NULL DEFAULT '',
+        checkpoint_id TEXT NOT NULL,
+        parent_checkpoint_id TEXT,
+        type TEXT,
+        checkpoint JSONB NOT NULL,
+        metadata JSONB NOT NULL DEFAULT '{}',
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (thread_id, checkpoint_ns, checkpoint_id)
+    );
+
+    -- Indexes
+    CREATE INDEX IF NOT EXISTS idx_checkpoints_thread_id
+        ON checkpoints (thread_id);
+
+    CREATE INDEX IF NOT EXISTS idx_checkpoints_parent
+        ON checkpoints (parent_checkpoint_id)
+        WHERE parent_checkpoint_id IS NOT NULL;
+
+    CREATE INDEX IF NOT EXISTS idx_checkpoints_created_at
+        ON checkpoints (created_at DESC);
+
+    CREATE INDEX IF NOT EXISTS idx_checkpoints_metadata_gin
+        ON checkpoints USING gin (metadata);
+
+    -- Trigger function
+    CREATE OR REPLACE FUNCTION update_updated_at_column()
+    RETURNS TRIGGER AS $$
+    BEGIN
+        NEW.updated_at = CURRENT_TIMESTAMP;
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE TRIGGER update_checkpoints_updated_at
+        BEFORE UPDATE ON checkpoints
+        FOR EACH ROW
+        EXECUTE FUNCTION update_updated_at_column();
+
+    COMMENT ON TABLE checkpoints IS 'LangGraph agent state checkpoints for conversation persistence';
+
+    -- ============================================================================
+    -- 3. MAINTENANCE FUNCTION
+    -- ============================================================================
+    CREATE OR REPLACE FUNCTION cleanup_old_checkpoints(days_to_keep INTEGER DEFAULT 30)
+    RETURNS INTEGER AS $$
+    DECLARE
+        deleted_count INTEGER;
+    BEGIN
+        DELETE FROM checkpoints
+        WHERE created_at < NOW() - (days_to_keep || ' days')::INTERVAL;
+        GET DIAGNOSTICS deleted_count = ROW_COUNT;
+        RETURN deleted_count;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    -- ============================================================================
+    -- VERIFICATION
+    -- ============================================================================
+    DO $$
+    BEGIN
+        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'checkpoints') THEN
+            RAISE NOTICE '✓ checkpoints table created successfully';
+        ELSE
+            RAISE WARNING '✗ checkpoints table NOT created';
+        END IF;
+    END $$;

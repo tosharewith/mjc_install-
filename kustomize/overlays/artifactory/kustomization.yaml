@@ -36,15 +36,42 @@ images:
     newName: br.icr.io/br-ibm-images/mjc-mermaid-validator
     newTag: 1.0.17-llm-ready-amd64
 
-  # External images remain the same (or mirror them too)
-  - name: ghcr.io/ibm/mcp-context-forge
-    newName: ghcr.io/ibm/mcp-context-forge
-    newTag: 0.6.0
+  # MCP Context Forge (migrated to ICR, then to Artifactory)
+  - name: icr.io/mjc-cr/mcp-context-forge
+    newName: br.icr.io/br-ibm-images/mcp-context-forge
+    newTag: 0.8.0
 
-  - name: milvusdb/milvus
-    newName: milvusdb/milvus
+  # MCP ARC S3 Server
+  - name: icr.io/mjc-cr/mcp-arc-s3-server
+    newName: br.icr.io/br-ibm-images/mcp-arc-s3-server
+    newTag: 2.1.45-amd64
+
+  # Redis
+  - name: redis
+    newName: br.icr.io/br-ibm-images/redis
+    newTag: "8.0.2"
+
+  # Milvus images  - name: milvusdb/milvus
+    newName: br.icr.io/br-ibm-images/milvus
     newTag: v2.5.15
 
   - name: zilliz/attu
-    newName: zilliz/attu
+    newName: br.icr.io/br-ibm-images/attu
     newTag: v2.5.6
+
+  # Milvus dependencies
+  - name: docker.io/milvusdb/etcd
+    newName: br.icr.io/br-ibm-images/etcd
+    newTag: 3.5.18-r1
+
+  - name: docker.io/bitnami/kafka
+    newName: br.icr.io/br-ibm-images/kafka
+    newTag: 3.1.0-debian-10-r52
+
+  - name: minio/minio
+    newName: br.icr.io/br-ibm-images/minio
+    newTag: RELEASE.2024-05-28T17-19-04Z
+
+  - name: docker.io/bitnami/zookeeper
+    newName: br.icr.io/br-ibm-images/zookeeper
+    newTag: 3.7.0-debian-10-r320
