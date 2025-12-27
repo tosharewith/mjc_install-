@@ -165,7 +165,7 @@ spec:
           value: "33554432"
         - name: JAVA_HEAP_SIZE
           value: 11g
-        image: icr.io/mjc-cr/mcp-arc-s3-tool:2.1.17-amd64
+        image: icr.io/mjc-cr/arc-spring-api:3.1.2-amd64
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3

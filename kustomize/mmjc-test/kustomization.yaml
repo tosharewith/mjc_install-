@@ -14,6 +14,7 @@ resources:
   - deployments/mcp-milvus-db.yaml
   - deployments/mermaid-validator-api.yaml
   - deployments/po.yaml
+  - deployments/entities-manager.yaml
   - deployments/attu.yaml
   - deployments/milvus-datanode.yaml
   - deployments/milvus-indexnode.yaml
@@ -40,6 +41,7 @@ resources:
   - services/mcp-milvus-db.yaml
   - services/mermaid-validator-api.yaml
   - services/po.yaml
+  - services/entities-manager.yaml
   - services/redis.yaml
   - services/attu.yaml
   - services/milvus-proxy.yaml
@@ -111,6 +113,10 @@ images:
     newName: icr.io/mjc-cr/mmjc-po
     newTag: 0.0.2
 
+  - name: icr.io/mjc-cr/mojoco-entities-manager
+    newName: icr.io/mjc-cr/mojoco-entities-manager
+    newTag: 0.0.2
+
   - name: icr.io/mjc-cr/go-mcp-git-s3
     newName: icr.io/mjc-cr/go-mcp-git-s3
     newTag: 1.0.31
@@ -123,15 +129,15 @@ images:
     newName: icr.io/mjc-cr/mjc-mermaid-validator
     newTag: 1.0.17-llm-ready-amd64
 
-  # MCP Context Forge (migrated to ICR)
+  # MCP Context Forge (Gateway)
   - name: icr.io/mjc-cr/mcp-context-forge
     newName: icr.io/mjc-cr/mcp-context-forge
-    newTag: 0.8.0
+    newTag: 0.9.0
 
-  # MCP ARC S3 Server
-  - name: icr.io/mjc-cr/mcp-arc-s3-server
-    newName: icr.io/mjc-cr/mcp-arc-s3-server
-    newTag: 2.1.45-amd64
+  # MCP ARC S3 Server (renamed to arc-spring-api)
+  - name: icr.io/mjc-cr/arc-spring-api
+    newName: icr.io/mjc-cr/arc-spring-api
+    newTag: 3.1.2-amd64
 
   # Redis
   - name: redis

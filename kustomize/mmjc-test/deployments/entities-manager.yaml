@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: em-mmjc-test
+  namespace: mmjc-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: em-mmjc
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+      labels:
+        app: em-mmjc
+    spec:
+      containers:
+      - name: entities-manager
+        image: icr.io/mjc-cr/mojoco-entities-manager:0.0.2
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: em-mmjc
+          protocol: TCP
+        env:
+        - name: DB_URL
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRESQL_HOST
+              name: common-db-config
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRESQL_PORT
+              name: common-db-config
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRESQL_USERNAME
+              name: postgresql-secret-test
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRESQL_PASSWORD
+              name: postgresql-secret-test
+        - name: DB_NAME
+          value: mojoco-entities
+        - name: LOG_LEVEL
+          value: INFO
+        - name: MAX_THREADS
+          value: "10"
+        - name: COS_MAX_KEYS
+          value: "1000"
+        - name: API_TIMEOUT_SEC
+          value: "240"
+        resources:
+          limits:
+            cpu: 250m
+            memory: 1Gi
+          requests:
+            cpu: 125m
+            memory: 1Gi
+      imagePullSecrets:
+      - name: all-icr-io-mmjc
+      restartPolicy: Always

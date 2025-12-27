@@ -1,42 +1,76 @@
 # 🔍 Guia Completo: Serviços e Imagens para Migração
 
-**Data**: 2025-10-29
+**Data**: 2025-12-27
+**Fonte**: Namespace mmjc-test
 **Objetivo**: Identificar serviços internos vs AWS, imagens para migração e configuração GenAI
 
 ---
 
 ## 📦 1. IMAGENS DOCKER PARA MIGRAÇÃO
 
-### 1.1 Imagens Identificadas
+### 1.1 Imagens Identificadas (mmjc-test namespace)
 
-| Imagem Original | Componente | Tamanho Aprox | Prioridade |
-|----------------|------------|---------------|------------|
-| `milvusdb/milvus:v2.5.15` | Milvus (5 componentes) | ~1GB | 🔴 ALTA |
-| `docker.io/milvusdb/etcd:3.5.18-r1` | Etcd | ~150MB | 🔴 ALTA |
-| `docker.io/bitnami/kafka:3.1.0-debian-10-r52` | Kafka | ~500MB | 🔴 ALTA |
-| `docker.io/bitnami/zookeeper:3.7.0-debian-10-r320` | Zookeeper | ~300MB | 🔴 ALTA |
-| `icr.io/mjc-cr/mmjc-airflow-service:latest` | Airflow (todos) | ~2GB | 🔴 ALTA |
-| `quay.io/prometheus/statsd-exporter:v0.28.0` | StatsD | ~20MB | 🟡 BAIXA (pública) |
+#### MMJC Custom Applications
 
-**Total estimado**: ~6-8GB de imagens
+| Imagem Original | Componente | Versão | Prioridade |
+|----------------|------------|--------|------------|
+| `icr.io/mjc-cr/mmjc-agents` | Agents Service | `0.0.2` | 🔴 ALTA |
+| `icr.io/mjc-cr/mmjc-frontend` | Frontend | `0.0.2` | 🔴 ALTA |
+| `icr.io/mjc-cr/mmjc-po` | Process Orchestrator | `0.0.2` | 🔴 ALTA |
+| `icr.io/mjc-cr/mojoco-entities-manager` | Entities Manager | `0.0.2` | 🔴 ALTA |
+| `icr.io/mjc-cr/mjc-mermaid-validator` | Mermaid Validator | `1.0.17-llm-ready-amd64` | 🔴 ALTA |
+
+#### MCP Servers
+
+| Imagem Original | Componente | Versão | Prioridade |
+|----------------|------------|--------|------------|
+| `icr.io/mjc-cr/go-mcp-git-s3` | Git-S3 Server | `1.0.31` | 🔴 ALTA |
+| `icr.io/mjc-cr/arc-spring-api` | ARC S3 Server | `3.1.2-amd64` | 🔴 ALTA |
+| `icr.io/mjc-cr/mcp-context-forge` | Context Forge (Gateway) | `0.9.0` | 🔴 ALTA |
+| `icr.io/mjc-cr/mcp-milvus-db` | Milvus DB Server | `0.0.2` | 🔴 ALTA |
+
+#### Infrastructure
+
+| Imagem Original | Componente | Versão | Prioridade |
+|----------------|------------|--------|------------|
+| `milvusdb/milvus` | Milvus (5 componentes) | `v2.5.15` | 🔴 ALTA |
+| `docker.io/milvusdb/etcd` | Etcd | `3.5.18-r1` | 🔴 ALTA |
+| `docker.io/bitnami/kafka` | Kafka | `3.1.0-debian-10-r52` | 🔴 ALTA |
+| `docker.io/bitnami/zookeeper` | Zookeeper | `3.7.0-debian-10-r320` | 🔴 ALTA |
+| `minio/minio` | MinIO | `RELEASE.2024-05-28T17-19-04Z` | 🔴 ALTA |
+| `redis` | Redis | `8.0.2` | 🔴 ALTA |
+| `zilliz/attu` | Attu (Milvus UI) | `v2.5.6` | 🟡 MÉDIA |
+
+**Total estimado**: ~8-10GB de imagens
 
 ### 1.2 Imagens que DEVEM ser Migradas
 
-**Prioridade ALTA** (imagens de registries privados ou versões específicas):
+**MMJC Custom Applications** (IBM Container Registry - privado):
 ```bash
-# Milvus Stack (todas em docker.io - podem ou não ser migradas)
+icr.io/mjc-cr/mmjc-agents:0.0.2
+icr.io/mjc-cr/mmjc-frontend:0.0.2
+icr.io/mjc-cr/mmjc-po:0.0.2
+icr.io/mjc-cr/mojoco-entities-manager:0.0.2
+icr.io/mjc-cr/mjc-mermaid-validator:1.0.17-llm-ready-amd64
+```
+
+**MCP Servers** (IBM Container Registry - privado):
+```bash
+icr.io/mjc-cr/go-mcp-git-s3:1.0.31
+icr.io/mjc-cr/arc-spring-api:3.1.2-amd64
+icr.io/mjc-cr/mcp-context-forge:0.9.0
+icr.io/mjc-cr/mcp-milvus-db:0.0.2
+```
+
+**Infrastructure** (public registries):
+```bash
 milvusdb/milvus:v2.5.15
 docker.io/milvusdb/etcd:3.5.18-r1
 docker.io/bitnami/kafka:3.1.0-debian-10-r52
 docker.io/bitnami/zookeeper:3.7.0-debian-10-r320
-
-# Airflow (DEVE ser migrado - está em registry privado IBM)
-icr.io/mjc-cr/mmjc-airflow-service:latest
-```
-
-**Prioridade BAIXA** (imagens públicas - podem permanecer):
-```bash
-quay.io/prometheus/statsd-exporter:v0.28.0
+minio/minio:RELEASE.2024-05-28T17-19-04Z
+redis:8.0.2
+zilliz/attu:v2.5.6
 ```
 
 ### 1.3 Opções de Migração de Imagens
@@ -490,17 +524,27 @@ kubectl get pvc -A
 ### Imagens para migrar:
 
 ```
-OBRIGATÓRIAS:
-- icr.io/mjc-cr/mmjc-airflow-service:latest → ECR ou IBM ICR
+MMJC APPLICATIONS (OBRIGATÓRIAS - ICR privado):
+- icr.io/mjc-cr/mmjc-agents:0.0.2
+- icr.io/mjc-cr/mmjc-frontend:0.0.2
+- icr.io/mjc-cr/mmjc-po:0.0.2
+- icr.io/mjc-cr/mojoco-entities-manager:0.0.2
+- icr.io/mjc-cr/mjc-mermaid-validator:1.0.17-llm-ready-amd64
 
-RECOMENDADAS:
+MCP SERVERS (OBRIGATÓRIAS - ICR privado):
+- icr.io/mjc-cr/go-mcp-git-s3:1.0.31
+- icr.io/mjc-cr/arc-spring-api:3.1.2-amd64
+- icr.io/mjc-cr/mcp-context-forge:0.9.0
+- icr.io/mjc-cr/mcp-milvus-db:0.0.2
+
+INFRASTRUCTURE (RECOMENDADAS):
 - milvusdb/milvus:v2.5.15
 - docker.io/milvusdb/etcd:3.5.18-r1
 - docker.io/bitnami/kafka:3.1.0-debian-10-r52
 - docker.io/bitnami/zookeeper:3.7.0-debian-10-r320
-
-OPCIONAL:
-- quay.io/prometheus/statsd-exporter:v0.28.0 (pública)
+- minio/minio:RELEASE.2024-05-28T17-19-04Z
+- redis:8.0.2
+- zilliz/attu:v2.5.6
 ```
 
 ### GenAI/Bedrock:
@@ -520,5 +564,6 @@ OPCIONAL:
 
 ---
 
-**Última atualização**: 2025-10-29
-**Próximos passos**: Execute `./migrate.sh` para iniciar migração automática
+**Última atualização**: 2025-12-27
+**Fonte**: Namespace mmjc-test
+**Próximos passos**: Execute `./scripts/pull-and-retag-images.sh` para retagear imagens

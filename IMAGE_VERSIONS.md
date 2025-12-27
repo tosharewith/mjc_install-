@@ -1,82 +1,92 @@
 # MMJC Image Versions
 
-**Last Updated**: 2025-11-12
+**Last Updated**: 2025-12-27
+**Source**: mmjc-test namespace
 **Status**: Ready for Air-Gapped Deployment
 
-Complete list of Docker images pulled and retagged for Artifactory deployment.
+Complete list of Docker images running in mmjc-test namespace.
 
 ---
 
 ## Summary
 
-- **Total Images**: 15 production images
-- **Status**: ✅ All successfully pulled and retagged
-- **Registry Pattern**: `br.icr.io/br-ibm-images/<image>:<tag>`
-- **Missing**: Kafka and Zookeeper (deprecated tags - see notes below)
+- **Total Images**: 18 production images
+- **Status**: ✅ All verified from mmjc-test namespace
+- **Registry Pattern**: `icr.io/mjc-cr/<image>:<tag>` (IBM Cloud)
+- **Air-Gapped Pattern**: `br.icr.io/br-ibm-images/<image>:<tag>`
 
 ---
 
 ## MMJC Custom Applications
 
-| Component | Image | Version |
-|-----------|-------|---------|
-| Agents Service | `br.icr.io/br-ibm-images/mmjc-agents` | `0.0.2` |
-| Frontend | `br.icr.io/br-ibm-images/mmjc-frontend` | `0.0.2` |
-| Product Owner (PO) | `br.icr.io/br-ibm-images/mmjc-po` | `0.0.2` |
-| Airflow Service | `br.icr.io/br-ibm-images/mmjc-airflow-service` | `latest` |
-| Mermaid Validator | `br.icr.io/br-ibm-images/mjc-mermaid-validator` | `1.0.17-llm-ready-amd64` |
+| Component | Image | Version | Deployment |
+|-----------|-------|---------|------------|
+| Agents Service | `icr.io/mjc-cr/mmjc-agents` | `0.0.2` | agents-mmjc-test |
+| Frontend | `icr.io/mjc-cr/mmjc-frontend` | `0.0.2` | frontend-mmjc-test |
+| Process Orchestrator (PO) | `icr.io/mjc-cr/mmjc-po` | `0.0.2` | po-mmjc-test |
+| Entities Manager | `icr.io/mjc-cr/mojoco-entities-manager` | `0.0.2` | em-mmjc-test |
+| Mermaid Validator | `icr.io/mjc-cr/mjc-mermaid-validator` | `1.0.17-llm-ready-amd64` | mermaid-validator-api |
 
 ---
 
 ## MCP (Model Context Protocol) Servers
 
-| Component | Image | Version |
-|-----------|-------|---------|
-| Git-S3 Server | `br.icr.io/br-ibm-images/go-mcp-git-s3` | `1.0.31` |
-| ARC S3 Server | `br.icr.io/br-ibm-images/mcp-arc-s3-server` | `2.1.45-amd64` |
-| Context Forge | `br.icr.io/br-ibm-images/mcp-context-forge` | `0.8.0` |
-| Milvus DB Server | `br.icr.io/br-ibm-images/mcp-milvus-db` | `0.0.2` |
+| Component | Image | Version | Deployment |
+|-----------|-------|---------|------------|
+| Git-S3 Server | `icr.io/mjc-cr/go-mcp-git-s3` | `1.0.31` | mcp-git-s3-server |
+| ARC S3 Server | `icr.io/mjc-cr/arc-spring-api` | `3.1.2-amd64` | mcp-arc-s3-server |
+| Context Forge (Gateway) | `icr.io/mjc-cr/mcp-context-forge` | `0.9.0` | mcp-gateway-test |
+| Milvus DB Server | `icr.io/mjc-cr/mcp-milvus-db` | `0.0.2` | mcp-milvus-db-test |
 
 ---
 
 ## Infrastructure Components
 
-### Vector Database
+### Vector Database (Milvus Cluster)
 
-| Component | Image | Version |
-|-----------|-------|---------|
-| Milvus | `br.icr.io/br-ibm-images/milvus` | `v2.5.15` |
-| Attu (Milvus UI) | `br.icr.io/br-ibm-images/attu` | `v2.5.6` |
-| etcd | `br.icr.io/br-ibm-images/etcd` | `3.5.18-r1` |
+| Component | Image | Version | Type |
+|-----------|-------|---------|------|
+| Milvus Proxy | `milvusdb/milvus` | `v2.5.15` | Deployment |
+| Milvus DataNode | `milvusdb/milvus` | `v2.5.15` | Deployment |
+| Milvus IndexNode | `milvusdb/milvus` | `v2.5.15` | Deployment |
+| Milvus QueryNode | `milvusdb/milvus` | `v2.5.15` | Deployment |
+| Milvus MixCoord | `milvusdb/milvus` | `v2.5.15` | Deployment |
+| Attu (Milvus UI) | `zilliz/attu` | `v2.5.6` | Deployment |
+| etcd | `docker.io/milvusdb/etcd` | `3.5.18-r1` | StatefulSet |
+
+### Message Queue
+
+| Component | Image | Version | Type |
+|-----------|-------|---------|------|
+| Kafka | `docker.io/bitnami/kafka` | `3.1.0-debian-10-r52` | StatefulSet |
+| Zookeeper | `docker.io/bitnami/zookeeper` | `3.7.0-debian-10-r320` | StatefulSet |
 
 ### Storage & Cache
 
-| Component | Image | Version |
-|-----------|-------|---------|
-| MinIO | `br.icr.io/br-ibm-images/minio` | `RELEASE.2024-05-28T17-19-04Z` |
-| Redis | `br.icr.io/br-ibm-images/redis` | `8.0.2` |
-
-### Monitoring
-
-| Component | Image | Version |
-|-----------|-------|---------|
-| StatsD Exporter | `br.icr.io/br-ibm-images/statsd-exporter` | `v0.28.0` |
+| Component | Image | Version | Type |
+|-----------|-------|---------|------|
+| MinIO | `minio/minio` | `RELEASE.2024-05-28T17-19-04Z` | StatefulSet |
+| Redis | `redis` | `8.0.2` | StatefulSet |
 
 ---
 
-## Missing Images (Cluster-Only)
+## Services Exposed
 
-These images are running in the current cluster but failed to pull from Docker Hub due to deprecated/removed tags:
-
-| Component | Running Version | Status |
-|-----------|-----------------|--------|
-| Kafka | `bitnami/kafka:3.1.0-debian-10-r52` | ⚠️ Tag no longer available |
-| Zookeeper | `bitnami/zookeeper:3.7.0-debian-10-r320` | ⚠️ Tag no longer available |
-
-**Resolution Options:**
-1. Export directly from cluster: `kubectl get pods -o yaml > kafka-zk-pods.yaml` then extract images
-2. Use newer Bitnami versions (breaking changes possible)
-3. Keep using cluster-cached versions (not portable to new clusters)
+| Service | Type | Ports | Selector |
+|---------|------|-------|----------|
+| agents-mmjc-test | ClusterIP | 80/TCP | app=agents-mmjc |
+| em-mmjc-test | ClusterIP | 80/TCP | app=em-mmjc |
+| frontend-mmjc-test | ClusterIP | 80/TCP | app=frontend-mmjc |
+| mcp-arc-s3-service | ClusterIP | 8383/TCP, 8443/TCP | app=mcp-arc-s3-server |
+| mcp-gateway-test | ClusterIP | 80/TCP | app=mcp-gateway |
+| mcp-git-s3-server | ClusterIP | 8080/TCP, 8443/TCP, 9090/TCP | app=mcp-git-s3-server |
+| mcp-git-s3-server-lb | LoadBalancer | 80/TCP, 443/TCP | app=mcp-git-s3-server |
+| mcp-milvus-db-test | ClusterIP | 8903/TCP | app=mcp-milvus-db |
+| mermaid-validator-api | ClusterIP | 80/TCP | app=mermaid-validator-api |
+| milvus-mmjc-test | ClusterIP | 19530/TCP, 9091/TCP | component=proxy |
+| my-attu-svc | ClusterIP | 3000/TCP | app=attu |
+| po-mmjc-test | ClusterIP | 80/TCP | app=po-mmjc |
+| redis-service-test | ClusterIP | 6379/TCP | app=redis-cluster |
 
 ---
 
@@ -94,85 +104,87 @@ br.icr.io/br-ibm-images/<image>:<version>
 
 ---
 
-## Version Changes from Previous Deployment
+## Air-Gapped Deployment Images
 
-| Image | Previous | Current | Change |
-|-------|----------|---------|--------|
-| mmjc-airflow-service | `3.0.2` | `latest` | Updated to match cluster |
-| mcp-arc-s3-server | `2.1.17-amd64` | `2.1.45-amd64` | ⬆️ Version bump |
+For air-gapped installations, retag from `icr.io/mjc-cr/` to `br.icr.io/br-ibm-images/`:
+
+```bash
+# MMJC Applications
+br.icr.io/br-ibm-images/mmjc-agents:0.0.2
+br.icr.io/br-ibm-images/mmjc-frontend:0.0.2
+br.icr.io/br-ibm-images/mmjc-po:0.0.2
+br.icr.io/br-ibm-images/mojoco-entities-manager:0.0.2
+br.icr.io/br-ibm-images/mjc-mermaid-validator:1.0.17-llm-ready-amd64
+
+# MCP Servers
+br.icr.io/br-ibm-images/go-mcp-git-s3:1.0.31
+br.icr.io/br-ibm-images/arc-spring-api:3.1.2-amd64
+br.icr.io/br-ibm-images/mcp-context-forge:0.9.0
+br.icr.io/br-ibm-images/mcp-milvus-db:0.0.2
+
+# Infrastructure
+br.icr.io/br-ibm-images/milvus:v2.5.15
+br.icr.io/br-ibm-images/attu:v2.5.6
+br.icr.io/br-ibm-images/etcd:3.5.18-r1
+br.icr.io/br-ibm-images/minio:RELEASE.2024-05-28T17-19-04Z
+br.icr.io/br-ibm-images/redis:8.0.2
+br.icr.io/br-ibm-images/kafka:3.1.0-debian-10-r52
+br.icr.io/br-ibm-images/zookeeper:3.7.0-debian-10-r320
+```
+
+---
+
+## Known Issues
+
+### Deprecated Image Tags
+
+| Component | Running Version | Status |
+|-----------|-----------------|--------|
+| Kafka | `bitnami/kafka:3.1.0-debian-10-r52` | ⚠️ Tag no longer available on Docker Hub |
+| Zookeeper | `bitnami/zookeeper:3.7.0-debian-10-r320` | ⚠️ Tag no longer available on Docker Hub |
+| Zookeeper Pod | `milvus-mmjc-test-zookeeper-0` | ⚠️ ImagePullBackOff |
+
+**Resolution Options:**
+1. Export directly from cluster nodes where images are cached
+2. Use newer Bitnami versions (may have breaking changes)
+3. Migrate Milvus to use Pulsar instead of Kafka (recommended by Milvus)
 
 ---
 
 ## Deployment Instructions
 
-### 1. View Tagged Images Locally
+### 1. Pull and Retag Images
 
 ```bash
-export DOCKER_HOST="unix:///Users/gregoriomomm/.colima/default/docker.sock"
-docker images br.icr.io/br-ibm-images/
+./scripts/pull-and-retag-images.sh
 ```
 
 ### 2. Push to Artifactory
 
 ```bash
-# Login to Artifactory
 docker login br.icr.io
-
-# Push all images
 ./scripts/pull-and-retag-images.sh --push
 ```
 
 ### 3. Deploy with Kustomize
 
 ```bash
-# For air-gapped deployment
-kubectl apply -k kustomize/overlays/artifactory
-
 # For IBM Cloud deployment
 kubectl apply -k kustomize/mmjc-test
-kubectl apply -k kustomize/airflow-test
-```
 
----
-
-## Installation-Specific Configuration
-
-All images are now available with both registry patterns:
-
-**IBM Cloud (ICR):**
-- Use `icr.io/mjc-cr/*` in `kustomize/mmjc-test/`
-- Use `icr.io/mjc-cr/*` in `kustomize/airflow-test/`
-
-**Air-Gapped (Artifactory):**
-- Use `br.icr.io/br-ibm-images/*` in `kustomize/overlays/artifactory/`
-
-Configuration generator creates installation-specific overlays:
-```bash
-./scripts/generate-installation-configs.sh <values-file> <output-dir>
+# For air-gapped deployment
+kubectl apply -k kustomize/overlays/artifactory
 ```
 
 ---
 
 ## Notes
 
-1. **Airflow Version**: Changed from `3.0.2` to `latest` to match running cluster
-2. **Kafka/Zookeeper**: Tags `3.1.0-debian-10-r52` and `3.7.0-debian-10-r320` no longer exist on Docker Hub
-3. **MCP Arc Server**: Two versions tagged (`2.1.17` and `2.1.45`) - use `2.1.45-amd64` for new deployments
-4. **PostgreSQL**: Not included (managed service - uses IBM Cloud PostgreSQL 16.8)
-5. **Image Sizes**: Total ~6.5GB for all images
-
----
-
-## Verification
-
-Check all images are present:
-```bash
-# Count should be 15
-docker images br.icr.io/br-ibm-images/ | grep -v REPOSITORY | wc -l
-
-# List with sizes
-docker images br.icr.io/br-ibm-images/ --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}"
-```
+1. **Entities Manager**: New service (mojoco-entities-manager) added for entity management
+2. **ARC Spring API**: Image renamed from `mcp-arc-s3-server` to `arc-spring-api`, version 3.1.2
+4. **Context Forge**: Updated from 0.8.0 to 0.9.0
+5. **PostgreSQL**: Not included (managed service - uses IBM Cloud PostgreSQL)
+6. **Kafka/Zookeeper**: Tags deprecated - use cached images or migrate to Pulsar
 
 ---
 

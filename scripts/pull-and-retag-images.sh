@@ -43,25 +43,23 @@ echo "Target: $TARGET_REGISTRY"
 echo "=========================================="
 echo ""
 
-# Image manifest based on current cluster state and kustomization.yaml
+# Image manifest based on mmjc-test namespace (verified 2025-12-27)
 # Format: "image-name:tag"
 declare -a IMAGES=(
     # MMJC Custom Applications
     "mmjc-agents:0.0.2"
     "mmjc-frontend:0.0.2"
     "mmjc-po:0.0.2"
+    "mojoco-entities-manager:0.0.2"
 
     # MCP Servers
     "go-mcp-git-s3:1.0.31"
     "mcp-milvus-db:0.0.2"
-    "mcp-context-forge:0.8.0"
-    "mcp-arc-s3-server:2.1.45-amd64"
+    "mcp-context-forge:0.9.0"
+    "arc-spring-api:3.1.2-amd64"
 
     # Validators
     "mjc-mermaid-validator:1.0.17-llm-ready-amd64"
-
-    # Airflow
-    "mmjc-airflow-service:latest"
 )
 
 # Public images that need to be mirrored

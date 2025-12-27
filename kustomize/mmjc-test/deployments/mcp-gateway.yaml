@@ -68,7 +68,7 @@ spec:
               name: postgresql-secret-test
         - name: DATABASE_URL
           value: postgresql://$(POSTGRESQL_USERNAME):$(POSTGRESQL_PASSWORD)@$(POSTGRESQL_HOST):32337/mcp
-        image: ghcr.io/ibm/mcp-context-forge:0.6.0
+        image: icr.io/mjc-cr/mcp-context-forge:0.9.0
         imagePullPolicy: Always
         name: gateway
         ports:
